@@ -15,7 +15,7 @@ app.use(function(req, res, next) {
 
 app.use(express.static('public'));
 
-broadcastUDPPacket();
+setInterval(broadcastUDPPacket,5000);
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
