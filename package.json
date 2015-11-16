@@ -1,0 +1,18 @@
+{
+  "name": "DWA_jarvis",
+  "version": "1.0.0",
+  "description": "Domotica project for the DWA semester",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://nromeijn@bitbucket.org/Redslayer230/jarvis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
