@@ -6,7 +6,10 @@ var dgram = require('dgram');
 var os = require('os');
 var ifaces = os.networkInterfaces();
 
+var retrievedSock = false;
+
 server.listen(80);
+
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -14,16 +17,17 @@ app.use(function(req, res, next) {
     next();
 });
 
-
 app.use(express.static('public'));
 
-setInterval(broadcastUDPPacket,5000);
+var broadcastInterval = setInterval(broadcastUDPPacket,5000);
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
 });
 
 app.get('/sok',function(req,res){
+    retrievedSock = true;
+    clearInterval(broadcastInterval);
     res.json(SOK[0]);
 });
 
@@ -39,7 +43,6 @@ app.post('/off',function(req,res){
 
 
 function broadcastUDPPacket(){
-
     var broadcastObject = {
         type:'SOK',
         version:'0.0.1'

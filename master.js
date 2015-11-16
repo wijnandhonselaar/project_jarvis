@@ -12,10 +12,10 @@ server.listen(3221);
 
 var devices =  {
     actuator:[],
-    sensors:[]
+    sensor:[]
 };
 
-function addToDeviceList(d) {
+function addToDeviceList(d,remote) {
     if(devices[d.type].length != 0) {
         for (var i = 0; i < devices[d.type].length; i++) {
             if (devices[d.type][i].id !== d.id) {
@@ -24,6 +24,7 @@ function addToDeviceList(d) {
         }
     } else {
         devices[d.type].push(d);
+        console.log("Discovered "+ d.name + " on "+remote.address);
     }
 }
 
@@ -36,8 +37,8 @@ listenForUDPPackets(function(msg, remote){
                 return;
             }
             var d = JSON.parse(res.buffer.toString());
-            addToDeviceList(d);
-            console.log(devices);
+            addToDeviceList(d, remote);
+            //console.log(devices);
         });
     }
 });
@@ -53,7 +54,7 @@ function listenForUDPPackets(callback){
 
     udpserver.on('message', function (message, remote) {
         callback(JSON.parse(message), remote);
-        console.log(remote.address + ':' + remote.port +' - ' + message);
+        //console.log(remote.address + ':' + remote.port +' - ' + message);
     });
 
     udpserver.bind(3221);
