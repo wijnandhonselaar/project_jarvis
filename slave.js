@@ -27,7 +27,9 @@ app.get('/', function (req, res) {
 
 app.get('/sok',function(req,res){
     retrievedSock = true;
-    clearInterval(broadcastInterval);
+    if(!retrievedSock) {
+        clearInterval(broadcastInterval);
+    }
     res.json(SOK[0]);
 });
 
@@ -40,7 +42,6 @@ app.post('/off',function(req,res){
     console.log('off');
     res.send('');
 });
-
 
 function broadcastUDPPacket(){
     var broadcastObject = {
