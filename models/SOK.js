@@ -1,4 +1,4 @@
-var sok = {
+var sok = [{
     id: 12,
     name: 'Philips hue',
     type: 'actuator',
@@ -58,6 +58,27 @@ var sok = {
             description : 'Changes the color of the philips hue lamp'
         }
     ]
-};
+},
+{
+    id: 12,
+    name: 'Humidity sensor',
+    type: 'sensor',
+    sokVersion: 0.1,
+    description: 'Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.',
+    commands: [
+        {
+            name : 'status',
+            parameters: [],
+            requestInterval: 5000,
+            httpMethod: 'GET',
+            returns: {
+                Celsius: 'number',
+                Fahrenheit: 'number',
+                Kelvin: 'number'
+            },
+            description: 'Retrieves status of sensor'
+        }
+    ]
+}];
 
 module.exports = sok;

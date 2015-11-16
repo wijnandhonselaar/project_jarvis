@@ -3,6 +3,8 @@ var app = express();
 var server = require('http').Server(app);
 var SOK = require('./models/SOK');
 var dgram = require('dgram');
+var os = require('os');
+var ifaces = os.networkInterfaces();
 
 server.listen(80);
 
@@ -22,7 +24,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/sok',function(req,res){
-    res.json(SOK);
+    res.json(SOK[0]);
 });
 
 app.post('/on',function(req,res){
@@ -37,6 +39,7 @@ app.post('/off',function(req,res){
 
 
 function broadcastUDPPacket(){
+
     var broadcastObject = {
         type:'SOK',
         version:'0.0.1'

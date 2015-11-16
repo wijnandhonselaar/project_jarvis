@@ -15,19 +15,34 @@ var devices =  {
     sensors:[]
 };
 
-listenForUDPPackets(function(msg){
+function addToDeviceList(d) {
+    if(devices[d.type].length != 0) {
+        for (var i = 0; i < devices[d.type].length; i++) {
+            if (devices[d.type][i].id !== d.id) {
+                devices[d.type].push(d);
+            }
+        }
+    } else {
+        devices[d.type].push(d);
+    }
+}
+
+listenForUDPPackets(function(msg, remote){
+
     if(supportedSOKVersions.indexOf(msg.version) !== -1){
-        http.get('http://localhost/sok', function (err, res) {
+        http.get('http://'+remote.address+'/sok', function (err, res) {
             if (err) {
                 console.error(err);
                 return;
             }
             var d = JSON.parse(res.buffer.toString());
-            devices[d.type].push(d);
+            addToDeviceList(d);
             console.log(devices);
         });
     }
 });
+
+
 
 function listenForUDPPackets(callback){
     var udpserver = dgram.createSocket("udp4");
@@ -37,7 +52,7 @@ function listenForUDPPackets(callback){
     });
 
     udpserver.on('message', function (message, remote) {
-        callback(JSON.parse(message));
+        callback(JSON.parse(message), remote);
         console.log(remote.address + ':' + remote.port +' - ' + message);
     });
 
