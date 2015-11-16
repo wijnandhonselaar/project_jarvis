@@ -6,8 +6,6 @@ var dgram = require('dgram');
 var os = require('os');
 var ifaces = os.networkInterfaces();
 
-var retrievedSock = false;
-
 server.listen(80);
 
 
@@ -26,10 +24,6 @@ app.get('/', function (req, res) {
 });
 
 app.get('/sok',function(req,res){
-    retrievedSock = true;
-    if(!retrievedSock) {
-        clearInterval(broadcastInterval);
-    }
     res.json(SOK[0]);
 });
 

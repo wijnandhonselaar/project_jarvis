@@ -29,7 +29,6 @@ function addToDeviceList(d,remote) {
 }
 
 listenForUDPPackets(function(msg, remote){
-
     if(supportedSOKVersions.indexOf(msg.version) !== -1){
         http.get('http://'+remote.address+'/sok', function (err, res) {
             if (err) {
