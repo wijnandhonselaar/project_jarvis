@@ -1,45 +1,55 @@
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
 var SOK = require('./models/SOK');
 var dgram = require('dgram');
-var http = require('http-request');
 
-var supportedSOKVersions = ['0.0.1'];
+server.listen(80);
 
-server.listen(3221);
-
-var devices =  {
-    actuator:[],
-    sensors:[]
-};
-
-listenForUDPPackets(function(msg){
-    if(supportedSOKVersions.indexOf(msg.version) !== -1){
-        http.get('http://localhost/sok', function (err, res) {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            var d = JSON.parse(res.buffer.toString());
-            devices[d.type].push(d);
-            console.log(devices);
-        });
-    }
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
 
-function listenForUDPPackets(callback){
-    var udpserver = dgram.createSocket("udp4");
-    udpserver.on('listening', function () {
-        var address = server.address();
-        console.log('UDP Server listening on ' + address.address + ":" + address.port);
-    });
 
-    udpserver.on('message', function (message, remote) {
-        callback(JSON.parse(message));
-        console.log(remote.address + ':' + remote.port +' - ' + message);
-    });
+app.use(express.static('public'));
 
-    udpserver.bind(3221);
+broadcastUDPPacket();
+
+app.get('/', function (req, res) {
+    res.sendfile(__dirname+'/public/index.html');
+});
+
+app.get('/sok',function(req,res){
+    res.json(SOK);
+});
+
+app.post('/on',function(req,res){
+    console.log('on');
+    res.send('');
+});
+
+app.post('/off',function(req,res){
+    console.log('off');
+    res.send('');
+});
+
+
+function broadcastUDPPacket(){
+    var broadcastObject = {
+        type:'SOK',
+        version:'0.0.1'
+    };
+    var broadcastAddress = "255.255.255.255";
+    var message = new Buffer(JSON.stringify(broadcastObject));
+    var client = dgram.createSocket("udp4");
+    client.bind();
+    client.on("listening", function () {
+        client.setBroadcast(true);
+        client.send(message, 0, message.length, 3221, broadcastAddress, function(err, bytes) {
+            client.close();
+        });
+    });
 }
+
