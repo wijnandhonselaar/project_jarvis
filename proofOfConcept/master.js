@@ -1,8 +1,6 @@
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
-var SOK = require('./../models/SOK');
 var dgram = require('dgram');
 var http = require('superagent');
 var supportedSOKVersions = ['0.0.1'];
@@ -16,12 +14,12 @@ var devices =  {
 };
 
 function addToDeviceList(d,remote) {
-    //console.log(d.type);
     if(devices[d.type].length !== 0) {
-
          for(var i = 0; i<devices[d.type].length; i++){
+
              var exists = false;
-             if(devices[d.type].id === d.type){
+
+             if(devices[d.type][i].id === d.id){
                  exists = true;
              }
          }
