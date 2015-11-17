@@ -15,7 +15,7 @@
 
         function getDevices() {
             var ds = this;
-            $http.get("192.168.0.102:3221/devices")
+            $http.get("localhost:3221/devices")
                 .success(function(devices){
                     devices = JSON.parse(devices);
                     ds.devices.actuator = devices.actuator;
