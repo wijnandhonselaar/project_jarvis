@@ -13,6 +13,10 @@ var devices =  {
     sensor:[]
 };
 
+app.get('/devices', function(req,res){
+   res.json(devices);
+});
+
 function addToDeviceList(d,remote) {
     if(devices[d.type].length !== 0) {
          for(var i = 0; i<devices[d.type].length; i++){
@@ -35,12 +39,26 @@ function addToDeviceList(d,remote) {
     }
 }
 
+function getDeviceByIPAddress(ip){
+    for (var property in devices) {
+        if (object.hasOwnProperty(property)) {
+            for(var i = 0; i<devices[property].length; i++){
+                if(devices[property][i].ip == ip){
+                    return devices[property][i];
+                }
+            }
+        }
+    }
+    return null;
+}
+
 listenForUDPPackets(function(msg, remote){
     if(supportedSOKVersions.indexOf(msg.version) !== -1){
-        if(!httpPending[remote.address] || httpPending[remote.address] == undefined) {
+        if(!httpPending[remote.address] || httpPending[remote.address] == undefined && getDeviceByIPAddress(remote.address)) {
             http
                 .get('http://' + remote.address + '/sok')
                 .end(function (err, res) {
+                    res.body.ip = remote.address;
                     addToDeviceList(res.body, remote);
                     httpPending[remote.address] = false;
                 });
