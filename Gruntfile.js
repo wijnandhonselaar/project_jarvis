@@ -49,6 +49,7 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: [
+                    'public/index.html',
                     'Gruntfile.js',
                     'public/components/app.js',
                     'public/components/**/*.js',
