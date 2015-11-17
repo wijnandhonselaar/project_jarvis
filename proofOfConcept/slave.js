@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
-var SOK = require('./models/SOK');
+var SOK = require('./../models/SOK');
 var dgram = require('dgram');
 var os = require('os');
 var ifaces = os.networkInterfaces();
@@ -42,7 +42,9 @@ function broadcastUDPPacket(){
         type:'SOK',
         version:'0.0.1'
     };
-    var broadcastAddress = "255.255.255.255";
+
+    var broadcastAddress = "0.0.0.0";
+    //var broadcastAddress = "255.255.255.255";
     var message = new Buffer(JSON.stringify(broadcastObject));
     var client = dgram.createSocket("udp4");
     client.bind();
