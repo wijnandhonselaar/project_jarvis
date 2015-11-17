@@ -8,12 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HANICA/project_jarvis.git"
+    "url": "https://nromeijn@bitbucket.org/Redslayer230/jarvis.git"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "http-request": "^0.7.0",
+    "socket.io": "^1.3.7",
+    "superagent": "^1.4.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
