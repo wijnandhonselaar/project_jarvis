@@ -62,7 +62,6 @@ listenForUDPPackets(function(msg, remote){
                 .end(function (err, res) {
                     var msg = JSON.parse(res.text);
                     msg.ip = remote.address;
-
                     addToDeviceList(msg, remote);
                     httpPending[remote.address] = false;
                 });
