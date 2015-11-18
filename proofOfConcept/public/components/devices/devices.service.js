@@ -15,9 +15,9 @@
 
         function getDevices() {
             var ds = this;
-            $http.get("localhost:3221/devices")
+            $http.get("/devices")
                 .success(function(devices){
-                    devices = JSON.parse(devices);
+                    console.log(devices);
                     ds.devices.actuator = devices.actuator;
                     ds.devices.sensor = devices.sensor;
                 })

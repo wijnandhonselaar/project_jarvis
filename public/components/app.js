@@ -6,13 +6,13 @@ var jarvisApp = angular.module('jarvisApp', [
 ]);
 
 jarvisApp.config(["$stateProvider","$urlRouterProvider", function($stateProvider, $urlRouterProvider){
-    $urlRouterProvider.otherwise("/devices");
-    $stateProvider
-        .state('devices', {
-            url: "/devices",
-            templateUrl: "components/devices/devices.html",
-            controller: 'DevicesCtrl',
-            controllerAs: 'dc',
-            data: { pageTitle: "Devices" }
-        })
+    //$urlRouterProvider.otherwise("/devices");
+    //$stateProvider
+    //    .state('devices', {
+    //        url: "/devices",
+    //        templateUrl: "components/devices/devices.html",
+    //        controller: 'DevicesCtrl',
+    //        controllerAs: 'dc',
+    //        data: { pageTitle: "Devices" }
+    //    })
 }]);
