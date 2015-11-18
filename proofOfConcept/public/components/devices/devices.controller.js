@@ -12,7 +12,7 @@
         dc.devices = DS.devices;
         DS.getDevices();
 
-        var socket = io.connect('/');
+        var socket = io.connect('http://localhost:3221');
         socket.on('event', function (data) {
             console.log(data);
             if(data.event == "deviceschanged") {

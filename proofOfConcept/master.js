@@ -7,7 +7,7 @@ var dgram = require('dgram');
 var http = require('superagent');
 var supportedSOKVersions = ['0.0.1'];
 
-server.listen(80);
+server.listen(3221);
 
 var httpPending = [];
 var devices =  {
@@ -94,5 +94,5 @@ function listenForUDPPackets(callback){
         //console.log(remote.address + ':' + remote.port +' - ' + message);
     });
 
-    udpserver.bind(80);
+    udpserver.bind(3221);
 }
