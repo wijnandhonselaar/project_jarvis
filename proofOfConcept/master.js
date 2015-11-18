@@ -3,6 +3,7 @@ var app = express();
 var server = require('http').Server(app);
 var dgram = require('dgram');
 var http = require('superagent');
+var SOK = require('./../models/SOK');
 var supportedSOKVersions = ['0.0.1'];
 
 server.listen(3221);
@@ -14,7 +15,8 @@ var devices =  {
 };
 
 app.get('/devices', function(req,res){
-   res.json(devices);
+  res.json(devices);
+    //res.json(SOK[0]);
 });
 
 function addToDeviceList(d,remote) {
@@ -58,8 +60,9 @@ listenForUDPPackets(function(msg, remote){
             http
                 .get('http://' + remote.address + '/sok')
                 .end(function (err, res) {
-                    res.body.ip = remote.address;
-                    addToDeviceList(res.body, remote);
+                    var msg = JSON.parse(res.text);
+                    msg.ip = remote.address;
+                    addToDeviceList(msg, remote);
                     httpPending[remote.address] = false;
                 });
         }
@@ -78,7 +81,7 @@ function listenForUDPPackets(callback){
 
     udpserver.on('message', function (message, remote) {
         callback(JSON.parse(message), remote);
-        //console.log(remote.address + ':' + remote.port +' - ' + message);
+        console.log(remote.address + ':' + remote.port +' - ' + message);
     });
 
     udpserver.bind(3221);
