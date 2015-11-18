@@ -1,5 +1,6 @@
 'use strict';
 
 angular.module('jarvis', [
-    'jarvis.title'
+    'jarvis.title',
+    'jarvis.devices'
 ]);

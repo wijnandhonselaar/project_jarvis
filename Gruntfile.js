@@ -13,6 +13,7 @@ module.exports = function(grunt) {
                     'public/bower_components/angular-ui-router/release/angular-ui-router.min.js',
                     'public/bower_components/jquery/dist/jquery.js',
                     'public/bower_components/Materialize/dist/js/materialize.js',
+                    'public/bower_components/socket.io-client/socket.io.js',
 
                     'public/components/**/*module.js',
                     'public/components/**/*.js',
@@ -49,6 +50,7 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: [
+                    'public/index.html',
                     'Gruntfile.js',
                     'public/components/app.js',
                     'public/components/**/*.js',

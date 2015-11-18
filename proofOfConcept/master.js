@@ -1,12 +1,13 @@
-var express = require('express');
+var express = require("express");
 var app = express();
 var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var path = require('path');
 var dgram = require('dgram');
 var http = require('superagent');
-var SOK = require('./../models/SOK');
 var supportedSOKVersions = ['0.0.1'];
 
-server.listen(3221);
+server.listen(80);
 
 var httpPending = [];
 var devices =  {
@@ -15,28 +16,40 @@ var devices =  {
 };
 
 app.get('/devices', function(req,res){
-  res.json(devices);
-    //res.json(SOK[0]);
+    res.json(devices);
 });
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+//io.on("connection", function(socket) {
+//    setTimeout(function(){
+//        devices.actuator.push({
+//            test: "shizzle"
+//        });
+//        io.emit("event", {event: "deviceschanged"});
+//    }, 5000);
+//});
 
 function addToDeviceList(d,remote) {
     if(devices[d.type].length !== 0) {
-         for(var i = 0; i<devices[d.type].length; i++){
+        for(var i = 0; i<devices[d.type].length; i++){
 
-             var exists = false;
+            var exists = false;
 
-             if(devices[d.type][i].id === d.id){
-                 exists = true;
-             }
-         }
+            if(devices[d.type][i].id === d.id){
+                exists = true;
+            }
+        }
 
         if(!exists){
             devices[d.type].push(d);
+            io.emit("event", {event: "deviceschanged"});
             console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
         }
 
     } else {
         devices[d.type].push(d);
+        io.emit("event", {event: "deviceschanged"});
         console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
     }
 }
@@ -60,17 +73,14 @@ listenForUDPPackets(function(msg, remote){
             http
                 .get('http://' + remote.address + '/sok')
                 .end(function (err, res) {
-                    var msg = JSON.parse(res.text);
-                    msg.ip = remote.address;
-                    addToDeviceList(msg, remote);
+                    res.body.ip = remote.address;
+                    addToDeviceList(res.body, remote);
                     httpPending[remote.address] = false;
                 });
         }
         httpPending[remote.address] = true;
     }
 });
-
-
 
 function listenForUDPPackets(callback){
     var udpserver = dgram.createSocket("udp4");
@@ -81,8 +91,8 @@ function listenForUDPPackets(callback){
 
     udpserver.on('message', function (message, remote) {
         callback(JSON.parse(message), remote);
-        console.log(remote.address + ':' + remote.port +' - ' + message);
+        //console.log(remote.address + ':' + remote.port +' - ' + message);
     });
 
-    udpserver.bind(3221);
+    udpserver.bind(80);
 }
