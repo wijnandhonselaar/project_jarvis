@@ -73,8 +73,9 @@ listenForUDPPackets(function(msg, remote){
             http
                 .get('http://' + remote.address + '/sok')
                 .end(function (err, res) {
-                    res.body.ip = remote.address;
-                    addToDeviceList(res.body, remote);
+                    var msg = JSON.parse(res.text);
+                    msg.ip = remote.address;
+                    addToDeviceList(msg, remote);
                     httpPending[remote.address] = false;
                 });
         }
