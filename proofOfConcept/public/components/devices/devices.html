@@ -1,10 +1,17 @@
 <div class="row">
-    <div class="col s12 m8">
+    <div class="col m8">
         <div class="card-panel blue darken-2">
           <span class="white-text">
               <pre>
-{{ dc.devices | json }}
+                {{ dc.devices | json }}
               </pre>
+          </span>
+        </div>
+    </div>
+    <div class="col m4">
+        <div class="card-panel">
+          <span class="white-text">
+                <img style="width: 100%;" src="{{ dc.devices.actuator[0].image}}">
           </span>
         </div>
     </div>

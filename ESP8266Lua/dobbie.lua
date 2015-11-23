@@ -1,22 +1,14 @@
 local dobbie = {}
 local json = require "cjson"
-local handshakePin = 4;
---gpio.mode(handshakePin, gpio.OUTPUT)
---gpio.write(handshakePin, gpio.LOW)
-
-dobbie.httpRequests = {
-    GET = {
-        sok = function()
-            file.open("sok.json", "r")
-            sokdefinition = file.read();
-            file.close();
-            print("Sending sok definition...")
---            gpio.mode(handshakePin, gpio.OUTPUT)
---            gpio.write(handshakePin, gpio.HIGH)
-            return sokdefinition
-        end
-    }
+dobbie.headersHaveBeenSent = false
+dobbie.fileTransfer = {
+    hasFile = false,
+    fileSize = 0,
+    filePosition = 0,
+    bytesSent = 0,
+    finished = false
 }
+dobbie.httpRequests = require 'routes'
 
 function dobbie.handle(conn,request)
     http_method = getHttpMethod(request)
@@ -24,24 +16,22 @@ function dobbie.handle(conn,request)
     print(http_method.. "/" .. getRequestHandle(request))
     if dobbie.httpRequests[http_method] ~= nil then
         if dobbie.httpRequests[http_method][requestHandle] ~= nil then
-            message = dobbie.httpRequests[http_method][requestHandle]()
+            message = dobbie.httpRequests[http_method][requestHandle](conn)
+            if message == nil then
+                message = "No response given"
+            end
         else
-            message = "Route does not exist"
+            message = "Route does not exist check HTTP method"
         end
     else
-        message = "HTTP method not supported"    
-    end
-    
-    conn:send("HTTP/1.1 200 OK\r\n")
---    conn:send("Content-Type: application/json\r\n")
---    conn:send("Content-Type: text/html\r\n")
-    conn:send("Content-Length: " .. tostring(string.len(message)) .. "\r\n")
-    conn:send("Connection: close\r\n")
-    conn:send("\r\n" .. message .. "\r\n")
-    conn:close()
-    request = nil
-    collectgarbage()
-end    
+        message = "HTTP method not supported"
+    end  
+     if dobbie.fileTransfer.hasFile == false then
+        dobbie.headersHaveBeenSent = false
+     end
+     request = nil
+     collectgarbage()
+end
 
 function getHttpMethod(request)
     if string.find(request,"GET") ~= nil then  
@@ -65,17 +55,58 @@ function getRequestHandle(request)
 end
 
 
-function mysplit(inputstr, sep)
-        if sep == nil then
-                sep = "%s"
+function dobbie.streamFile(conn, filename, seek)
+    if file.open(filename, "r") then
+        length = 0
+        if seek then
+             if dobbie.fileTransfer.bytesSent >= dobbie.fileTransfer.fileSize then
+                dobbie.fileTransfer.finished = true
+                dobbie.fileTransfer.hasFile = false
+                dobbie.fileTransfer.bytesSent = 0
+                dobbie.fileTransfer.filePosition = 0
+                dobbie.headersHaveBeenSent = false
+                conn:close()
+                collectgarbage()
+                return
+            else
+                file.seek("set", dobbie.fileTransfer.filePosition);
+            end
         end
-        local t={} ; i=1
-        for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-                t[i] = str
-                i = i + 1
-        end
-        return t
+        repeat
+            local line= file.read(512)
+            if line then 
+                if length < 2560 then
+          
+                    length = length + string.len(tostring(line))
+                    dobbie.fileTransfer.bytesSent = dobbie.fileTransfer.bytesSent + 512
+                    dobbie.fileTransfer.filePosition = dobbie.fileTransfer.bytesSent
+                    print(dobbie.fileTransfer.bytesSent);
+                   
+                    send(conn, line)
+                end 
+            end
+        until not line    
+        file.close()
+    end
 end
 
+function send(conn, message, length)
+    if dobbie.headersHaveBeenSent == false then
+        print("sending headers")
+        conn:send("HTTP/1.1 200 OK\r\n\r\n")
+--      conn:send("Content-Type: application/json\r\n")
+--      conn:send("Content-Type: text/html\r\n")    
+--      conn:send("Content-Length: ".. tostring(length) .."\r\n\r\n")
+--      conn:send("Keep-Alive: timeout=15, max=100\r\n\r\n")
+        dobbie.headersHaveBeenSent = true
+    end
+    if message ~= nil then
+        conn:send(message)
+    end
+end
+
+function dobbie.resetFilePos()
+    dobbie.fileTransfer.filePosition = 0;
+end
 
 return dobbie
