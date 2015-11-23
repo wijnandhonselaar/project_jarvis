@@ -5,7 +5,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var autoDiscover = require('./classes/autodiscover');
+var autoDiscover = require('./modules/autodiscover');
 var sensorRoutes = require('./routes/sensorRoutes');
 
 server.listen(GLOBAL.port);

@@ -2,7 +2,7 @@ var supportedSOKVersions = ['0.0.1'];
 var httpPending = [];
 var dgram = require('dgram');
 var http = require('superagent');
-var devices = require('./devices');
+var devices = require('./deviceManager');
 var io = null;
 var server = null;
 

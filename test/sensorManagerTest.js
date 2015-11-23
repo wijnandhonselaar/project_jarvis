@@ -2,8 +2,8 @@ var expect              = require('chai').expect;
 var should              = require('should');
 var request             = require('supertest');
 var Sensor              = require('../models/sensor');
-var devices             = require('../classes/devices');
-var sensorManager       = require('../classes/sensorManager');
+var devices             = require('./devices');
+var sensorManager       = require('./sensorManager');
 var dgram               = require('dgram');
 var io                  = null;
 

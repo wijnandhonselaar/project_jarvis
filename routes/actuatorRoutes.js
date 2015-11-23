@@ -1,5 +1,5 @@
 module.exports = (function() {
-    var actuatorManager = require('../classes/actuatorManager');
+    var actuatorManager = require('./actuatorManager');
     var express= require('express');
 
     var route = express.Router();

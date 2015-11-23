@@ -1,5 +1,5 @@
 var cp = require('child_process');
-var child = cp.fork('./classes/sensorPolling');
+var child = cp.fork('./modules/sensorPolling');
 var intervalArray = [];
 
 //return message of childprocess - sensor data

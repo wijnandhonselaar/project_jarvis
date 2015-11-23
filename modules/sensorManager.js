@@ -1,4 +1,4 @@
-var devices = require('./devices');
+var devices = require('./deviceManager');
 
 module.exports = {
     getAll: function () {
