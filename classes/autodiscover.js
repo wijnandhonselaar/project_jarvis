@@ -27,7 +27,6 @@ function listenForUDPPackets(callback) {
     udpserver.bind(GLOBAL.port);
 }
 
-
 module.exports = {
     init: function (svr, socket) {
         io = socket;

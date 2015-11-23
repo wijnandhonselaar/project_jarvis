@@ -92,7 +92,7 @@ function listenForUDPPackets(callback){
 
     udpserver.on('message', function (message, remote) {
         callback(JSON.parse(message), remote);
-        //console.log(remote.address + ':' + remote.port +' - ' + message);
+        console.log(remote.address + ':' + remote.port +' - ' + message);
     });
 
     udpserver.bind(3221);
