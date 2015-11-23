@@ -32,7 +32,7 @@ describe("Models tests", function () {
                 done();
             }).error(console.log);
         });
-        
+
         it('Should have a savedate', function (done) {
 
             // get the sensor

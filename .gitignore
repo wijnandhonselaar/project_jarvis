@@ -35,3 +35,4 @@ localtest/
 localtest/*
 npm-debug.log
 .env
+rethinkdb_data/
