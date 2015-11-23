@@ -1,5 +1,5 @@
 local pins = require 'pins'
-local globalmethods = require 'globalmethods'
+ globalmethods = require 'globalmethods'
 local routes = {
     GET = {
         sok = function(conn)

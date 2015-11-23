@@ -1,5 +1,6 @@
 local dobbie = {}
 local json = require "cjson"
+
 dobbie.headersHaveBeenSent = false
 dobbie.fileTransfer = {
     hasFile = false,
@@ -25,11 +26,14 @@ function dobbie.handle(conn,request)
         end
     else
         message = "HTTP method not supported"
-    end  
+    end      
      if dobbie.fileTransfer.hasFile == false then
         dobbie.headersHaveBeenSent = false
      end
-     request = nil
+     if http_method == "POST" then
+        setPostParams(request)
+     end
+       request = nil
      collectgarbage()
 end
 
@@ -52,6 +56,22 @@ function getRequestHandle(request)
     request_handle = string.sub(request_handle, 0, (e-2))
    
     return request_handle
+end
+
+function setPostParams(request)
+      body = globalmethods.explode(request, "\n\r\n\r")
+     print(body[13])
+      bodyParam = globalmethods.explode(body[13], "&")
+      postParameters = {}
+
+    for i=1,table.maxn(bodyParam)
+    do 
+       keyPairValue = globalmethods.explode(bodyParam[i], "=")
+       s1 = tostring(keyPairValue[1])
+       s2 = tostring(keyPairValue[2])
+        postParameters[s1] = s2
+    end   
+    print(postParameters.kleur)
 end
 
 
