@@ -15,4 +15,9 @@ jarvisApp.config(["$stateProvider","$urlRouterProvider", function($stateProvider
     //        controllerAs: 'dc',
     //        data: { pageTitle: "Devices" }
     //    })
+    $urlRouterProvider.
+        when('/sensors', {
+            templateUrl: './templates/sensors.html',
+            controller: 'sensorController'
+        })
 }]);

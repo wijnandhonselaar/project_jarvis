@@ -1,5 +1,5 @@
 var sensors = [];
-;
+
 module.exports = {
     getAll: function () {
         return sensors;

@@ -13,7 +13,7 @@ autoDiscover.init(server, io);
 
 // Middleware
 app.use(express.static('public'));
-app.use("/api/v1/sensor",sensorRoutes);
+app.use("/api/v1/sensors",sensorRoutes);
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
