@@ -1,12 +1,8 @@
-var sensors = [];
+var devices = require('./devices');
 
 module.exports = {
     getAll: function () {
-        return sensors;
-    },
-
-    add: function (name) {
-        sensors.push({name: name});
+        return devices.getSensors();
     }
 }
 

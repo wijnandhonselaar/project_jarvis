@@ -2,7 +2,11 @@ var devices =  {
     actuator:[],
     sensor:[]
 };
-
+/*
+ *  d       device
+ *  remote  remote ip-address
+ *  io      Socket
+ */
 function addToDeviceList(d,remote, io) {
     if(devices[d.type].length !== 0) {
         for(var i = 0; i<devices[d.type].length; i++){
@@ -43,5 +47,7 @@ function getDeviceByIPAddress(ip){
 module.exports = {
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
-    get: function(){return devices}
+    get: function(){return devices},
+    getSensors: function(){return devices.sensor;},
+    getActuators: function(){return devices.actuator;}
 };

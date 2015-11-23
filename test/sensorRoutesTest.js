@@ -2,12 +2,23 @@ var expect              = require('chai').expect;
 var should              = require('should');
 var request             = require('supertest');
 var api                 = request('http://localhost:3000');
+var Sensor              = require('../models/sensor');
+var devices             = require('../classes/devices');
 var sensorManager       = require('../classes/sensorManager');
+var dgram               = require('dgram');
+var io                  = null;
 
 describe('Sensor routing', function() {
+
+    // Add sensors
     before(function (done) {
-        sensorManager.add({name: 'temperature'});
-        sensorManager.add({name: 'lumen'});
+        io = dgram.createSocket("udp4");
+        var device = newSensor(123, 'philips temp sensor', 'woonkamer thermometer');
+        device.type = 'sensor';
+        devices.add(device, '192.168.0.45', io);
+        device = newSensor(3286, 'philips lumen sensor', 'woonkamer, is het al donker?');
+        device.type = 'sensor';
+        devices.add(device, '192.168.0.45', io);
         done();
     });
 
@@ -32,3 +43,25 @@ describe('Sensor routing', function() {
         done();
     });
 });
+
+function newSensor(id, name, alias) {
+    return new Sensor({
+        id: id,
+        alias: alias,
+        name: name,
+        sokVersion: 0.11,
+        description: 'Temperatuur op 0.1c nauwkeuring',
+        commands: [{
+            name: 'get temperature',
+            parameters: ["para", "meter"],
+            requestInterval: 5000,
+            httpMethod: "GET",
+            returns: {
+                Celsius: 'number',
+                Fahrenheit: 'number',
+                Kelvin: 'number'
+            },
+            description: "geeft de temperatuur"
+        }]
+    });
+}

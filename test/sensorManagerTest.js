@@ -1,16 +1,23 @@
 var expect              = require('chai').expect;
 var should              = require('should');
 var request             = require('supertest');
+var Sensor              = require('../models/sensor');
+var devices             = require('../classes/devices');
 var sensorManager       = require('../classes/sensorManager');
+var dgram               = require('dgram');
+var io                  = null;
 
 describe('Sensor manager', function() {
     before(function (done) {
+        io = dgram.createSocket("udp4");
         done();
     });
 
     describe('#Add sensor', function () {
         it('should add a sensor to the list of sensors', function (done) {
-            sensorManager.add({name: "temperature"});
+            var device = newSensor(123, 'philips temp sensor', 'woonkamer thermometer');
+            device.type = 'sensor';
+            devices.add(device, '192.168.0.45', io);
             expect(sensorManager.getAll().length).to.equal(1);
             done();
         });
@@ -25,7 +32,28 @@ describe('Sensor manager', function() {
     });
 
     after(function (done) {
-        sensorManager.sensors = [];
         done();
     });
 });
+
+function newSensor(id, name, alias) {
+    return new Sensor({
+        id: id,
+        alias: alias,
+        name: name,
+        sokVersion: 0.11,
+        description: 'Temperatuur op 0.1c nauwkeuring',
+        commands: [{
+            name: 'get temperature',
+            parameters: ["para", "meter"],
+            requestInterval: 5000,
+            httpMethod: "GET",
+            returns: {
+                Celsius: 'number',
+                Fahrenheit: 'number',
+                Kelvin: 'number'
+            },
+            description: "geeft de temperatuur"
+        }]
+    });
+}
