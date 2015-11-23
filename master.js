@@ -3,6 +3,9 @@ var app = express();
 var server = require('http').Server(app);
 var SOK = require('./models/SOK');
 var dgram = require('dgram');
+var interval = require('./classes/intervalManager');
+
+
 
 server.listen(80);
 
