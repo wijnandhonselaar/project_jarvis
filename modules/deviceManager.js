@@ -20,13 +20,13 @@ function addToDeviceList(d,remote, io) {
 
         if(!exists){
             devices[d.type].push(d);
-            io.emit("event", {event: "deviceschanged"});
+            io.emit("deviceAdded", {data: d});
             if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
         }
 
     } else {
         devices[d.type].push(d);
-        io.emit("event", {event: "deviceschanged"});
+        io.emit("deviceAdded", {data: d});
         if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
     }
 }
@@ -47,7 +47,7 @@ function getDeviceByIPAddress(ip){
 module.exports = {
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
-    get: function(){return devices},
+    getAll: function(){return devices},
     getSensors: function(){return devices.sensor;},
     getActuators: function(){return devices.actuator;}
 };

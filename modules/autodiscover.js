@@ -8,7 +8,7 @@ var server = null;
 
 
 /**
- * Functie welke luistert naar UDP broadcasts van andere apparaten binnen het netwerk (Slave devices)
+ * Functie welke luistert naar UDP broadcasts van andere apparaten binnen het netwerk (Slave deviceManager)
  * @param callback, callback functie met een geparsed json gebricht als argument
  */
 function listenForUDPPackets(callback) {
