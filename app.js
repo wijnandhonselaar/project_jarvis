@@ -13,7 +13,7 @@ var sok = require('./models/SOK');
 server.listen(GLOBAL.port);
 autoDiscover.init(server, io);
 
-interperter.post('stringtest', sok , {naam:'hallo'} , function(res){
+interperter.post('stringtest', sok , { naam:'hallo' } , function(res){
 
 });
 

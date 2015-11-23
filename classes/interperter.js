@@ -4,18 +4,20 @@ var superAgent = require('superagent');
 var validators = {
     number: function (val, min, max) {
         if (typeof val == 'number') {
+            if (GLOBAL.logToConsole) console.log('Number is being validated....');
             return !!(val > min && val < max);
         }
         return false;
     },
     boolean: function (val) {
+        if (GLOBAL.logToConsole) console.log('Boolean is being validated....');
         return typeof val == 'boolean';
     },
     string: function (val, min, max, type) {
         if (typeof val == 'string') {
             switch (type) {
                 case 'length':
-                    console.log('String is being validated....');
+                    if (GLOBAL.logToConsole) console.log('String is being validated....');
                     return !!(val.length >= min && val.length <= max);
                     break;
             }
@@ -28,12 +30,16 @@ var validators = {
 
 var obj = {
     validate: function validate(command, object, paramList) {
+
+        var validatedParams = {};
+
         for (var param in object.commands[command].parameters) {
             if (object.commands[command].parameters.hasOwnProperty(param)) {
+                validatedParams[param] = true;
                 var paramObj = object.commands[command].parameters[param];
                 var accepts = paramObj.accepts;
                 if (param in paramList) {
-                    if (GLOBAL.logToConsole) console.log('found '+ param +' in paramlist');
+                    if (GLOBAL.logToConsole) console.log('Found '+ param +' in paramlist');
                     var value = paramList[param];
                     var validates = true;
                     for (var i = 0; i < accepts.length; i++) {
@@ -44,9 +50,9 @@ var obj = {
                             for (var b = 0; b < acceptObj.limit.length; b++) {
                                 var limitObj = acceptObj.limit[b];
                                 if (!validators[acceptObj.type](value, limitObj.min, limitObj.max, limitObj.type)) {
-                                    validates = false;
+                                    validatedParams[param] = false;
                                 } else {
-                                    console.log('Param '+param+' passed validation');
+                                    if (GLOBAL.logToConsole) console.log('Param '+param+' passed validation');
                                 }
                             }
                         }
@@ -54,6 +60,7 @@ var obj = {
                 } else validates = !param.required;
             }
         }
+        if (GLOBAL.logToConsole) console.log(validatedParams);
     },
     post: function (command, object, paramlist, cb) {
         if (obj.validate(command, object, paramlist)) {
