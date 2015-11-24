@@ -1,7 +1,6 @@
 module.exports = (function() {
     var deviceManager = require('./modules/deviceManager');
     var express= require('express');
-
     var route = express.Router();
 
     route.get('/devices', function(request, resp) {
