@@ -1,24 +1,29 @@
 module.exports = (function() {
     var deviceManager = require('../modules/deviceManager');
     var express= require('express');
-
     var route = express.Router();
 
-    route.get('/devices', function(request, resp) {
+    route.get('/', function(request, resp) {
         resp.send({devices: deviceManager.getAll()});
     });
 
-    route.get('/devices/actuators', function(request, resp) {
+    route.get('/actuators', function(request, resp) {
         resp.send({actuators: deviceManager.getActuators()});
     });
 
-    route.get('/devices/sensors', function(request, resp) {
+    route.get('/sensors', function(request, resp) {
         resp.send({sensors: deviceManager.getSensors()});
     });
-    //
-    //route.get('/devices/:id', function(request, resp) {
-    //    resp.send({sensors: deviceManager.getByPk(request.paramter['id'])});
-    //});
+
+    route.put('/:devicetype/:id/alias', function(request,resp){
+        response = deviceManager.updateDeviceAlias(request.params.devicetype, request.params.id, request.body.alias);
+        resp.send(JSON.stringify(response));
+    });
+
+    route.put('/sensors/:id/interval', function(request,resp){
+        response = deviceManager.updateSensorInterval(request.params.id, request.body.interval);
+        resp.send(JSON.stringify(response));
+    });
 
     return route;
 })();
