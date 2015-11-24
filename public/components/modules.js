@@ -1,5 +1,9 @@
-'use strict';
+(function () {
+    'use strict';
 
-angular.module('jarvis', [
-    'jarvis.title'
-]);
+    angular.module('jarvis', [
+        'templatecache',
+        'jarvis.title'
+    ]);
+
+}());
