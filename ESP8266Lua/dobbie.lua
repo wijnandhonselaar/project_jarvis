@@ -13,11 +13,14 @@ dobbie.httpRequests = require 'routes'
 
 function dobbie.handle(conn,request)
     http_method = getHttpMethod(request)
+     if http_method == "POST" then
+        postParams = setPostParams(request)
+     end
     requestHandle = getRequestHandle(request)
     print(http_method.. "/" .. getRequestHandle(request))
     if dobbie.httpRequests[http_method] ~= nil then
         if dobbie.httpRequests[http_method][requestHandle] ~= nil then
-            message = dobbie.httpRequests[http_method][requestHandle](conn)
+            message = dobbie.httpRequests[http_method][requestHandle](conn, postParams)
             if message == nil then
                 message = "No response given"
             end
@@ -29,9 +32,6 @@ function dobbie.handle(conn,request)
     end      
      if dobbie.fileTransfer.hasFile == false then
         dobbie.headersHaveBeenSent = false
-     end
-     if http_method == "POST" then
-        setPostParams(request)
      end
        request = nil
      collectgarbage()
@@ -60,18 +60,18 @@ end
 
 function setPostParams(request)
       body = globalmethods.explode(request, "\n\r\n\r")
-     print(body[13])
-      bodyParam = globalmethods.explode(body[13], "&")
       postParameters = {}
-
-    for i=1,table.maxn(bodyParam)
-    do 
-       keyPairValue = globalmethods.explode(bodyParam[i], "=")
-       s1 = tostring(keyPairValue[1])
-       s2 = tostring(keyPairValue[2])
-        postParameters[s1] = s2
-    end   
-    print(postParameters.kleur)
+      if body[13] ~= nil then
+        bodyParam = globalmethods.explode(body[13], "&")
+        for i=1,table.maxn(bodyParam)
+            do 
+            keyPairValue = globalmethods.explode(bodyParam[i], "=")
+            s1 = tostring(keyPairValue[1])
+            s2 = tostring(keyPairValue[2])
+            postParameters[s1] = s2
+        end  
+    end
+    return postParameters  
 end
 
 

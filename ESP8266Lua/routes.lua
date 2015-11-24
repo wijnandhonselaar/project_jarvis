@@ -18,7 +18,7 @@ local routes = {
         end
     },
     POST = {
-        on = function(conn)
+        on = function(conn) 
             gpio.mode(pins.powerPin, gpio.OUTPUT)
             gpio.write(pins.powerPin, gpio.HIGH)
             return "true";
