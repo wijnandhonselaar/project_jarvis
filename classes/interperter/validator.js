@@ -1,5 +1,4 @@
 var devices = require('./../devices');
-var superAgent = require('superagent');
 
 var validators = {
     number: function (val, min, max) {
