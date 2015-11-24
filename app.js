@@ -5,16 +5,23 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var bodyParser = require('body-parser')
 var autoDiscover = require('./classes/autoDiscover');
-
-var interperter = require('./classes/interperter');
+var validator = require('./classes/interperter/validator');
 var sok = require('./models/SOK');
 
 server.listen(GLOBAL.port);
 autoDiscover.init(server, io);
 
-interperter.post('stringtest', sok , { naam:'hallo' } , function(res){
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
+app.post('/koffiezetapparaat/stringtest', function(req, res){
+    validator.validate('stringtest', sok, req.body, function(interperterResponse){
+        res.json(interperterResponse)
+    });
 });
 
 app.use(express.static('public'));

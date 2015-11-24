@@ -46,6 +46,11 @@ module.exports = {   id: 1251,
                                 type: 'length',
                                 min: '1',
                                 max: '5'
+                            },
+                            {
+                                type: 'length',
+                                min: '3',
+                                max: '10'
                             }
                         ]
                     }]
