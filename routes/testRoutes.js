@@ -6,8 +6,12 @@ var router = express.Router();
 var sok = require('../models/SOK');
 var validator = require('../modules/interperter/validator');
 
-router.post('/stringtest', function(req, res){
-    validator.validate('stringtest', sok, req.body, function(interperterResponse){
+//stringtest
+//numbertest
+//booltest
+//listtest
+router.post('/validate/:command', function(req, res){
+    validator.validate(req.params.command, sok, req.body, function(interperterResponse){
         res.json(interperterResponse)
     });
 });

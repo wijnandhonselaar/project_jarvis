@@ -22,7 +22,6 @@ if(GLOBAL.dev) {
     app.use('/test', testRoutes);
 }
 
-
 // Middleware
 app.use(express.static('public'));
 app.use("/devices",deviceRoutes);
@@ -30,3 +29,4 @@ app.use("/devices",deviceRoutes);
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
 });
+
