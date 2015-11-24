@@ -1,5 +1,5 @@
 module.exports = (function() {
-    var deviceManager = require('./deviceManager');
+    var deviceManager = require('../modules/deviceManager');
     var express= require('express');
 
     var route = express.Router();
