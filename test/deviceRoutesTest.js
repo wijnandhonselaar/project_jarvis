@@ -1,7 +1,7 @@
 var expect              = require('chai').expect;
 var should              = require('should');
 var request             = require('supertest');
-var api                 = request('http://localhost:3000');
+var api                 = request('http://localhost:3221');
 var Sensor              = require('../models/sensor');
 var deviceManager       = require('../modules/deviceManager');
 var dgram               = require('dgram');
@@ -24,7 +24,7 @@ describe('Device routing', function() {
     describe('#get all devices', function() {
         it('should receive a list of devices', function (done) {
             api
-                .get('/api/v1/devices')
+                .get('/devices')
                 .send()
                 .expect(200) //Status code
                 .end(function(err,res) {
@@ -40,7 +40,7 @@ describe('Device routing', function() {
     describe('#get all sensors', function () {
         it('should receive list of sensors', function (done) {
             api
-                .get('/api/v1/devices/sensors')
+                .get('/devices/sensors')
                 .send()
                 .expect(200) //Status code
                 .end(function(err,res) {
@@ -57,7 +57,7 @@ describe('Device routing', function() {
     describe('#get all actuators', function () {
         it('should receive a list of actuators', function (done) {
             api
-                .get('/api/v1/devices/actuators')
+                .get('/devices/actuators')
                 .send()
                 .expect(200) //Status code
                 .end(function(err,res) {
@@ -74,7 +74,7 @@ describe('Device routing', function() {
     describe('#updateAliasForDevice', function () {
         it('Update an alias for a device', function (done) {
             api
-                .get('/api/v1/devices/actuators')
+                .get('/devices/actuators')
                 .send()
                 .expect(200) //Status code
                 .end(function(err,res) {
