@@ -30,6 +30,7 @@ describe("Models tests", function () {
 				config: {
 					ip: '192.168.0.201',
 					alias: 'Temperatuur woonkamer',
+					clientRequestInterval: 3000
 				}
 			});
 

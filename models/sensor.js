@@ -19,7 +19,7 @@ var Sensor = thinky.createModel("Sensor", {
     config: {
         ip: type.string().required(),
         alias: type.string(),
-        clientrequestinterval: type.number().default(5000)
+        clientRequestInterval: type.number().default(5000)
     }
 });
 
