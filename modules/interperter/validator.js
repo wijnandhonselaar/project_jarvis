@@ -1,4 +1,4 @@
-var devices = require('./../devices');
+var devices = require('../deviceManager');
 
 var validators = {
     number: function (val, min, max) {

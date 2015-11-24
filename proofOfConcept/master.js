@@ -15,7 +15,7 @@ var devices =  {
     sensor:[]
 };
 
-app.get('/devices', function(req,res){
+app.get('/deviceManager', function(req,res){
     res.json(devices);
 });
 
@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //io.on("connection", function(socket) {
 //    setTimeout(function(){
-//        devices.actuator.push({
+//        deviceManager.actuator.push({
 //            test: "shizzle"
 //        });
 //        io.emit("event", {event: "deviceschanged"});

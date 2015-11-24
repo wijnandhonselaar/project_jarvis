@@ -5,6 +5,8 @@
         .module('jarvis.voorbeeld')
         .directive('voorbeeldDirective', voorbeeldDirective);
 
+    voorbeeldDirective.$inject = [];
+
     function voorbeeldDirective() {
         return {
             templateUrl: 'c',
