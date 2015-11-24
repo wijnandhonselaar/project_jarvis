@@ -10,8 +10,6 @@ describe("Models tests", function () {
 			// create the new sensor
 			var newsensor = new Sensor({
 				id: id,
-				ip: '192.168.0.201',
-				alias: 'Temperatuur woonkamer',
 				name: 'philips temp',
 				sokVersion: 0.11,
 				description: 'Temperatuur op 0.1c nauwkeuring',
@@ -28,6 +26,10 @@ describe("Models tests", function () {
 						 },
 						 description: 'Retrieves status of philips hue lamp'
 					}
+				},
+				config: {
+					ip: '192.168.0.201',
+					alias: 'Temperatuur woonkamer',
 				}
 			});
 
@@ -68,12 +70,11 @@ describe("Models tests", function () {
 			// create the new actuator
 			var newactuator = new Actuator({
 				id: id,
-				ip: '192.168.0.201',
 				name: 'Philips hue',
 				type: 'actuator',
 				sokVersion: 0.12,
 				description: 'Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.',
-				   commands: {
+				commands: {
 					  off: {
 						 name : 'off',
 						 parameters: {},
@@ -94,31 +95,35 @@ describe("Models tests", function () {
 						 },
 						 description: 'Retrieves status of philips hue lamp'
 					  },
-					  changeColor: {
-						 name : 'changeColor',
-						 parameters: {
+					changeColor: {
+						name : 'changeColor',
+						parameters: {
 							color: {
-								   name : 'color',
-								   required: true,
-								   accepts: {
-									  type: 'hex',
-									  limit: [
-									 {
+									name : 'color',
+									required: true,
+									accepts: {
 										type: 'hex',
-										min: '0x000000',
-										max: '0xffffff'
-									 }
-									  ],
-								  list : ['R','G','B'] //Predefined parameter values
-							   },
-						}
-					 },
-					 requestInterval: 5000,
-					 httpMethod : 'POST',
-					 returns: 'Boolean',
-					 description : 'Changes the color of the philips hue lamp'
-				  }
-			   }
+										limit: [
+										{
+											type: 'hex',
+											min: '0x000000',
+											max: '0xffffff'
+										}
+									],
+									list : ['R','G','B'] //Predefined parameter values
+								},
+							}
+						},
+						requestInterval: 5000,
+						httpMethod : 'POST',
+						returns: 'Boolean',
+						description : 'Changes the color of the philips hue lamp'
+					}
+				},
+				config: {
+					ip: '192.168.0.202',
+					alias: 'Lamp woonkamer',
+				}
 			});
 
 			// save the new sensor
@@ -191,7 +196,11 @@ describe("Models tests", function () {
 					 returns: 'Boolean',
 					 description : 'Changes the color of the philips hue lamp'
 				  }
-			   }
+			   }, 
+				config: {
+					ip: '192.168.0.202',
+					alias: 'Lamp woonkamer',
+				}
 		});
 
 			// save the new sensor
