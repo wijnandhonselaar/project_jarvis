@@ -7,7 +7,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var bodyParser = require('body-parser')
-var autoDiscover = require('./modules/autoDiscover');
+var autoDiscover = require('./modules/autodiscover');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
 
@@ -22,9 +22,10 @@ if(GLOBAL.dev) {
     app.use('/test', testRoutes);
 }
 
+
 // Middleware
 app.use(express.static('public'));
-app.use("/api/v1/devices", deviceRoutes);
+app.use("/devices",deviceRoutes);
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
