@@ -1,5 +1,11 @@
 var devices = require('../deviceManager');
 
+
+/**
+ * validator function mapped to the paramter types which are defineable in the SOK protocol definiton
+ * List, number, boolean and string
+ * @type {{number: Function, boolean: Function, string: Function, inList: Function}}
+ */
 var validators = {
     number: function (val, min, max) {
         val = parseFloat(val);
@@ -59,6 +65,14 @@ var validators = {
     }
 };
 
+/**
+ * Function validates incoming command against given parameters; checks if given arguments validate as given by the SOK definition
+ * @param command commandString which indicates what command is being executed
+ * @param object deviceObject (sok definition)
+ * @param paramList json object with key/value pairs of arguments (name must match the name in the sok definition)
+ * @param callback -- speaks for itself (returns object with all parameters and if they are validated or not)
+ */
+
 function validateCommand(command, object, paramList, callback) {
 
     var validatedParams = {};
@@ -101,6 +115,11 @@ function validateCommand(command, object, paramList, callback) {
     if (GLOBAL.logToConsole) console.log(validatedParams);
     callback(validatedParams)
 }
+
+/**
+ * Export object, returns object with a single validate function (check parameters of the validateCommand function for documentation)
+ * @type {{validate: Function}}
+ */
 
 var obj = {
     validate: function (command, object, paramlist, cb) {
