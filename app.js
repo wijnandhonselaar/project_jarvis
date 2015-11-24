@@ -22,7 +22,6 @@ if(GLOBAL.dev) {
     app.use('/test', testRoutes);
 }
 
-
 // Middleware
 app.use(express.static('public'));
 app.use("/devices",deviceRoutes);
