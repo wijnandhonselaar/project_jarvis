@@ -15,7 +15,7 @@
 
         function getDevices() {
             var ds = this;
-            $http.get("/devices")
+            $http.get("/deviceManager")
                 .success(function(devices){
                     console.log(devices);
                     ds.devices.actuator = devices.actuator;

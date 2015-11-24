@@ -3,6 +3,28 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
+        jshint: {
+            all: [ 'Gruntfile.js', 'public/components/*.js', 'public/components/**/*module.js', 'public/components/**/*.js' ],
+            options: {
+                globals: {
+                    "angular": true,
+                    "document": true,
+                    "io": true
+                }
+            }
+        },
+
+        html2js: {
+            options: {
+                base: 'public',
+                module: 'templatecache'
+            },
+            dist: {
+                src: ['public/components/**/*.html'],
+                dest: 'tmp/templates.js'
+            }
+        },
+
         concat: {
             dist: {
                 options: {
@@ -14,6 +36,8 @@ module.exports = function(grunt) {
                     'public/bower_components/jquery/dist/jquery.js',
                     'public/bower_components/Materialize/dist/js/materialize.js',
                     'public/bower_components/socket.io-client/socket.io.js',
+
+                    'tmp/templates.js',
 
                     'public/components/**/*module.js',
                     'public/components/**/*.js',
@@ -58,7 +82,7 @@ module.exports = function(grunt) {
                     'public/components/modules.js',
                     'public/css/app.css'
                 ],
-                tasks: ['concat:dist', 'concat:css'],
+                tasks: [ 'jshint', 'html2js:dist', 'concat:dist', 'concat:css'],
                 options: {
                     atBegin: true,
                     livereload: 5050
@@ -68,9 +92,12 @@ module.exports = function(grunt) {
 
     });
 
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask("development", "watch:dev");
+    grunt.registerTask("minify", "uglify");
 };

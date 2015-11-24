@@ -1687,7 +1687,7 @@ audio, canvas, progress, video {
 
 /**
  * Prevent modern browsers from displaying `audio` without controls.
- * Remove excess height in iOS 5 deviceManager.
+ * Remove excess height in iOS 5 devices.
  */
 audio:not([controls]) {
   display: none;

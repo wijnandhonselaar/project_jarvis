@@ -2,13 +2,13 @@ var supportedSOKVersions = ['0.0.1'];
 var httpPending = [];
 var dgram = require('dgram');
 var http = require('superagent');
-var devices = require('./devices');
+var devices = require('./deviceManager');
 var io = null;
 var server = null;
 
 
 /**
- * Functie welke luistert naar UDP broadcasts van andere apparaten binnen het netwerk (Slave devices)
+ * Functie welke luistert naar UDP broadcasts van andere apparaten binnen het netwerk (Slave deviceManager)
  * @param callback, callback functie met een geparsed json gebricht als argument
  */
 function listenForUDPPackets(callback) {
@@ -26,7 +26,6 @@ function listenForUDPPackets(callback) {
 
     udpserver.bind(GLOBAL.port);
 }
-
 
 module.exports = {
     init: function (svr, socket) {
