@@ -2,11 +2,12 @@ var devices = require('../deviceManager');
 
 var validators = {
     number: function (val, min, max) {
+        val = parseFloat(val);
         var res = {};
         res.validated = false;
         if (typeof val == 'number' && !isNaN(val)) {
             if (GLOBAL.logToConsole) console.log('Number is being validated....');
-            res.validated = !!(val > min && val < max);
+            res.validated = !!(val >= min && val <= max);
             if(!res.validated) res.err = 'Nummer is te hoog of te laag nummer:'+val+' min:'+min+' max:'+max;
 
         } else {
@@ -15,6 +16,16 @@ var validators = {
         return res;
     },
     boolean: function (val) {
+        switch(val){
+            case 'true':
+            case '1':
+                val = true;
+                break;
+            case 'false':
+            case '0':
+                val = false;
+                break;
+        }
         if (GLOBAL.logToConsole) console.log('Boolean is being validated....');
         var res = {};
         res.validated = typeof val == 'boolean';
@@ -39,10 +50,11 @@ var validators = {
         return res;
     },
     inList: function (val, list) {
+        if(!isNaN(val)) val = parseFloat(val);
         var res = {};
         res.validated = false;
-        res.validated = list.indexof(val) !== -1;
-        if(!res.validated) res.err = 'Value not in predefined param list';
+        res.validated = list.indexOf(val) !== -1;
+        if(!res.validated) res.err = 'Value not in predefined param list: ' + list;
         return res;
     }
 };
@@ -69,7 +81,7 @@ function validateCommand(command, object, paramList, callback) {
                 for (var i = 0; i < accepts.length; i++) {
                     var acceptObj = accepts[i];
                     if (paramObj.list.length > 0) {
-                        validates = validators.inList(value, acceptObj.list);
+                        validatedParams[param] = validators.inList(value, paramObj.list);
                     } else {
                         for (var b = 0; b < acceptObj.limit.length; b++) {
                             var limitObj = acceptObj.limit[b];

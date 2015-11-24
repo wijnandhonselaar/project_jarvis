@@ -24,7 +24,7 @@ if(GLOBAL.dev) {
 
 // Middleware
 app.use(express.static('public'));
-app.use("/api/v1/devices",deviceRoutes);
+app.use("/api/v1/devices", deviceRoutes);
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
