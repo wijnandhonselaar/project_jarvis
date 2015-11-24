@@ -10,12 +10,8 @@ process.on('message', function(m) {
 	  		request
 	  		.get(m.ip +'/status')
 	  		.end(function(err, res){
-		     // if (res.status === 200) {
+	  			//TODO If res object is available
 		     	process.send(m.id);
-		     // } 
-		     // else {
-		     //   console.log('Oh no! error ' + res.text);
-		     // }
 		  });
 		}
 });
