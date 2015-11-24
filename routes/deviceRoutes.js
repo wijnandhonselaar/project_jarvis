@@ -5,7 +5,7 @@ module.exports = (function() {
     var route = express.Router();
 
     route.get('/devices', function(request, resp) {
-        resp.send({sensors: deviceManager.getAll()});
+        resp.send({devices: deviceManager.getAll()});
     });
 
     route.get('/devices/actuators', function(request, resp) {

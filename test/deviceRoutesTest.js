@@ -12,12 +12,12 @@ describe('Device routing', function() {
     // Add sensors
     before(function (done) {
         io = dgram.createSocket("udp4");
-        var device = newSensor(123, 'philips temp sensor', 'woonkamer thermometer');
+        var device = newDevice(123, 'philips temp sensor', 'woonkamer thermometer');
         device.type = 'sensor';
-        deviceManager.addToDeviceList(device, '192.168.0.45', io);
-        device = newSensor(3286, 'philips lumen sensor', 'woonkamer, is het al donker?');
-        device.type = 'sensor';
-        deviceManager.addToDeviceList(device, '192.168.0.46', io);
+        deviceManager.add(device, '192.168.0.45', io);
+        device = newDevice(3286, 'philips lumen sensor', 'woonkamer, is het al donker?');
+        device.type = 'actuator';
+        deviceManager.add(device, '192.168.0.46', io);
         done();
     });
 
@@ -31,7 +31,7 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
-                    expect(res.body.sensors.length).to.be.above(1);
+                    expect(res.body.devices.length).to.be.above(1);
                     done();
                 });
         });
@@ -54,7 +54,7 @@ describe('Device routing', function() {
     });
 
     describe('#get all actuators', function () {
-        if('should receive a list of actuators', function (done) {
+        it('should receive a list of actuators', function (done) {
             api
                 .get('/api/v1/devices/actuators')
                 .send()
@@ -63,7 +63,7 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
-                    expect(res.body.sensors.length).to.be.above(1);
+                    expect(res.body.actuators.length).to.be.above(1);
                     done();
                 });
         });
@@ -74,7 +74,7 @@ describe('Device routing', function() {
     });
 });
 
-function newSensor(id, name, alias) {
+function newDevice(id, name, alias) {
     return new Sensor({
         id: id,
         alias: alias,
@@ -94,8 +94,4 @@ function newSensor(id, name, alias) {
             description: "geeft de temperatuur"
         }]
     });
-}
-
-function newActuator(id, name, alias) {
-    return {};
 }
