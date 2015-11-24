@@ -29,3 +29,4 @@ app.use("/api/v1/devices", deviceRoutes);
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
 });
+
