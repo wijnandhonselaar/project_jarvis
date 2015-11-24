@@ -3,6 +3,7 @@ var type = thinky.type;
 
 var Actuator = thinky.createModel("Actuator", {
 	id: type.number().required(),
+	ip: type.string().required(),
 	alias: type.string(),
 	savedAt: type.date().default(thinky.r.now()),
 	name: type.string(),
