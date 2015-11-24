@@ -47,6 +47,7 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
+                    expect(res.body.sensors[0].id).to.be.equal(123);
                     expect(res.body.sensors.length).to.be.above(1);
                     done();
                 });
@@ -63,6 +64,24 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
+                    expect(res.body.actuators[0].id).to.be.equal(3286);
+                    expect(res.body.actuators.length).to.be.above(1);
+                    done();
+                });
+        });
+    });
+
+    describe('#updateAliasForDevice', function () {
+        it('Update an alias for a device', function (done) {
+            api
+                .get('/api/v1/devices/actuators')
+                .send()
+                .expect(200) //Status code
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    expect(res.body.actuators[0].id).to.be.equal(3286);
                     expect(res.body.actuators.length).to.be.above(1);
                     done();
                 });
@@ -77,7 +96,7 @@ describe('Device routing', function() {
 function newDevice(id, name, alias) {
     return new Sensor({
         id: id,
-        alias: alias,
+        config:{alias: alias},
         name: name,
         sokVersion: 0.11,
         description: 'Temperatuur op 0.1c nauwkeuring',
