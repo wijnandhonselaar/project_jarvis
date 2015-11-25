@@ -14,6 +14,12 @@ body{
     height: 480px !important;
     width: 800px !important;
     overflow: hidden !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .mainwindow{
