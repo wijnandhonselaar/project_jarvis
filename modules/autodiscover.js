@@ -38,7 +38,7 @@ module.exports = {
                         .get('http://' + remote.address + '/sok')
                         .end(function (err, res) {
                             var msg = JSON.parse(res.text);
-                            devices.add(msg, remote);
+                            deviceManager.add(msg, remote);
                             httpPending[remote.address] = false;
                         });
                 }
@@ -46,5 +46,5 @@ module.exports = {
             }
         });
     },
-    getDevices: function(){return devices.get()}
+    getDevices: function(){return deviceManager.get()}
 };
