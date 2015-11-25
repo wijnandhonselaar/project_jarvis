@@ -34,8 +34,8 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
-                    console.log(res.body);
-                    //expect(res.body.devices.length).to.equal(2);
+                    //console.log(res.body);
+                    expect(res.body.devices.length).to.equal(2);
                     done();
                 });
         });
