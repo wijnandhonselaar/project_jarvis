@@ -13,12 +13,15 @@ var devices =  {
     actuators:[],
     sensors:[]
 };
-/*
+var io = null;
+
+/**
  *  d       device
  *  remote  remote ip-address
  *  io      Socket
  */
-function addToDeviceList(d,remote, io) {
+
+function addToDeviceList(d, remote) {
     if(devices[d.type].length !== 0) {
         var exists = false;
         for(var i = 0; i<devices[d.type].length; i++){
@@ -28,13 +31,13 @@ function addToDeviceList(d,remote, io) {
         }
 
         if(!exists){
-            devices[d.type].push({model: d, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null});
+            devices[d.type].push({id: d.id, model: d, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null});
             io.emit("deviceAdded", {data: d});
             if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
         }
 
     } else {
-        devices[d.type].push({model: d, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
+        devices[d.type].push({id: d.id, model: d, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
         io.emit("deviceAdded", {data: d});
         if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
     }
@@ -88,6 +91,7 @@ function updateDeviceAliasFunction(devicetype, id, alias){
             return {Success: "Success, alias for "+ devices.devicetype[i].id + " was successfully updated."};
        }
     }
+
     return {err: "Error, could not find " +devicetype + " with id: " + id + " to update alias."};
 }
 
@@ -98,10 +102,14 @@ function updateSensorIntervalFunction(id, clientRequestInterval){
             return {Success: "Success, interval for "+ devices.sensors[i].id + " was successfully updated."};
         }
     }
+
     return {err: "Error, could not find sensors with id: " + id + " to update request interval."};
 }
 
 module.exports = {
+    init: function(socketio){
+        io = socketio;
+    },
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
     getSensor: getSensorById,
