@@ -2,7 +2,7 @@ var cp = require('child_process');
 var child = cp.fork('./modules/sensorPolling');
 var intervalArray = [];
 
-//return message of childprocess - sensor data
+//return message of childprocess - sensors data
 child.on('message', function(m) {
     //TODO switch with main data
   console.log('received: ' + m);

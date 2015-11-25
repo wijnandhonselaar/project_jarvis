@@ -11,17 +11,17 @@ var index = 0;
 server.listen(80);
 
 var devices =  {
-    actuator:[],
-    sensor:[]
+    actuators:[],
+    sensors:[]
 };
 
 //create 30 actuators and 30 sensors
 for (var i = 0; i < 30; i++) {
         if(i < 30){
-            devices.actuator.push(createDevice("actuator", i));
+            devices.actuators.push(createDevice("actuators", i));
         }
         else{
-            devices.sensor.push(createDevice("sensor", i));
+            devices.sensors.push(createDevice("sensors", i));
         }
 };
 
@@ -53,12 +53,12 @@ function broadcastUDPPacket(){
         index = 0;
     }
     if(index < 30){
-        console.log(devices.actuator[index]);
-        res.send(JSON.stringify(devices.actuator[index]));
+        console.log(devices.actuators[index]);
+        res.send(JSON.stringify(devices.actuators[index]));
         index ++;
     }
     else if(index < 60){
-        res.send(JSON.stringify(devices.sensor[index]));
+        res.send(JSON.stringify(devices.sensors[index]));
         index ++;
     }
 });

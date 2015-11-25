@@ -1,8 +1,20 @@
+/*
+ * actuator: [{ model,
+ *              config{String alias, String ip, Integer clientRequestInterval},
+ *              status
+ *           }]
+ * sensor:   [{ model,
+ *              config{String alias, String ip, Integer clientRequestInterval},
+ *              status
+ *           }]
+ *
+ */
 var devices =  {
-    actuator:[],
-    sensor:[]
+    actuators:[],
+    sensors:[]
 };
 var io = null;
+
 /**
  *  d       device
  *  remote  remote ip-address
@@ -19,13 +31,13 @@ function addToDeviceList(d, remote) {
         }
 
         if(!exists){
-            devices[d.type].push(d);
+            devices[d.type].push({id: d.id, model: d, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null});
             io.emit("deviceAdded", {data: d});
             if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
         }
 
     } else {
-        devices[d.type].push(d);
+        devices[d.type].push({id: d.id, model: d, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
         io.emit("deviceAdded", {data: d});
         if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
     }
@@ -41,33 +53,57 @@ function getDeviceByIPAddress(ip){
             }
         }
     }
-    return null;
+    return {err: "Error, could not find device with IP: " + ip + "."};
+}
+
+function getSensorById(id) {
+    for (var i = 0; i < devices.sensors.length; i++) {
+        if(devices.sensors[i].id === id){
+            return devices.sensors[i];
+        }
+    }
+    return {err: "Error, could not find sensor with id: " + id + "."};
+}
+
+function getActuatorById(id) {
+    for (var i = 0; i < devices.actuators.length; i++) {
+        if(devices.actuators[i].id === id){
+            return devices.actuators[i];
+        }
+    }
+    return {err: "Error, could not find actuator with id: " + id + "."};
+}
+
+function updateDeviceStatus(devicetype, id, status) {
+    for (var i = 0; i < devices.devicetype.length; i++) {
+        if(devices.devicetype[i].id === id){
+            devices.devicetype[i].config.status = status;
+            return {Success: "Success, status for "+ devices.devicetype[i].id + " was successfully updated."};
+        }
+    }
+    return {err: "Error, could not find " +devicetype + " with id: " + id + " to update status."};
 }
 
 function updateDeviceAliasFunction(devicetype, id, alias){
-    if(devicetype === "sensors"){
-        devicetype = "sensor"
-    }
-    if(devicetype === "actuators"){
-        devicetype = "actuator"
-    }
     for (var i = 0; i < devices.devicetype.length; i++) {
        if(devices.devicetype[i].id === id){
-            devices.devicetype[i].config.alias = interval;
-            return {Succes: "Succes, alias for "+ devices.devicetype[i].id + " was succesfully updated."};
+            devices.devicetype[i].config.alias = clientRequestInterval;
+            return {Success: "Success, alias for "+ devices.devicetype[i].id + " was successfully updated."};
        }
     }
-    return {Error: "Error, could not find " +devicetype + " with id: " + id + " to update"};
+
+    return {err: "Error, could not find " +devicetype + " with id: " + id + " to update alias."};
 }
 
-function updateSensorIntervalFunction(id, interval){
-    for (var i = 0; i < devices.sensor.length; i++) {
-        if(devices.sensor[i].id === id){
-            devices.sensor[i].config.clientRequestInterval = interval;
-            return {Succes: "Succes, interval for "+ devices.sensor[i].id + " was succesfully updated."};
+function updateSensorIntervalFunction(id, clientRequestInterval){
+    for (var i = 0; i < devices.sensors.length; i++) {
+        if(devices.sensors[i].id === id){
+            devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
+            return {Success: "Success, interval for "+ devices.sensors[i].id + " was successfully updated."};
         }
     }
-    return {Error: "Error, could not find sensor with id: " + id + " to update"};
+
+    return {err: "Error, could not find sensors with id: " + id + " to update request interval."};
 }
 
 module.exports = {
@@ -76,9 +112,12 @@ module.exports = {
     },
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
-    getAll: function(){return devices},
-    getSensors: function(){return devices.sensor;},
-    getActuators: function(){return devices.actuator;},
+    getSensor: getSensorById,
+    getActuator: getActuatorById,
+    getAll: function(){return devices;},
+    getSensors: function(){return devices.sensors;},
+    getActuators: function(){return devices.actuators;},
     updateDeviceAlias: updateDeviceAliasFunction,
+    updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction
 };
