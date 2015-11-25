@@ -4,7 +4,7 @@ var request = require('superagent');
 // Message contains a list of sensors
 process.on('message', function(m) {
 	  	if(m.ip === undefined){
-	  		process.send("ERROR: cannot read ip-adress of sensor");
+	  		process.send("ERROR: cannot read ip-adress of sensors");
 	  	}
 	  	else{
 	  		request

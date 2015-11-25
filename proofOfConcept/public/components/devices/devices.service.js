@@ -18,8 +18,8 @@
             $http.get("/deviceManager")
                 .success(function(devices){
                     console.log(devices);
-                    ds.devices.actuator = devices.actuator;
-                    ds.devices.sensor = devices.sensor;
+                    ds.devices.actuators = devices.actuators;
+                    ds.devices.sensors = devices.sensors;
                 })
                 .error(function(err){
                     if(err) console.error(err);

@@ -3,7 +3,10 @@
 
     angular.module('jarvis', [
         'templatecache',
-        'jarvis.title'
+        'jarvis.title',
+        'jarvis.devices',
+        'jarvis.sensor',
+        'jarvis.actuator'
     ]);
 
 }());

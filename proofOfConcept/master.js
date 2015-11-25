@@ -11,8 +11,8 @@ server.listen(3221);
 
 var httpPending = [];
 var devices =  {
-    actuator:[],
-    sensor:[]
+    actuators:[],
+    sensors:[]
 };
 
 app.get('/deviceManager', function(req,res){
@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //io.on("connection", function(socket) {
 //    setTimeout(function(){
-//        deviceManager.actuator.push({
+//        deviceManager.actuators.push({
 //            test: "shizzle"
 //        });
 //        io.emit("event", {event: "deviceschanged"});

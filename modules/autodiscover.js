@@ -2,10 +2,9 @@ var supportedSOKVersions = ['0.0.1'];
 var httpPending = [];
 var dgram = require('dgram');
 var http = require('superagent');
-var devices = require('./deviceManager');
+var deviceManager = require('./deviceManager');
 var io = null;
 var server = null;
-
 
 /**
  * Functie welke luistert naar UDP broadcasts van andere apparaten binnen het netwerk (Slave deviceManager)
@@ -31,6 +30,7 @@ module.exports = {
     init: function (svr, socket) {
         io = socket;
         server = svr;
+        deviceManager.init(io);
         listenForUDPPackets(function (msg, remote) {
             if (supportedSOKVersions.indexOf(msg.version) !== -1) {
                 if (!httpPending[remote.address] || httpPending[remote.address] == undefined && devices.getByIP(remote.address)) {
@@ -38,8 +38,7 @@ module.exports = {
                         .get('http://' + remote.address + '/sok')
                         .end(function (err, res) {
                             var msg = JSON.parse(res.text);
-                            msg.ip = remote.address;
-                            devices.add(msg, remote, io);
+                            devices.add(msg, remote);
                             httpPending[remote.address] = false;
                         });
                 }
@@ -47,5 +46,5 @@ module.exports = {
             }
         });
     },
-    getDevices: function(){return devices.get()}
+    getDevices: function(){return deviceManager.get()}
 };

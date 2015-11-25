@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col s12">
+        <div class="col s6" style="position:fixed">
+            <h3>Info</h3>
+            <div class="col s6">
+                <h5>Type:</br> {{sdc.sensor.type}}</h5>
+                <h5>IP:</br>
+                {{sdc.sensor.ip}}</h5>
+                <h5>Beschrijving:</br>
+                {{sdc.sensor.description}}</h5>
+            </div>
+        </div>
+        <div class="col s6 offset-s6">
+            <h3>Sensor waarden</h3>
+            <div class="card small" style="height:100px; text-align:center" ng-repeat="(key,value) in sdc.sensor.commands.status.returns">
+                <div class="col s6">
+                    <h5  style="margin-top:35px">{{key}}</h5>
+                </div>
+                <div class="col s6" style="border-left: 2px solid #424242  ; height:100%">
+                    <h5 style="margin-top:35px">{{sdc.GetValueByKey(key)}}</h5>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
