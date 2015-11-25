@@ -5,12 +5,9 @@
         'ui.router',
         'jarvis'
     ]);
+
     jarvisApp.config(["$stateProvider","$urlRouterProvider", function($stateProvider, $urlRouterProvider){
-        $urlRouterProvider.
-            when('/sensors', {
-                templateUrl: './templates/sensors.html',
-                controller: 'sensorController'
-            })
-            .otherwise("/");
+        $urlRouterProvider.otherwise("/");
     }]);
+
 }());

@@ -1,5 +1,5 @@
 var cp = require('child_process');
-var child = cp.fork('./modules/sensorPolling');
+var child = cp.fork('./modules/workers/sensorPolling');
 var intervalArray = [];
 
 //return message of childprocess - sensors data
@@ -19,7 +19,7 @@ function pullData(sensor){
 function addIntervalsToSensors(list){
     for (var i = 0; i < list.length; i++) {
         pullData(list[i]);
-    };
+    }
 }
 
 module.exports = {
@@ -27,8 +27,8 @@ module.exports = {
     reInitiateIntervals : function (list){
         for (var i = 0; i < intervalArray.length; i++) {
             clearTimeout(intervalArray[i]);
-        };
+        }
         intervalArray.splice(0,intervalArray.length);
         addIntervalsToSensors(list);
     }
-}
+};
