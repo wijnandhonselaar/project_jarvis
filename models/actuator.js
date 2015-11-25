@@ -5,7 +5,7 @@ var Actuator = thinky.createModel("Actuator", {
 	id: type.number().required(),
 	savedAt: type.date().default(thinky.r.now()),
 	name: type.string().required(),
-	sokVersion: type.number().required(),
+	sokVersion: type.number().	required(),
 	description: type.string(),
 	commands: {
 		status: type.object().required().schema({
