@@ -11,6 +11,7 @@
         $stateProvider
             .state('sensorenOverzicht', {
                 url: "/sensors",
+                params: { activeMenu: "sensors" },
                 data: { pageTitle: "Sensoren" },
                 views: {
                     "mainView": {
@@ -32,11 +33,25 @@
             })
             .state('sensorDetail', {
                 url: "/sensors/:uid",
-                templateUrl: "components/sensor/sensor.detail.html",
-                controller: 'SensorDetailCtrl',
-                controllerAs: 'sdc',
-                params: { data: null },
-                data: { pageTitle: "uid: sensor" }
+                params: { data: null, activeMenu: "sensors" },
+                data: { pageTitle: "uid: sensor" },
+                views: {
+                    "mainView": {
+                        templateUrl: "components/sensor/sensor.detail.html",
+                        controller: 'SensorDetailCtrl',
+                        controllerAs: 'sdc'
+                    },
+                    "logView": {
+                        templateUrl: "components/log/log.html",
+                        controller: "LogCtrl",
+                        controllerAs: "lc"
+                    },
+                    "menuView": {
+                        templateUrl: "components/menu/menu.html",
+                        controller: "MenuCtrl",
+                        controllerAd: "mc"
+                    }
+                }
             });
     }
 
