@@ -36,3 +36,6 @@ localtest/*
 npm-debug.log
 .env
 rethinkdb_data/
+
+public/css/dist.css
+public/js/dist.js
