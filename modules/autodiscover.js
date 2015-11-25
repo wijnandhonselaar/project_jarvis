@@ -39,7 +39,7 @@ module.exports = {
                         .end(function (err, res) {
                             var msg = JSON.parse(res.text);
                             msg.ip = remote.address;
-                            devices.add(msg, remote);
+                            devices.add(msg, remote, io);
                             httpPending[remote.address] = false;
                         });
                 }

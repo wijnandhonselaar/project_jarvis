@@ -9,10 +9,8 @@ var devices =  {
  */
 function addToDeviceList(d,remote, io) {
     if(devices[d.type].length !== 0) {
+        var exists = false;
         for(var i = 0; i<devices[d.type].length; i++){
-
-            var exists = false;
-
             if(devices[d.type][i].id === d.id){
                 exists = true;
             }
