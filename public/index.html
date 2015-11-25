@@ -8,6 +8,7 @@
 </head>
 
 <body class="grey lighten-3">
+
     <header>
         <nav class="top-nav grey lighten-5" style="height: 50px;position: fixed;">
             <div class="container">
@@ -18,9 +19,9 @@
         </nav>
     </header>
 
-    <div style="padding-top: 60px;">
-        <ui-view></ui-view>
-    </div>
+    <div ui-view="mainView"></div>
+    <div ui-view="logView"></div>
+    <div ui-view="menuView"></div>
 
     <script src="//localhost:5050/livereload.js"></script>
 </body>

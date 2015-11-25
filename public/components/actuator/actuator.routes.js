@@ -11,10 +11,24 @@
         $stateProvider
             .state('actuatorsOverzicht', {
                 url: "/actuators",
-                templateUrl: "components/actuator/actuator.overzicht.html",
-                controller: 'ActuatorOverzichtCtrl',
-                controllerAs: 'aoc',
-                data: { pageTitle: "Actuatoren" }
+                data: { pageTitle: "Actuatoren" },
+                views: {
+                    "mainView": {
+                        templateUrl: "components/actuator/actuator.overzicht.html",
+                        controller: 'ActuatorOverzichtCtrl',
+                        controllerAs: 'aoc'
+                    },
+                    "logView": {
+                        templateUrl: "components/log/log.html",
+                        controller: "LogCtrl",
+                        controllerAs: "lc"
+                    },
+                    "menuView": {
+                        templateUrl: "components/menu/menu.html",
+                        controller: "MenuCtrl",
+                        controllerAd: "mc"
+                    }
+                }
             })
             .state('actuatorDetail', {
                 url: "/actuators/:uid",
