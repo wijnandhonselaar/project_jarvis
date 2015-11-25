@@ -2,12 +2,14 @@ var devices =  {
     actuator:[],
     sensor:[]
 };
-/*
+var io = null;
+/**
  *  d       device
  *  remote  remote ip-address
  *  io      Socket
  */
-function addToDeviceList(d,remote, io) {
+
+function addToDeviceList(d, remote) {
     if(devices[d.type].length !== 0) {
         var exists = false;
         for(var i = 0; i<devices[d.type].length; i++){
@@ -54,7 +56,7 @@ function updateDeviceAliasFunction(devicetype, id, alias){
             devices.devicetype[i].config.alias = interval;
             return {Succes: "Succes, alias for "+ devices.devicetype[i].id + " was succesfully updated."};
        }
-    };
+    }
     return {Error: "Error, could not find " +devicetype + " with id: " + id + " to update"};
 }
 
@@ -64,11 +66,14 @@ function updateSensorIntervalFunction(id, interval){
             devices.sensor[i].config.clientRequestInterval = interval;
             return {Succes: "Succes, interval for "+ devices.sensor[i].id + " was succesfully updated."};
         }
-    };
+    }
     return {Error: "Error, could not find sensor with id: " + id + " to update"};
 }
 
 module.exports = {
+    init: function(socketio){
+        io = socketio;
+    },
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
     getAll: function(){return devices},
