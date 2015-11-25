@@ -1,9 +1,11 @@
 /*
- * actuator: [{ model,
+ * actuator: [{ id,
+ *              model,
  *              config{String alias, String ip, Integer clientRequestInterval},
  *              status
  *           }]
- * sensor:   [{ model,
+ * sensor:   [{ id,
+ *              model,
  *              config{String alias, String ip, Integer clientRequestInterval},
  *              status
  *           }]
@@ -16,33 +18,48 @@ var devices =  {
 var io = null;
 
 /**
- *  d       device
- *  remote  remote ip-address
- *  io      Socket
+ *
+ * @param device
+ * @param remote
  */
-
-function addToDeviceList(d, remote) {
-    if(devices[d.type].length !== 0) {
+function addToDeviceList(device, remote) {
+    console.log('Adding device:' + device.id);
+    if(devices[device.type].length !== 0) {
+        console.log('Hier kom ik niet');
         var exists = false;
-        for(var i = 0; i<devices[d.type].length; i++){
-            if(devices[d.type][i].id === d.id){
+        for(var i = 0; i<devices[device.type].length; i++){
+            if(devices[device.type][i].id === device.id){
                 exists = true;
             }
         }
 
         if(!exists){
-            devices[d.type].push({id: d.id, model: d, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null});
-            io.emit("deviceAdded", {data: d});
-            if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
+            devices[device.type].push({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null});
+            io.emit("deviceAdded", {data: device});
+            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[device.type].length);
         }
 
     } else {
-        devices[d.type].push({id: d.id, model: d, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
-        io.emit("deviceAdded", {data: d});
-        if(GLOBAL.logToConsole) console.log("Discovered "+ d.name + " on "+remote.address+ ' length: '+devices[d.type].length);
+        console.log('Adding device:' + device.id + 'type: ' + device.type);
+        devices[device.type].push({id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
+        console.log('Added device: ' + devices[device.type][devices[device.type].length - 1].id);
+        io.emit("deviceAdded", {data: device});
+        if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[device.type].length);
     }
+    if(devices.actuators[0] !== undefined) {
+        console.log('Actuators: ' + devices.actuators[0]);
+    }
+    if(devices.sensors[0] !== undefined) {
+        console.log('Sensors: ' + devices.sensors[0]);
+    }
+    console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
 }
 
+/**
+ *
+ * @param ip
+ * @returns {*}
+ */
 function getDeviceByIPAddress(ip){
     for (var property in devices) {
         if (object.hasOwnProperty(property)) {
@@ -56,6 +73,11 @@ function getDeviceByIPAddress(ip){
     return {err: "Error, could not find device with IP: " + ip + "."};
 }
 
+/**
+ *
+ * @param id
+ * @returns {*}
+ */
 function getSensorById(id) {
     for (var i = 0; i < devices.sensors.length; i++) {
         if(devices.sensors[i].id === id){
@@ -65,6 +87,11 @@ function getSensorById(id) {
     return {err: "Error, could not find sensor with id: " + id + "."};
 }
 
+/**
+ *
+ * @param id
+ * @returns {*}
+ */
 function getActuatorById(id) {
     for (var i = 0; i < devices.actuators.length; i++) {
         if(devices.actuators[i].id === id){
@@ -74,6 +101,13 @@ function getActuatorById(id) {
     return {err: "Error, could not find actuator with id: " + id + "."};
 }
 
+/**
+ *
+ * @param devicetype
+ * @param id
+ * @param status
+ * @returns {*}
+ */
 function updateDeviceStatus(devicetype, id, status) {
     for (var i = 0; i < devices.devicetype.length; i++) {
         if(devices.devicetype[i].id === id){
@@ -84,6 +118,13 @@ function updateDeviceStatus(devicetype, id, status) {
     return {err: "Error, could not find " +devicetype + " with id: " + id + " to update status."};
 }
 
+/**
+ *
+ * @param devicetype
+ * @param id
+ * @param alias
+ * @returns {*}
+ */
 function updateDeviceAliasFunction(devicetype, id, alias){
     for (var i = 0; i < devices.devicetype.length; i++) {
        if(devices.devicetype[i].id === id){
@@ -95,6 +136,12 @@ function updateDeviceAliasFunction(devicetype, id, alias){
     return {err: "Error, could not find " +devicetype + " with id: " + id + " to update alias."};
 }
 
+/**
+ *
+ * @param id
+ * @param clientRequestInterval
+ * @returns {*}
+ */
 function updateSensorIntervalFunction(id, clientRequestInterval){
     for (var i = 0; i < devices.sensors.length; i++) {
         if(devices.sensors[i].id === id){
@@ -106,6 +153,22 @@ function updateSensorIntervalFunction(id, clientRequestInterval){
     return {err: "Error, could not find sensors with id: " + id + " to update request interval."};
 }
 
+//noinspection JSClosureCompilerSyntax
+/**
+ *
+ * @type {{ init: Function,
+ *          add: addToDeviceList,
+ *          getByIP: getDeviceByIPAddress,
+ *          getSensor: getSensorById,
+ *          getActuator: getActuatorById,
+ *          getAll: Function,
+ *          getSensors: Function,
+ *          getActuators: Function,
+ *          updateDeviceAlias: updateDeviceAliasFunction,
+ *          updateDeviceStatus: updateDeviceStatus,
+ *          updateSensorInterval: updateSensorIntervalFunction
+*         }}
+ */
 module.exports = {
     init: function(socketio){
         io = socketio;

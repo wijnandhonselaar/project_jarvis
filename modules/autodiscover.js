@@ -46,5 +46,6 @@ module.exports = {
             }
         });
     },
-    getDevices: function(){return devices.get()}
+    getDevices: function(){return devices.get()},
+    getDeviceManager: function(){return deviceManager;}
 };
