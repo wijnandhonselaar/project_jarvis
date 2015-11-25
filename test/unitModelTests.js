@@ -6,8 +6,8 @@ describe("Models tests", function () {
 	describe('Sensor', function () {
 		var id = 5468;
 
-		it('Should save a new sensor', function (done) {
-			// create the new sensor
+		it('Should save a new sensors', function (done) {
+			// create the new sensors
 			var newsensor = new Sensor({
 				id: id,
 				name: 'philips temp',
@@ -34,7 +34,7 @@ describe("Models tests", function () {
 				}
 			});
 
-			// save the new sensor
+			// save the new sensors
 			Sensor.save(newsensor).then(function(res) {
 				done();
 			}).error(console.log);
@@ -42,7 +42,7 @@ describe("Models tests", function () {
 		
 		it('Should have a savedate', function (done) {
 
-			// get the sensor
+			// get the sensors
 			Sensor.get(id).then(function(sensor) {
 				// check if the savedAt exists (which is done by the model)
 				expect(sensor.savedAt).to.exist;
@@ -51,12 +51,12 @@ describe("Models tests", function () {
 		}).error(console.log);
 		});
 
-		it('Should delete a sensor', function (done) {
+		it('Should delete a sensors', function (done) {
 
-			// get the sensor
+			// get the sensors
 			Sensor.get(id).then(function(sensor) {
 
-				// delete the sensor
+				// delete the sensors
 				sensor.delete().then(function(result) {
 					done();
 				});
@@ -67,12 +67,12 @@ describe("Models tests", function () {
 
 	describe('Actuator', function () {
 		var id = 95987894;
-		it('Shouldn\'t save a new actuator, no on command', function (done) {
-			// create the new actuator
+		it('Shouldn\'t save a new actuators, no on command', function (done) {
+			// create the new actuators
 			var newactuator = new Actuator({
 				id: id,
 				name: 'Philips hue',
-				type: 'actuator',
+				type: 'actuators',
 				sokVersion: 0.12,
 				description: 'Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.',
 				commands: {
@@ -127,7 +127,7 @@ describe("Models tests", function () {
 				}
 			});
 
-			// save the new sensor
+			// save the new sensors
 			Actuator.save(newactuator).then(function(res) {
 				
 			}).error(function(){
@@ -135,13 +135,13 @@ describe("Models tests", function () {
 			});
 		});
 
-		it('Should save a new actuator', function (done) {
-			// create the new actuator
+		it('Should save a new actuators', function (done) {
+			// create the new actuators
 			var newactuator = new Actuator({
 				id: id,
 				ip: '192.168.0.201',
 				name: 'Philips hue',
-				type: 'actuator',
+				type: 'actuators',
 				sokVersion: 0.12,
 				description: 'Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.',
 				   commands: {
@@ -204,7 +204,7 @@ describe("Models tests", function () {
 				}
 		});
 
-			// save the new sensor
+			// save the new sensors
 			Actuator.save(newactuator).then(function(res) {
 				done();
 			}).error(console.log);
@@ -212,7 +212,7 @@ describe("Models tests", function () {
 
 		it('Should have a savedate', function (done) {
 
-			// get the sensor
+			// get the sensors
 			Actuator.get(id).then(function(actuator) {
 				// check if the savedAt exists (which is done by the model)
 				expect(actuator.savedAt).to.exist;
@@ -223,7 +223,7 @@ describe("Models tests", function () {
 
 		it('Should have a on command', function (done) {
 
-				// get the sensor
+				// get the sensors
 				Actuator.get(id).then(function(actuator) {
 					// check if the savedAt exists (which is done by the model)
 					expect(actuator.commands.on).to.exist;
@@ -234,7 +234,7 @@ describe("Models tests", function () {
 
 		it('Should have a off command', function (done) {
 
-			// get the sensor
+			// get the sensors
 			Actuator.get(id).then(function(actuator) {
 				// check if the savedAt exists (which is done by the model)
 				expect(actuator.commands.off).to.exist;
@@ -245,7 +245,7 @@ describe("Models tests", function () {
 
 		it('Should have a status command', function (done) {
 
-			// get the sensor
+			// get the sensors
 			Actuator.get(id).then(function(actuator) {
 				// check if the savedAt exists (which is done by the model)
 				expect(actuator.commands.status).to.exist;
@@ -254,12 +254,12 @@ describe("Models tests", function () {
 			}).error(console.log);
 		});
 
-		it('Should delete a actuator', function (done) {
+		it('Should delete a actuators', function (done) {
 
-			// get the sensor
+			// get the sensors
 			Actuator.get(id).then(function(actuator) {
 
-				// delete the sensor
+				// delete the sensors
 				actuator.delete().then(function(result) {
 					done();
 				});

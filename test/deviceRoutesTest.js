@@ -16,12 +16,12 @@ describe('Device routing', function() {
 
     beforeEach(function (done) {
         io = dgram.createSocket("udp4");
-        var device = newDevice(123, 'philips temp sensor', 'woonkamer thermometer');
-        device.type = 'sensor';
+        var device = newDevice(123, 'philips temp sensors', 'woonkamer thermometer');
+        device.type = 'sensors';
         deviceManager.add(device, '192.168.0.45', io);
-        //device = newDevice(3286, 'philips lumen sensor', 'woonkamer, is het al donker?');
-        //device.type = 'actuator';
-        //deviceManager.add(device, '192.168.0.46', io);
+        device = newDevice(3286, 'philips lumen sensors', 'woonkamer, is het al donker?');
+        device.type = 'actuators';
+        deviceManager.add(device, '192.168.0.46', io);
         done();
     });
 
