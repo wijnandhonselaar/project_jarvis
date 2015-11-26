@@ -8,9 +8,9 @@ var Actuator = require('../models/actuator.js'),
  * @param type(string): the device type (actuator/sensor)
  */
 function checkType(type) {
-    if(type === 'actuator' || type === 'Actuator'){
+    if(type === 'actuator' || type === 'Actuator' || type === "actuators" || "Actuators"){
         return Actuator;
-    } else if (type === 'sensor' || type === 'Sensor') {
+    } else if (type === 'sensor' || type === 'Sensor' || type === "Sensoren" || type === "sensors" || type === "Sensors" || type === "sensoren") {
         return Sensor;
     } else {
         return false;
