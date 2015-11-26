@@ -11,17 +11,17 @@ var index = 0;
 server.listen(80);
 
 var devices =  {
-    actuator:[],
-    sensor:[]
+    actuators:[],
+    sensors:[]
 };
 
 //create 30 actuators and 30 sensors
 for (var i = 0; i < 30; i++) {
         if(i < 30){
-            devices.actuator.push(createDevice("actuator", i));
+            devices.actuators.push(createDevice("actuators", i));
         }
         else{
-            devices.sensor.push(createDevice("sensor", i));
+            devices.sensors.push(createDevice("sensors", i));
         }
 };
 
@@ -53,12 +53,12 @@ function broadcastUDPPacket(){
         index = 0;
     }
     if(index < 30){
-        console.log(devices.actuator[index]);
-        res.send(JSON.stringify(devices.actuator[index]));
+        console.log(devices.actuators[index]);
+        res.send(JSON.stringify(devices.actuators[index]));
         index ++;
     }
     else if(index < 60){
-        res.send(JSON.stringify(devices.sensor[index]));
+        res.send(JSON.stringify(devices.sensors[index]));
         index ++;
     }
 });
@@ -71,7 +71,7 @@ function createDevice(deviceType, id){
         name: kind.name,
         type: deviceType,
         sokVersion: 0.1,
-        description: kind.name + ' is een geweldige ' + deviceType + ' die bijvoorbeeld het commando ' + kind.commands[0].name + ' kan uitvoeren!',
+        description: kind.name + ' is een geweldige ' + deviceType + ' die bijvoorbeeld het commando ' + kind.commands.on.name + ' kan uitvoeren!',
         commands: kind.commands
     }
 
@@ -82,85 +82,8 @@ function detemineKind(id){
     if(id < 5){
         var kind ={};
         kind.name = 'Lamp ' + (id+1);
-        kind.commands = [{
-                name: 'change intensity',
-                parameters: [],
-                requestInterval: 5000,
-                httpMethod: 'POST',
-                returns: 'Boolean',
-                description: kind.name + ' will change intensity'
-            },{
-                name : 'status',
-                parameters: [],
-                requestInterval: 5000,
-                httpMethod: 'GET',
-                returns: {
-                    intensity: 'number',
-                },
-                description: 'Retrieves status of ' + kind.name
-            }]
-    }
-
-    else if(id < 10){
-        var kind ={}
-        kind.name = 'Rolluik ' + (id-4)
-        kind.commands = [{
-                name : 'status',
-                parameters: [],
-                requestInterval: 5000,
-                httpMethod: 'GET',
-                returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
-                },
-                description: 'Retrieves status of ' + kind.name
-            }]
-        kind.commands.push(getOpenCommand(kind.name));
-        kind.commands.push(getCloseCommand(kind.name));
-
-    }
-
-    else if(id < 15){
-        var kind ={}
-        kind.name = 'Raam ' + (id-9)
-        kind.commands = [{
-                name : 'status',
-                parameters: [],
-                requestInterval: 5000,
-                httpMethod: 'GET',
-                returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
-                },
-                description: 'Retrieves status of ' + kind.name
-            }]
-        kind.commands.push(getOpenCommand(kind.name));
-        kind.commands.push(getCloseCommand(kind.name));
-
-    }
-
-    else if(id < 20){
-        var kind ={}
-        kind.name = 'Verwarming ' + (id-14)
-        kind.commands = [{
-                name : 'status',
-                parameters: [],
-                requestInterval: 5000,
-                httpMethod: 'GET',
-                returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
-                },
-                description: 'Retrieves status of ' + kind.name
-            }]
-        kind.commands.push(getOpenCommand(kind.name));
-        kind.commands.push(getCloseCommand(kind.name));
-    }
-
-    else if(id < 25){        
-        var kind ={}
-        kind.name = 'Tv ' + (id-19)
-        kind.commands = [{
+        kind.commands = {
+            on:{
                 name: 'on',
                 parameters: [],
                 requestInterval: 5000,
@@ -168,7 +91,7 @@ function detemineKind(id){
                 returns: 'Boolean',
                 description: kind.name +' will be turned on'
             },
-            {
+            off:{
                 name : 'off',
                 parameters: [],
                 requestInterval: 5000,
@@ -176,7 +99,108 @@ function detemineKind(id){
                 returns: 'Boolean',
                 description: kind.name +' will be turned off'
             },
-            {
+            changeIntensity:{
+                    name: 'change intensity',
+                    parameters: [],
+                    requestInterval: 5000,
+                    httpMethod: 'POST',
+                    returns: 'Boolean',
+                    description: kind.name + ' will change intensity'
+                    },
+            status:    {
+                    name : 'status',
+                    parameters: [],
+                    requestInterval: 5000,
+                    httpMethod: 'GET',
+                    returns: {
+                        intensity: 'number',
+                    },
+                    description: 'Retrieves status of ' + kind.name
+                }   
+        }
+    }
+
+    else if(id < 10){
+        var kind ={}
+        kind.name = 'Rolluik ' + (id-4)
+        kind.commands = {
+            status:{
+                name : 'status',
+                parameters: [],
+                requestInterval: 5000,
+                httpMethod: 'GET',
+                returns: {
+                    open: 'boolean',
+                    closed: 'boolean'
+                },
+                description: 'Retrieves status of ' + kind.name
+            },
+            on:getOpenCommand(kind.name),
+            off: getCloseCommand(kind.name)
+        }
+    }
+
+    else if(id < 15){
+        var kind ={}
+        kind.name = 'Raam ' + (id-9)
+        kind.commands = {
+            status:{
+                name : 'status',
+                parameters: [],
+                requestInterval: 5000,
+                httpMethod: 'GET',
+                returns: {
+                    open: 'boolean',
+                    closed: 'boolean'
+                },
+                description: 'Retrieves status of ' + kind.name
+            },
+            on:getOpenCommand(kind.name),
+            off: getCloseCommand(kind.name)
+        }
+    }
+
+    else if(id < 20){
+        var kind ={}
+        kind.name = 'Verwarming ' + (id-14)
+        kind.commands = {
+            status:{
+                name : 'status',
+                parameters: [],
+                requestInterval: 5000,
+                httpMethod: 'GET',
+                returns: {
+                    open: 'boolean',
+                    closed: 'boolean'
+                },
+                description: 'Retrieves status of ' + kind.name
+            },
+            on:getOpenCommand(kind.name),
+            off: getCloseCommand(kind.name)
+        }
+    }
+
+    else if(id < 25){        
+        var kind ={}
+        kind.name = 'Tv ' + (id-19)
+        kind.commands = {
+            on:{
+                name: 'on',
+                parameters: [],
+                requestInterval: 5000,
+                httpMethod: 'POST',
+                returns: 'Boolean',
+                description: kind.name +' will be turned on'
+            },
+            off:{
+                name : 'off',
+                parameters: [],
+                requestInterval: 5000,
+                httpMethod: 'POST',
+                returns: 'Boolean',
+                description: kind.name +' will be turned off'
+            },
+            status:{
                 name : 'status',
                 parameters: [],
                 requestInterval: 5000,
@@ -186,13 +210,15 @@ function detemineKind(id){
                     off: 'boolean'
                 },
                 description: 'Retrieves status of ' + kind.name
-            }]
+            }
+        }
     }
 
     else if(id < 30){
         var kind ={}
         kind.name = 'Deurslot ' + (id-24)
-        kind.commands = [{
+        kind.commands = {
+            status:{
                 name : 'status',
                 parameters: [],
                 requestInterval: 5000,
@@ -202,9 +228,10 @@ function detemineKind(id){
                     closed: 'boolean'
                 },
                 description: 'Retrieves status of ' + kind.name
-            }]
-        kind.commands.push(getOpenCommand(kind.name));
-        kind.commands.push(getCloseCommand(kind.name));
+            },
+            on:getOpenCommand(kind.name),
+            off: getCloseCommand(kind.name)
+        }
     }
     return kind;
 }
