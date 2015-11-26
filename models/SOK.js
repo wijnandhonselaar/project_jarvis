@@ -3,6 +3,7 @@ module.exports = {   id: 1251,
         sokVersion: 0.1,
     description: 'Integer posuere erat a ante venenatis dapibus posuere.',
     type: 'Sensor',
+    image: '',
     commands: {
         on : {
             name: 'on',

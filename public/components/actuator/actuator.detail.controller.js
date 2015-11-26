@@ -21,15 +21,24 @@
                 console.error(err);
             });
 
-        function showCommand(paramList){
-            if(paramList.length>0)
+        function showCommand(parameters){
+            if(Object.keys(parameters).length > 0)
             $('#commandModal').openModal();
         }
-
 
         $timeout(function(){
             $('.tooltipped').tooltip({delay: 50});
         });
+
+        //DS.sendCommand()
+        //    .then(function(data){
+        //        Materialize.toast("Command successfull excecuted", 4000);
+        //        console.log(data);
+        //    })
+        //    .catch(function(err){
+        //        Materialize.toast("Command error", 4000);
+        //        console.log(err);
+        //    });
     }
 
 })();

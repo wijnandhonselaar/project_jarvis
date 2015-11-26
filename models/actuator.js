@@ -8,6 +8,7 @@ var Actuator = thinky.createModel("Actuator", {
 		name: type.string().required(),
 		sokVersion: type.number().required(),
 		description: type.string(),
+		image: type.string(),
 		commands: {
 			status: type.object().required().schema({
 				name: type.string().required(),
@@ -34,7 +35,8 @@ var Actuator = thinky.createModel("Actuator", {
 	},
 	config: {
 		ip: type.string().required(),
-		alias: type.string()
+		alias: type.string(),
+		active: type.boolean().default(true)
 	}
 });
 
