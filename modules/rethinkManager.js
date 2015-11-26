@@ -38,6 +38,27 @@ function getDevice(id, type, fn) {
 }
 
 /*
+ * getAllDevices
+ * type(string): get all actuators or sensors.
+ * fn(function): the callback
+ */
+function getAllDevices(type, fn) {
+
+    type = checkType(type);
+
+    if(!type) {
+        fn({Error: "type is unknown"});
+        return false;
+    }
+
+    type.run().then(function(res) {
+        fn(null, res);
+    }).error(function(err) {
+        fn({Error: "The "+ type +" wasn't found", Message: err});
+    });
+}
+
+/*
  *  saveDevice - saves the object from the newDevice parameter
  *  newDevice(object): the new device
  *  type(string): with the device (actuator/sensor)
@@ -69,13 +90,16 @@ function updateAlias(id, type, alias, fn) {
 
     type = checkType(type);
 
+    if(!type) {
+        fn({Error: "type is unknown"});
+        return false;
+    }
+
     type.get(id).update({config: {alias: alias}}).run().then(function(res) {
         fn(null, res);
     }).error(function(err) {
         fn(err);
-        return false;
     });
-
 }
 
 
@@ -91,13 +115,34 @@ function updateClientRequestInterval(id, interval, fn) {
         fn(null, res);
     }).error(function(err) {
         fn(err);
-        return false;
     });
 }
+
+/*
+ *
+ */
+function updateActive(id, type, status, fn) {
+
+    type = checkType(type);
+
+    if(!type) {
+        fn({Error: "type is unknown"});
+        return false;
+    }
+
+    type.get(id).update({config: {active: status}}).run().then(function(res) {
+        fn(null, res);
+    }).error(function(err) {
+        fn(err);
+    });
+}
+
 
 module.exports = {
     saveDevice: saveDevice,
     getDevice: getDevice,
     updateAlias: updateAlias,
-    updateClientRequestInterval: updateClientRequestInterval
+    updateClientRequestInterval: updateClientRequestInterval,
+    updateActive: updateActive,
+    getAllDevices: getAllDevices
 };
