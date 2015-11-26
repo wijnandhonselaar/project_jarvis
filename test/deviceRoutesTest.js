@@ -1,27 +1,26 @@
 var expect              = require('chai').expect;
-var should              = require('should');
 var request             = require('supertest');
 var api                 = request('http://localhost:3221');
 var Sensor              = require('../models/sensor');
 var deviceManager       = require('../modules/deviceManager');
-var dgram               = require('dgram');
-var io                  = null;
+var io                  = {};
 
 describe('Device routing', function() {
 
     // Add sensors
     before(function (done) {
+        io.emit = function(){};
+        deviceManager.init(io);
+        var device = newDevice(123, 'a', 'woonkamer thermometer');
+        device.type = 'sensors';
+        deviceManager.add(device, '192.168.0.45');
+        device = newDevice(3286, 'b', 'woonkamer, lamp');
+        device.type = 'actuators';
+        deviceManager.add(device, '192.168.0.46');
         done();
     });
 
     beforeEach(function (done) {
-        io = dgram.createSocket("udp4");
-        var device = newDevice(123, 'philips temp sensors', 'woonkamer thermometer');
-        device.type = 'sensors';
-        deviceManager.add(device, '192.168.0.45', io);
-        device = newDevice(3286, 'philips lumen sensors', 'woonkamer, is het al donker?');
-        device.type = 'actuators';
-        deviceManager.add(device, '192.168.0.46', io);
         done();
     });
 
@@ -35,8 +34,8 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
-                    console.log(res.body);
-                    //expect(res.body.devices.length).to.equal(2);
+                    //console.log(res.body);
+                    expect(res.body.devices.length).to.equal(2);
                     done();
                 });
         });
@@ -106,7 +105,7 @@ function newDevice(id, name, alias) {
         sokVersion: 0.11,
         description: 'Temperatuur op 0.1c nauwkeuring',
         commands: [{
-            name: 'get temperature',
+            name: 'c',
             parameters: ["para", "meter"],
             requestInterval: 5000,
             httpMethod: "GET",

@@ -8,6 +8,7 @@ var Sensor = thinky.createModel("Sensor", {
         name: type.string(),
         sokVersion: type.number().required(),
         description: type.string(),
+        image: type.string(),
         commands: {
             status: type.object().required().schema({
                 name: type.string().required(),
