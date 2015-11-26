@@ -1,3 +1,42 @@
-<pre>
-{{adc.actuator | json}}
-</pre>
+<div class="row" style="margin-top:15px;">
+    <div class="col m2">
+        <div class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
+            <div class="status green"></div>
+            <div style="background-image:url({{adc.actuator.model.image}}); margin:0 auto; width: 50px; height:55px; background-size:cover;"></div>
+            <!--<img src="{{adc.actuator.model.image}}" style="width:40px; margin-top:3px;">-->
+        </div>
+    </div>
+    <div class="col m10">
+        <div class="row detaildescrip" style="margin-top:8px;">
+            <div class="col m12">
+                {{adc.actuator.model.name}}
+            </div>
+            <div class="col m12">
+                <p class="description">{{adc.actuator.model.description}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col m4 nopad">
+        <div class="row">
+            <div class="col m12">
+                <div class="command nopad valign-wrapper card" ng-repeat="command in adc.actuator.model.commands" ng-if="command.name != 'status'">
+                    <div ng-click="adc.showCommand(command.parameters)" class="touch valign" style="display: inline-block; width: 85%;">{{command.name}}</div>
+                    <div data-position="top" data-delay="50" data-tooltip="{{command.description}}" class="tooltipped text-center" style="display: inline-block; width:15%; background-color:#F84E19; color:white; font-size:24px;">i</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="commandModal" class="modal" style="margin-top:-25px;">
+    <div class="modal-content">
+        <h4>Modal Header</h4>
+        <p>A bunch of text</p>
+    </div>
+</div>
+
+
+

@@ -19,7 +19,6 @@
            devices[data.data.type].push(data.data);
             $rs.$apply();
         });
-        
 
         loadDevices()
             .then(function () {
