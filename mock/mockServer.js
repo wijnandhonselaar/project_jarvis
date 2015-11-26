@@ -353,4 +353,49 @@ function getCloseCommand(name){
             };
 }
 
+function playScenario(name) {
+    switch(name) {
+        case 'opstaan':
+            console.log('Harry heeft iedere ochtend zijn wekker staan om 7 uur.');
+            var device = getDevice('actuator', 'Lamp 1');
+            console.log(device.commands.on.description);
+            break;
+        case 'vertrek':
+            break;
+        case 'aankomst':
+            break;
+        case 'bedtijd':
+            break;
+        case 'sensor reageert niet meer':
+            break;
+        case 'actuator reageert niet meer':
+            break;
+    }
+}
+
+function getDevice(type, name) {
+    switch (type) {
+        case 'sensor':
+            var sensors = devices.sensors;
+            for(var i = 0; i < sensors.length; i++) {
+                if(sensors[i].name == name) return sensors[i];
+            }
+            break;
+        case 'actuator':
+            var actuators = devices.actuators;
+            for(var i = 0; i < actuators.length; i++) {
+                if(actuators[i].name == name) return actuators[i];
+            }
+            break;
+    }
+}
+
+stdin.resume();
+stdin.on('data',function(chunk){
+    var scenario=chunk.toString().replace(/\n/,'');
+    playScenario(scenario);
+}).on('end',function(){
+    console.log('stdin:closed');
+});
+
 console.log(devices.sensors[0])
