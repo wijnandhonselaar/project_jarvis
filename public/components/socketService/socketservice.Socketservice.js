@@ -27,9 +27,8 @@
            socket.emit(requestType, requestData);
         }
 
-    }
     return {
         socketListener: socketListener,
         socketEmit: socketEmit
     };
-})();
+}})();
