@@ -20,15 +20,18 @@
                 console.error(err);
             });
 
-        DS.sendCommand()
-            .then(function(data){
-                Materialize.toast("Command successfull excecuted", 4000);
-                console.log(data);
-            })
-            .catch(function(err){
-                Materialize.toast("Command error", 4000);
-                console.log(err);
-            })
+        $scope.sendcommand = function(command, type){
+            DS.sendCommand($sp.uid, command, type)
+                .then(function(data){
+                    Materialize.toast("Command successfull excecuted", 4000);
+                    console.log(data);
+                })
+                .catch(function(err){
+                    Materialize.toast("Command error", 4000);
+                    console.log(err);
+                });
+        }
+
     }
 
 })();
