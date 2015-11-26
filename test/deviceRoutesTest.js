@@ -1,41 +1,43 @@
 var expect              = require('chai').expect;
-var request             = require('supertest');
-var api                 = request('http://localhost:3221');
-var Sensor              = require('../models/sensor');
-var deviceManager       = require('../modules/deviceManager');
-var io                  = {};
+var api                 = require('superagent')
 
 describe('Device routing', function() {
 
-    // Add sensors
     before(function (done) {
-        io.emit = function(){};
-        deviceManager.init(io);
-        var device = newDevice(123, 'a', 'woonkamer thermometer');
+        var device = newDevice(123, 'a');
         device.type = 'sensor';
-        deviceManager.add(device, '192.168.0.45');
-        device = newDevice(3286, 'b', 'woonkamer, lamp');
-        device.type = 'actuator';
-        deviceManager.add(device, '192.168.0.46');
-        done();
-    });
 
-    beforeEach(function (done) {
+        api.post('http://localhost:3221/test/devices/add')
+        .send({device : device, ip: '192.186.24.1'})
+        .end(function (err, res) {
+            if (err) { throw err;}
+            console.log("oke");
+        });
+
+        device = newDevice(3286, 'b');
+        device.type = 'actuator';
+        api.post('http://localhost:3221/test/devices/add')
+        .send({device : device, ip: '192.186.24.1'})
+        .end(function (err, res) {
+            if (err) { throw err;}
+            console.log("oke");
+        })
+
         done();
     });
 
     describe('#get all devices', function() {
         it('should receive a list of devices', function (done) {
             api
-                .get('/devices')
-                .send()
-                .expect(200) //Status code
+            .get('http://localhost:3221/devices')
+                //.expect(200) //Status code
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
-                    //console.log(res.body);
-                    expect(res.body.devices.length).to.equal(2);
+                    expect(res.body.devices.actuators.length).to.equal(1);
+                    expect(res.body.devices.actuators[0].config.alias).to.equal('');
+                    expect(res.body.devices.sensors.length).to.equal(1);
                     done();
                 });
         });
@@ -44,15 +46,14 @@ describe('Device routing', function() {
     describe('#get all sensors', function () {
         it('should receive list of sensors', function (done) {
             api
-                .get('/devices/sensors')
-                .send()
-                .expect(200) //Status code
+                .get('http://localhost:3221/devices/sensors')
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
                     expect(res.body.sensors[0].id).to.be.equal(123);
-                    expect(res.body.sensors.length).to.be.above(1);
+                    expect(res.body.sensors[0].config.alias).to.equal('');
+                    expect(res.body.sensors.length).to.equal(1);
                     done();
                 });
         });
@@ -61,46 +62,57 @@ describe('Device routing', function() {
     describe('#get all actuators', function () {
         it('should receive a list of actuators', function (done) {
             api
-                .get('/devices/actuators')
-                .send()
-                .expect(200) //Status code
+                .get('http://localhost:3221/devices/actuators')
+                //.send()
+                //.expect(200) //Status code
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
                     expect(res.body.actuators[0].id).to.be.equal(3286);
-                    expect(res.body.actuators.length).to.be.above(1);
+                    expect(res.body.actuators.length).to.be.equal(1);
                     done();
                 });
         });
     });
 
-    describe('#updateAliasForDevice', function () {
-        it('Update an alias for a device', function (done) {
+    describe('#Change an alias', function () {
+        it('should change the alias of a sensor', function (done) {
             api
-                .get('/devices/actuators')
-                .send()
-                .expect(200) //Status code
+                .put('http://localhost:3221/devices/sensors/123/alias')
+                .send({alias: 'nieuw'})
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
-                    expect(res.body.actuators[0].id).to.be.equal(3286);
-                    expect(res.body.actuators.length).to.be.above(1);
+                    expect(res.body.success).to.be.equal("Success, alias for 123 was successfully updated.");
+                    done();
+                });
+        });
+
+        it('should change the alias of a actuator', function (done) {
+            api
+                .put('http://localhost:3221/devices/actuators/3286/alias')
+                .send({alias: 'nieuw'})
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    expect(res.body.success).to.be.equal("Success, alias for 3286 was successfully updated.");
                     done();
                 });
         });
     });
+
 
     after(function (done) {
         done();
     });
 });
 
-function newDevice(id, name, alias) {
-    return new Sensor({
+function newDevice(id, name ) {
+    return {
         id: id,
-        config:{alias: alias},
         model:{
             name: name,
             sokVersion: 0.11,
@@ -119,5 +131,5 @@ function newDevice(id, name, alias) {
                 description: "geeft de temperatuur"
             }]
         }
-    });
+    }
 }

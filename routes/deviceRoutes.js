@@ -5,6 +5,7 @@ module.exports = (function() {
     var route = express.Router();
 
     route.get('/', function(request, resp) {
+        console.log(deviceManager.getAll());
         resp.send({devices: deviceManager.getAll()});
     });
 

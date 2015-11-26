@@ -23,8 +23,6 @@ var io = null;
  * @param remote
  */
 function addToDeviceList(device, remote) {
-    console.log('Adding device:' + device.id);
-
     var deviceType;
     switch(device.type){
         case 'actuator':
@@ -50,14 +48,11 @@ function addToDeviceList(device, remote) {
         }
 
     } else {
-        console.log('Adding device:' + device.id + 'type: ' + deviceType);
         var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null};
         devices[deviceType].push(deviceObj);
-        console.log('Added device: ' + devices[deviceType][devices[deviceType].length - 1].id);
         io.emit("deviceAdded", deviceObj);
         if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
     }
-    console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
 }
 
 /**
@@ -131,8 +126,12 @@ function updateDeviceStatus(devicetype, id, status) {
  * @returns {*}
  */
 function updateDeviceAliasFunction(devicetype, id, alias){
+    console.log(devicetype, id, alias);
+    console.log(devices);
+    console.log(devicetype.length);
     for (var i = 0; i < devices.devicetype.length; i++) {
        if(devices.devicetype[i].id === id){
+            console.log("hier3");
             devices.devicetype[i].config.alias = alias;
             return {Success: "Success, alias for "+ devices.devicetype[i].id + " was successfully updated."};
        }
@@ -182,7 +181,9 @@ module.exports = {
     getByIP:getDeviceByIPAddress,
     getSensor: getSensorById,
     getActuator: getActuatorById,
-    getAll: function(){return devices;},
+    getAll: function(){
+        console.log("hier");
+        return devices;},
     getSensors: function(){return devices.sensors;},
     getActuators: function(){return devices.actuators;},
     updateDeviceAlias: updateDeviceAliasFunction,

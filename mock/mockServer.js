@@ -33,8 +33,8 @@ function broadcastUDPPacket(){
         version:'0.0.1'
     };
 
-    //var broadcastAddress = "0.0.0.0";
-    var broadcastAddress = "255.255.255.255";
+    var broadcastAddress = "0.0.0.0";
+    //var broadcastAddress = "255.255.255.255";
     var message = new Buffer(JSON.stringify(broadcastObject));
     var client = dgram.createSocket("udp4");
     client.bind();
@@ -328,7 +328,7 @@ function detemineKind(id){
             },
         }
     }
-    return kind;
+    return kind;comm
 }
 
 function getOpenCommand(name){
