@@ -97,6 +97,13 @@ body{
     box-shadow:         none;
 }
 
+.customCard.onoff:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
 .customCard .detailcontainer .description{
     font-size:11px;
     color:RGBA(149, 149, 149, 1);
