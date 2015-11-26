@@ -36,6 +36,7 @@ module.exports = function(grunt) {
                     'public/bower_components/jquery/dist/jquery.js',
                     'public/bower_components/Materialize/dist/js/materialize.js',
                     'public/bower_components/socket.io-client/socket.io.js',
+                    'public/bower_components/keyboard/dist/js/jquery.keyboard.min.js',
 
                     'tmp/templates.js',
 
@@ -52,6 +53,7 @@ module.exports = function(grunt) {
                 },
                 src: [
                     'public/bower_components/Materialize/dist/css/materialize.css',
+                    'public/bower_components/keyboard/dist/css/keyboard-dark.min.css',
 
                     'public/css/app.css'
                 ],
