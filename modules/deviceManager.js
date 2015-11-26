@@ -87,7 +87,7 @@ function updateDeviceStatus(devicetype, id, status) {
 function updateDeviceAliasFunction(devicetype, id, alias){
     for (var i = 0; i < devices.devicetype.length; i++) {
        if(devices.devicetype[i].id === id){
-            devices.devicetype[i].config.alias = clientRequestInterval;
+            devices.devicetype[i].config.alias = alias;
             return {Success: "Success, alias for "+ devices.devicetype[i].id + " was successfully updated."};
        }
     }
