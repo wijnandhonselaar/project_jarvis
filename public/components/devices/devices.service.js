@@ -16,7 +16,7 @@
 
 
         socket.socketListener("deviceAdded", function(data){
-           devices[data.data.type].push(data.data);
+            devices[data.model.type].push(data);
             $rs.$apply();
         });
 
