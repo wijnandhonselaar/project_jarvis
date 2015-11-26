@@ -1,9 +1,11 @@
+"use strict";
+
 var Actuator = require('../models/actuator.js'),
     Sensor = require('../models/sensor.js');
 
-/*
+/**
  * checkType - returns the model based on the type (string) paramater
- * type(string): the device type (actuator/sensor)
+ * @param type(string): the device type (actuator/sensor)
  */
 function checkType(type) {
     if(type === 'actuator' || type === 'Actuator'){
@@ -15,11 +17,11 @@ function checkType(type) {
     }
 }
 
-/*
+/**
  *  getDevice - returns the requested device
- *  id(number): the id of the device
- *  type(string): the device type (actuator/sensor)
- *  fn(function): callback function (err, res)
+ *  @param id(number): the id of the device
+ *  @param type(string): the device type (actuator/sensor)
+ *  @param fn(function): callback function (err, res)
  */
 function getDevice(id, type, fn) {
 
@@ -37,10 +39,10 @@ function getDevice(id, type, fn) {
     });
 }
 
-/*
+/**
  * getAllDevices
- * type(string): get all actuators or sensors.
- * fn(function): the callback
+ * @param type(string): get all actuators or sensors.
+ * @param fn(function): the callback
  */
 function getAllDevices(type, fn) {
 
@@ -58,11 +60,11 @@ function getAllDevices(type, fn) {
     });
 }
 
-/*
+/**
  *  saveDevice - saves the object from the newDevice parameter
- *  newDevice(object): the new device
- *  type(string): with the device (actuator/sensor)
- *  fn(function): callback function (err, res)
+ *  @param newDevice(object): the new device
+ *  @param type(string): with the device (actuator/sensor)
+ *  @param fn(function): callback function (err, res)
  */
 function saveDevice(newDevice, type, fn) {
 
@@ -80,11 +82,11 @@ function saveDevice(newDevice, type, fn) {
     });
 }
 
-/*
+/**
  *  updateAlias - updates the alias
- *  type(string): the type (actuator/sensor)
- *  alias(string): the alias
- *  fn(function): callback function (err, res)
+ *  @param type(string): the type (actuator/sensor)
+ *  @param alias(string): the alias
+ *  @param fn(function): callback function (err, res)
  */
 function updateAlias(id, type, alias, fn) {
 
@@ -103,11 +105,11 @@ function updateAlias(id, type, alias, fn) {
 }
 
 
-/*
+/**
  *  updateClientRequestInterval - updates the clientRequestInterval for a sensor
- *  id(number): the id of the object to update
- *  interval(number): the desired interval
- *  fn(function): callback function (err, res)
+ *  @param id(number): the id of the object to update
+ *  @param interval(number): the desired interval
+ *  @param fn(function): callback function (err, res)
  */
 function updateClientRequestInterval(id, interval, fn) {
 
@@ -118,8 +120,12 @@ function updateClientRequestInterval(id, interval, fn) {
     });
 }
 
-/*
+/**
  *
+ * @param id: the id of the device to update
+ * @param type: actuator or sensor
+ * @param status: true or false
+ * @param fn: callback function(err, res)
  */
 function updateActive(id, type, status, fn) {
 
@@ -136,7 +142,6 @@ function updateActive(id, type, status, fn) {
         fn(err);
     });
 }
-
 
 module.exports = {
     saveDevice: saveDevice,
