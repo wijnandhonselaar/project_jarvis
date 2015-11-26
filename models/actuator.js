@@ -35,7 +35,8 @@ var Actuator = thinky.createModel("Actuator", {
 	},
 	config: {
 		ip: type.string().required(),
-		alias: type.string()
+		alias: type.string(),
+		active: type.boolean().default(true)
 	}
 });
 
