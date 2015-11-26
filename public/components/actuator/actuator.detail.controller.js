@@ -30,7 +30,7 @@
                     Materialize.toast("Command error", 4000);
                     console.log(err);
                 });
-        }
+        };
 
     }
 

@@ -5,21 +5,21 @@
         .module('jarvis.devices')
         .factory('DevicesService', DevicesService);
 
-    DevicesService.$inject = ['$http', '$rootScope'];
+    DevicesService.$inject = ['$http', '$rootScope', 'socketService'];
 
-    function DevicesService($http, $rs) {
+    function DevicesService($http, $rs, socket) {
         var devices = {
             actuator: [],
             sensor: []
         };
         var onDeviceLoad = [];
 
-        // socket moet nog in een aparte service
-        var socket = io.connect('http://localhost:3221');
-        socket.on('deviceAdded', function (data) {
-            devices[data.data.type].push(data.data);
+
+        socket.socketListener("deviceAdded", function(data){
+           devices[data.data.type].push(data.data);
             $rs.$apply();
         });
+        
 
         loadDevices()
             .then(function () {
@@ -100,11 +100,11 @@
             );
         }
 
-        function sendCommand(id, command) {
-            return new promise(
+        function sendCommand(id, command, type) {
+            return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/actuator/' + id + '/' + command.name, command.parameters)
+                        $http.post('http://localhost:3221/'+type+'/' + id + '/' + command.name, command.parameters)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
@@ -114,7 +114,7 @@
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
-                        $http.get('http://localhost:3221/actuator/' + id + '/' + command.name)
+                        $http.get('http://localhost:3221/'+type+'/' + id + '/' + command.name)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
