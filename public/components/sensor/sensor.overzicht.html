@@ -1,13 +1,39 @@
-<div class="row">
-    <div class="col s4 m4 l4" ng-repeat="sensor in soc.sensors" ng-click="soc.GoToDetail(sensor)">
-        <div class="card-panel grey lighten-5" style="padding: 10px;">
-            <div class="row" style="height: 50px;">
-                <div class="col m4" style="height:50px;">
-                    <img ng-src="{{sensor.image}}" ng-if="sensor.image" style="width: 100%;">
+<!--<div class="row">-->
+    <!--<div class="col s4 m4 l4" ng-repeat="sensor in soc.sensors" ng-click="soc.GoToDetail(sensor)">-->
+        <!--<div class="card-panel grey lighten-5" style="padding: 10px;">-->
+            <!--<div class="row" style="height: 50px;">-->
+                <!--<div class="col m4" style="height:50px;">-->
+                    <!--<img ng-src="{{sensor.image}}" ng-if="sensor.image" style="width: 100%;">-->
+                <!--</div>-->
+                <!--<div class="col m8">-->
+                    <!--<h6>{{sensor.alias}}</h6>-->
+                    <!--<span ng-repeat="(key, value) in sensor.commands.status.returns" ng-if="$index == 0">{{key}}: {{value}}</span>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+
+<!--<pre>-->
+<!--{{aoc.actuator | json}}-->
+<!--</pre>-->
+<div class="ptop_30">
+    <div class="col m6" ng-repeat="sensor in soc.sensors">
+        <div class="row">
+            <div class="col m4">
+                <div class="customCard onoff text-center">
+                    <div class="status red"></div>
+                    <div style="background-image:url({{sensor.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
+                    <!--<img src="{{actuator.model.image}}" style="width:25px; margin-top:3px;">-->
                 </div>
-                <div class="col m8">
-                    <h6>{{sensor.alias}}</h6>
-                    <span ng-repeat="(key, value) in sensor.commands.status.returns" ng-if="$index == 0">{{key}}: {{value}}</span>
+            </div>
+            <div class="col m8" ng-click="soc.GoToDetail(sensor)" style="margin-left:-8px; margin-top:0px;">
+                <div class="customCard" style="padding:1px;">
+                    <div class="detailcontainer">
+                        {{sensor.model.name}}<br>
+                        <span ng-repeat="(key, value) in sensor.commands.status.returns" ng-if="$index == 0">{{key}}: {{value}}</span>
+                    </div>
                 </div>
             </div>
         </div>
