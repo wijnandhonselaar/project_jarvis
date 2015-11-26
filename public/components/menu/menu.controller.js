@@ -5,10 +5,12 @@
         .module('jarvis.menu')
         .controller('MenuCtrl', MenuCtrl);
 
-    MenuCtrl.$inject = [];
+    MenuCtrl.$inject = ["$stateParams"];
 
-    function MenuCtrl() {
+    function MenuCtrl($stateParams) {
         var mc = this;
+        mc.active = $stateParams.activeMenu;
+        console.log(mc.active);
     }
 
 })();
