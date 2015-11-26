@@ -16,8 +16,8 @@ var devices =  {
 };
 
 //create 30 actuators and 30 sensors
-for (var i = 0; i < 50; i++) {
-        if(i < 30){
+for (var i = 0; i < 16; i++) {
+        if(i < 8){
             devices.actuators.push(createDevice("actuators", i));
         }
         else{
@@ -49,16 +49,16 @@ function broadcastUDPPacket(){
 //send all devices at once
  app.get('/sok', function(req,res){
     console.log(index);
-    if(index == 50){
+    if(index == 16){
         index = 0;
     }
-    if(index < 30){
+    if(index < 8){
         console.log(devices.actuators[index]);
         res.send(JSON.stringify(devices.actuators[index]));
         index ++;
     }
-    else if(index < 50){
-        res.send(JSON.stringify(devices.sensors[index-30]));
+    else if(index < 16){
+        res.send(JSON.stringify(devices.sensors[index-8]));
         index ++;
     }
 });

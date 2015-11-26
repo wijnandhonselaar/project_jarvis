@@ -21,9 +21,11 @@
                 console.error(err);
             });
 
-        function showCommand(parameters){
-            if(Object.keys(parameters).length > 0)
-            $('#commandModal').openModal();
+        function showCommand(command){
+            if(Object.keys(command.parameters).length > 0) {
+                $('#commandTitle').text(command.name);
+                $('#commandModal').openModal();
+            }
         }
 
         $timeout(function(){
