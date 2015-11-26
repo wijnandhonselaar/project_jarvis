@@ -5,10 +5,11 @@
         .module('jarvis.actuator')
         .controller('ActuatorDetailCtrl', ActuatorDetailCtrl);
 
-    ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope"];
+    ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope", '$timeout'];
 
-    function ActuatorDetailCtrl(DS, $sp, $scope) {
+    function ActuatorDetailCtrl(DS, $sp, $scope, $timeout) {
         var adc = this;
+        adc.showCommand = showCommand;
 
         DS.getDeviceById($sp.uid,"actuator")
             .then(function(data){
@@ -20,15 +21,24 @@
                 console.error(err);
             });
 
-        DS.sendCommand()
-            .then(function(data){
-                Materialize.toast("Command successfull excecuted", 4000);
-                console.log(data);
-            })
-            .catch(function(err){
-                Materialize.toast("Command error", 4000);
-                console.log(err);
-            })
+        function showCommand(parameters){
+            if(Object.keys(parameters).length > 0)
+            $('#commandModal').openModal();
+        }
+
+        $timeout(function(){
+            $('.tooltipped').tooltip({delay: 50});
+        });
+
+        //DS.sendCommand()
+        //    .then(function(data){
+        //        Materialize.toast("Command successfull excecuted", 4000);
+        //        console.log(data);
+        //    })
+        //    .catch(function(err){
+        //        Materialize.toast("Command error", 4000);
+        //        console.log(err);
+        //    });
     }
 
 })();

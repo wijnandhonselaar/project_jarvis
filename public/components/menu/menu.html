@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col m2 menu_item" ng-class="(mc.active == '') ? 'active' : ''" ui-sref="actuatorsOverzicht">
+        <div class="row">
+            <div class="col m12 text-center">
+                <img src="/images/icon_home{{mc.active=='' ? '_active' : ''}}.png" width="70%"><br>
+                <span>Home</span>
+            </div>
+        </div>
+    </div>
+    <div class="col m2 menu_item" ng-class="(mc.active == 'actuators') ? 'active' : ''" ui-sref="actuatorsOverzicht">
+        <div class="row">
+            <div class="col m12 text-center">
+                <img src="/images/icon_apparaten{{mc.active=='actuators' ? '_active' : ''}}.png" class="grayscale" width="70%"><br>
+                <span>Apparaten</span>
+            </div>
+        </div>
+    </div>
+    <div class="col m2 menu_item" ng-class="(mc.active == 'sensors') ? 'active' : ''" ui-sref="sensorenOverzicht">
+        <div class="row">
+            <div class="col m12 text-center">
+                <img src="/images/icon_sensoren{{mc.active=='sensors' ? '_active' : ''}}.png" width="70%"><br>
+                <span>Sensoren</span>
+            </div>
+        </div>
+    </div>
+    <div class="col m2 menu_item" ng-class="(mc.active == '') ? 'active' : ''" ui-sref="sensorenOverzicht">
+        <div class="row">
+            <div class="col m12 text-center" >
+                <img src="/images/icon_instellingen{{mc.active=='' ? '_active' : ''}}.png" width="70%"><br>
+                <span>Instellingen</span>
+            </div>
+        </div>
+    </div>
+</div>

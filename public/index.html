@@ -7,20 +7,44 @@
     <link href="css/dist.css" rel="stylesheet" type="text/css">
 </head>
 
-<body class="grey lighten-3">
+<body class="white">
     <header>
-        <nav class="top-nav grey lighten-5" style="height: 50px;position: fixed;">
-            <div class="container">
-                <div class="nav-wrapper valign-wrapper" style="height: 50px;">
-                    <a class="page-title valign" title-dir style="color: black;">Title</a>
+        <nav class="top-nav no-shadow white" style="height: 50px;position: fixed;">
+            <div class="row" style="padding-left:25px; padding-top:0px; margin-top:-5px;">
+                <div class="col m10">
+                    <a class="valign" title-dir style="font-size:22px; color: black;">Title</a>
+                </div>
+                <div class="col m1">
+                    <img src="images/icon_wifi.png" style="width: 30px; margin-left:-25px; margin-top:13px;">
+                </div>
+                <div class="col m1" style="color:black; margin-left:-30px; margin-top:-4px; font-size:28px;">
+                    <clock format="HH:mm"></clock>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div style="padding-top: 60px;" id="container">
-        <ui-view></ui-view>
-    </div>
+    <!--<div class="container">-->
+        <div class="row ptop_50">
+            <div class="col m9 nopad">
+                <div class="row">
+                    <div class="col m12 mainwindow">
+                        <div ui-view="mainView"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col m12 backpanel_light menucontainer">
+                        <div ui-view="menuView"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col m3 backpanel_dark logwindow nopad">
+                <div ui-view="logView"></div>
+            </div>
+        </div>
+    <!--</div>-->
+
+
 
     <script src="//localhost:5050/livereload.js"></script>
 </body>

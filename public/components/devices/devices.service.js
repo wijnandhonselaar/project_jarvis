@@ -101,7 +101,7 @@
         }
 
         function sendCommand(id, command) {
-            return new promise(
+            return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
                         $http.post('http://localhost:3221/actuator/' + id + '/' + command.name, command.parameters)
