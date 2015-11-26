@@ -290,7 +290,7 @@ describe('Actuator', function () {
             }
         }
 
-        rethinkManager.saveDevice(actuator,'actuator', function(err, res){
+        rethinkManager.saveDevice(actuator,'Actuator', function(err, res){
             if(err) {
                 done(err);
             } else {
