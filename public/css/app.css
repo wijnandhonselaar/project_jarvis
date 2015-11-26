@@ -30,6 +30,7 @@ body{
     padding-top:50px !important;
 }
 
+
 .ptop_30{
     padding-top:30px !important;
 }
@@ -75,6 +76,10 @@ body{
     border-right: 1px solid RGBA(149, 149, 149, 1);
 }
 
+.menu_item.active span{
+    color:#f54f29;
+}
+
 .customCard{
     border-radius: 3px;
     position: relative;
@@ -97,7 +102,7 @@ body{
     box-shadow:         none;
 }
 
-.customCard.onoff:active{
+.customCard:active{
     background-color: #F4F4F4;
     -moz-box-shadow:    inset 0 0 7px #EAEAEA;
     -webkit-box-shadow: inset 0 0 7px #EAEAEA;
@@ -107,6 +112,20 @@ body{
 .customCard .detailcontainer .description{
     font-size:11px;
     color:RGBA(149, 149, 149, 1);
+}
+
+.card .touch:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.card.touch:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
 }
 
 .status.off{
@@ -157,4 +176,22 @@ body{
 .logentry{
     height: 41px;
     border-bottom: 1px solid white;
+}
+
+.detaildescrip{
+    color:#959595;
+}
+
+.detaildescrip .description{
+    font-size:12px;
+}
+
+.command{
+    vertical-align: middle;
+    padding:5px;
+}
+
+.command .touch{
+    height: 36px;
+    padding:6px;
 }

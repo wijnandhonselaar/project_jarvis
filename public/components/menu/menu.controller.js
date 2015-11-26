@@ -11,6 +11,8 @@
         var mc = this;
         mc.active = $stateParams.activeMenu;
         console.log(mc.active);
+
+
     }
 
 })();

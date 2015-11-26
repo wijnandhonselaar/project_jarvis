@@ -27,7 +27,7 @@
                     "menuView": {
                         templateUrl: "components/menu/menu.html",
                         controller: "MenuCtrl",
-                        controllerAd: "mc"
+                        controllerAs: "mc"
                     }
                 }
             })
@@ -49,7 +49,7 @@
                     "menuView": {
                         templateUrl: "components/menu/menu.html",
                         controller: "MenuCtrl",
-                        controllerAd: "mc"
+                        controllerAs: "mc"
                     }
                 }
             });

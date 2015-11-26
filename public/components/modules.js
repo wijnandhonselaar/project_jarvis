@@ -3,6 +3,7 @@
 
     angular.module('jarvis', [
         'templatecache',
+        'jarvis.clock',
         'jarvis.title',
         'jarvis.devices',
         'jarvis.log',
