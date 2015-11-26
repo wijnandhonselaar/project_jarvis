@@ -5,11 +5,13 @@
         'templatecache',
         'jarvis.clock',
         'jarvis.title',
+        'jarvis.socketService',
         'jarvis.devices',
         'jarvis.log',
         'jarvis.menu',
         'jarvis.sensor',
         'jarvis.actuator'
+
     ]);
 
 }());
