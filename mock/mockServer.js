@@ -63,6 +63,7 @@ function broadcastUDPPacket(){
     }
 });
 
+
 function createDevice(deviceType, id){
     kind = detemineKind(id);
 
