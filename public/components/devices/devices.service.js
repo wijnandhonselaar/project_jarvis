@@ -33,7 +33,8 @@
             loadDevices:    loadDevices,
             getSensors:     getSensors,
             getActuators:   getActuators,
-            getDeviceById:  getDeviceById
+            getDeviceById:  getDeviceById,
+            sendCommand:    sendCommand
         };
 
         function loadDevices() {
@@ -98,6 +99,30 @@
                 }
             );
         }
+
+        function sendCommand(id, command){
+            if(command.httpMethod === "POST") {
+                $http.post('http://localhost:3221/actuator/' + id + '/' + command.name, command.parameters)
+                    .success(function (data, status) {
+                        console.log("succesfull send");
+                        return data;
+                    })
+                    .error(function (){
+                        console.log("error with command");
+                        return "err";
+                    });
+            }else if(command.httpMethod === "GET"){
+                $http.get('http://localhost:3221/actuator/' + id + '/' + command.name)
+                    .success(function (data, status){
+                        console.log("succesfull send");
+                        return data;
+                    })
+                    .error(function() {
+                        console.log("error with command");
+                        return "err";
+                    });
+                }
+            }
 
     }
 })();
