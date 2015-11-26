@@ -12,10 +12,10 @@ describe('Device routing', function() {
         io.emit = function(){};
         deviceManager.init(io);
         var device = newDevice(123, 'a', 'woonkamer thermometer');
-        device.type = 'sensors';
+        device.type = 'sensor';
         deviceManager.add(device, '192.168.0.45');
         device = newDevice(3286, 'b', 'woonkamer, lamp');
-        device.type = 'actuators';
+        device.type = 'actuator';
         deviceManager.add(device, '192.168.0.46');
         done();
     });
@@ -101,20 +101,23 @@ function newDevice(id, name, alias) {
     return new Sensor({
         id: id,
         config:{alias: alias},
-        name: name,
-        sokVersion: 0.11,
-        description: 'Temperatuur op 0.1c nauwkeuring',
-        commands: [{
-            name: 'c',
-            parameters: ["para", "meter"],
-            requestInterval: 5000,
-            httpMethod: "GET",
-            returns: {
-                Celsius: 'number',
-                Fahrenheit: 'number',
-                Kelvin: 'number'
-            },
-            description: "geeft de temperatuur"
-        }]
+        model:{
+            name: name,
+            sokVersion: 0.11,
+            description: 'Temperatuur op 0.1c nauwkeuring',
+            image: "niks",
+            commands: [{
+                name: 'c',
+                parameters: ["para", "meter"],
+                requestInterval: 5000,
+                httpMethod: "GET",
+                returns: {
+                    Celsius: 'number',
+                    Fahrenheit: 'number',
+                    Kelvin: 'number'
+                },
+                description: "geeft de temperatuur"
+            }]
+        }
     });
 }

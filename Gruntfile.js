@@ -48,7 +48,7 @@ module.exports = function(grunt) {
             },
             css: {
                 options: {
-                    separator: ';'
+                    separator: '\n'
                 },
                 src: [
                     'public/bower_components/Materialize/dist/css/materialize.css',

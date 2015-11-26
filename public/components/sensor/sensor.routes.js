@@ -11,18 +11,47 @@
         $stateProvider
             .state('sensorenOverzicht', {
                 url: "/sensors",
-                templateUrl: "components/sensor/sensor.overzicht.html",
-                controller: 'SensorOverzichtCtrl',
-                controllerAs: 'soc',
-                data: { pageTitle: "Sensoren" }
+                params: { activeMenu: "sensors" },
+                data: { pageTitle: "Sensoren" },
+                views: {
+                    "mainView": {
+                        templateUrl: "components/sensor/sensor.overzicht.html",
+                        controller: 'SensorOverzichtCtrl',
+                        controllerAs: 'soc'
+                    },
+                    "logView": {
+                        templateUrl: "components/log/log.html",
+                        controller: "LogCtrl",
+                        controllerAs: "lc"
+                    },
+                    "menuView": {
+                        templateUrl: "components/menu/menu.html",
+                        controller: "MenuCtrl",
+                        controllerAs: "mc"
+                    }
+                }
             })
             .state('sensorDetail', {
                 url: "/sensors/:uid",
-                templateUrl: "components/sensor/sensor.detail.html",
-                controller: 'SensorDetailCtrl',
-                controllerAs: 'sdc',
-                params: { data: null },
-                data: { pageTitle: "uid: sensor" }
+                params: { data: null, activeMenu: "sensors" },
+                data: { pageTitle: "uid: sensor" },
+                views: {
+                    "mainView": {
+                        templateUrl: "components/sensor/sensor.detail.html",
+                        controller: 'SensorDetailCtrl',
+                        controllerAs: 'sdc'
+                    },
+                    "logView": {
+                        templateUrl: "components/log/log.html",
+                        controller: "LogCtrl",
+                        controllerAs: "lc"
+                    },
+                    "menuView": {
+                        templateUrl: "components/menu/menu.html",
+                        controller: "MenuCtrl",
+                        controllerAs: "mc"
+                    }
+                }
             });
     }
 

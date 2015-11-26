@@ -24,9 +24,8 @@ var rethinkManager = require('./rethinkManager');
  * @param remote
  */
 function addToDeviceList(device, remote) {
-    //console.log('Adding device:' + device.id);
+    console.log('Adding device:' + device.id);
     if(devices[device.type].length !== 0) {
-        //console.log('Hier kom ik niet');
         var exists = false;
         for(var i = 0; i<devices[device.type].length; i++){
             if(devices[device.type][i].id === device.id){
@@ -52,9 +51,9 @@ function addToDeviceList(device, remote) {
         }
 
     } else {
-        //console.log('Adding device:' + device.id + 'type: ' + device.type);
+        console.log('Adding device:' + device.id + 'type: ' + device.type);
         devices[device.type].push({id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
-        //console.log('Added device: ' + devices[device.type][devices[device.type].length - 1].id);
+        console.log('Added device: ' + devices[device.type][devices[device.type].length - 1].id);
         io.emit("deviceAdded", {data: device});
 
         // Save to the database!
@@ -68,13 +67,7 @@ function addToDeviceList(device, remote) {
         });
         if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[device.type].length);
     }
-    if(devices.actuators[0] !== undefined) {
-        //console.log('Actuators: ' + devices.actuators[0]);
-    }
-    if(devices.sensors[0] !== undefined) {
-        //console.log('Sensors: ' + devices.sensors[0]);
-    }
-    //console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
+    console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
 }
 
 /**

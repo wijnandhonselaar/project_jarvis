@@ -1,0 +1,197 @@
+html{
+    height: 480px !important;
+    width: 800px !important;
+    overflow: hidden !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body{
+    height: 480px !important;
+    width: 800px !important;
+    overflow: hidden !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.mainwindow{
+    height: 325px !important;
+}
+
+.ptop_50{
+    padding-top:50px !important;
+}
+
+
+.ptop_30{
+    padding-top:30px !important;
+}
+
+.ptop_10{
+    padding-top:10px !important;
+}
+
+.nopad{
+    padding:0px !important;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.logwindow{
+    height: 100vh;
+}
+
+.menucontainer{
+    border-top:1px solid RGBA(149, 149, 149, 1);
+    height: 100vh;
+}
+
+.backpanel_dark{
+    background-color: #EAEAEA;
+}
+
+.backpanel_light{
+    background-color: #F4F4F4;
+}
+
+.menu_item{
+    margin-top:-2px;
+    height: 100vh;
+    padding-top:12px !important;
+}
+
+.menu_item.active{
+    background-color: white;
+    border-left:1px solid RGBA(149, 149, 149, 1);
+    border-right: 1px solid RGBA(149, 149, 149, 1);
+}
+
+.menu_item.active span{
+    color:#f54f29;
+}
+
+.customCard{
+    border-radius: 3px;
+    position: relative;
+    height: 50px;
+    border:1px solid RGBA(234, 234, 234, 1);
+    background-color: white;
+    -webkit-box-shadow: 2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    -moz-box-shadow:    2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    box-shadow:         2px 2px 5px 0px RGBA(234, 234, 234, 1);
+}
+
+.customCard .detailcontainer{
+    padding:3px;
+    color:RGBA(149, 149, 149, 1);
+}
+
+.no-shadow{
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
+
+.customCard:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.customCard .detailcontainer .description{
+    font-size:11px;
+    color:RGBA(149, 149, 149, 1);
+}
+
+.card .touch:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.card.touch:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.status.off{
+    background-color: #f54f29;
+}
+
+.status.on{
+    background-color: RGBA(189, 244, 106, 1);
+}
+
+.status{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    right:5px;
+    top:5px;
+}
+
+.top-nav{
+    border-bottom: 1px solid #f54f29;
+}
+
+.loglevel{
+    border-right: 1px solid white;
+    height: 40px;
+    width: 4px !important;
+}
+
+.loglevel.alert{
+    background-color: RGBA(247, 78, 26, 1);
+}
+
+.loglevel.newdevice{
+    background-color: RGBA(189, 244, 106, 1);
+}
+
+.lognotice{
+    font-size: 12px;
+    padding-top:2px;
+}
+
+.lognotice .date{
+    font-size:11px;
+    color:RGBA(149, 149, 149, 1);
+}
+
+.logentry{
+    height: 41px;
+    border-bottom: 1px solid white;
+}
+
+.detaildescrip{
+    color:#959595;
+}
+
+.detaildescrip .description{
+    font-size:12px;
+}
+
+.command{
+    vertical-align: middle;
+    padding:5px;
+}
+
+.command .touch{
+    height: 36px;
+    padding:6px;
+}
