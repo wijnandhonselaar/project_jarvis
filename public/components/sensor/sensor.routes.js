@@ -34,7 +34,7 @@
             .state('sensorDetail', {
                 url: "/sensors/:uid",
                 params: { data: null, activeMenu: "sensors" },
-                data: { pageTitle: "uid: sensor" },
+                data: { pageTitle: "Sensoren detail" },
                 views: {
                     "mainView": {
                         templateUrl: "components/sensor/sensor.detail.html",
