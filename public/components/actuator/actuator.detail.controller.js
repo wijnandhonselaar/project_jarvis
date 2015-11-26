@@ -19,8 +19,16 @@
                 Materialize.toast("Device not found", 4000);
                 console.error(err);
             });
-        //function below gets response from the ESP8266
-        //DS.sendCommand();
+
+        DS.sendCommand()
+            .then(function(data){
+                Materialize.toast("Command successfull excecuted", 4000);
+                console.log(data);
+            })
+            .catch(function(err){
+                Materialize.toast("Command error", 4000);
+                console.log(err);
+            })
     }
 
 })();
