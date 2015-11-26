@@ -17,26 +17,26 @@ module.exports = (function() {
     });
 
     route.get('/:devicetype/:id/:command', function(request, resp){
-        var device = deviceManager.getActuator(request.params.id);
+        var device = deviceManager.getActuator(parseInt(request.params.id));
         response = comm.get(request.params.command,device, function(){
             resp.send(JSON.stringify(response))
         })
     });
 
     route.post('/:devicetype/:id/:command', function(request,resp){
-        var device = deviceManager.getActuator(request.params.id);
+        var device = deviceManager.getActuator(parseInt(request.params.id));
         response = comm.post(request.params.command , device,command.parameters, function(){
             resp.send(JSON.stringify(response));
         });
     });
 
     route.put('/:devicetype/:id/alias', function(request,resp){
-        response = deviceManager.updateDeviceAlias(request.params.devicetype, request.params.id, request.body.alias);
+        response = deviceManager.updateDeviceAlias(request.params.devicetype, parseInt(request.params.id), request.body.alias);
         resp.send(JSON.stringify(response));
     });
 
     route.put('/sensors/:id/interval', function(request,resp){
-        response = deviceManager.updateSensorInterval(request.params.id, request.body.interval);
+        response = deviceManager.updateSensorInterval(parseInt(request.params.id), request.body.interval);
         resp.send(JSON.stringify(response));
     });
 

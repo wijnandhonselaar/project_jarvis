@@ -25,19 +25,28 @@ var rethinkManager = require('./rethinkManager');
  */
 function addToDeviceList(device, remote) {
     console.log('Adding device:' + device.id);
-    if(devices[device.type].length !== 0) {
+
+    var deviceType;
+    switch(device.type){
+        case 'actuator':
+            deviceType = 'actuators';
+            break;
+        case 'sensor':
+            deviceType = 'sensors';
+            break;
+    }
+    if(devices[deviceType].length !== 0) {
         var exists = false;
-        for(var i = 0; i<devices[device.type].length; i++){
-            if(devices[device.type][i].id === device.id){
+        for(var i = 0; i<devices[deviceType].length; i++){
+            if(devices[deviceType][i].id === device.id){
                 exists = true;
             }
         }
 
         if(!exists){
-            devices[device.type].push({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null});
-            io.emit("deviceAdded", {data: device});
-            console.log(device.type);
-
+            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status:null};
+            devices[deviceType].push(deviceObj);
+            io.emit("deviceAdded", deviceObj);
             // Save to the database!
             rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}}, device.type, function(err, res){
                 if(err) {
@@ -47,15 +56,15 @@ function addToDeviceList(device, remote) {
                     if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
                 }
             });
-            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[device.type].length);
+            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
         }
 
     } else {
-        console.log('Adding device:' + device.id + 'type: ' + device.type);
-        devices[device.type].push({id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null});
-        console.log('Added device: ' + devices[device.type][devices[device.type].length - 1].id);
-        io.emit("deviceAdded", {data: device});
-
+        console.log('Adding device:' + device.id + 'type: ' + deviceType);
+        var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null};
+        devices[deviceType].push(deviceObj);
+        console.log('Added device: ' + devices[deviceType][devices[deviceType].length - 1].id);
+        io.emit("deviceAdded", deviceObj);
         // Save to the database!
         rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null}, device.type, function(err, res){
             if(err) {
@@ -65,7 +74,7 @@ function addToDeviceList(device, remote) {
                 if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
             }
         });
-        if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[device.type].length);
+        if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
     }
     console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
 }
@@ -154,6 +163,7 @@ function updateDeviceAliasFunction(devicetype, id, alias){
                     if(GLOBAL.logToConsole) console.log("Saved the alias '"+ alias + "' to the database");
                 }
             });
+
             return {Success: "Success, alias for "+ devices.devicetype[i].id + " was successfully updated."};
        }
     }
