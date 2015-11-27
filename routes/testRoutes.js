@@ -18,7 +18,7 @@ router.post('/validate/:command', function(req, res){
 });
 
 router.post('/devices/add', function(req, res){
-    deviceManager.add(req.body.device, req.body.ip);
+    deviceManager.add(req.body.device, req.body.remote);
     res.send('done');
 });
 

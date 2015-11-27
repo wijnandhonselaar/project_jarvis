@@ -318,7 +318,7 @@ function determineKind(id){
             }
         }
     }
-    return kind;
+    return device;
 }
 
 function getOpenCommand(name){

@@ -32,13 +32,16 @@ module.exports = (function() {
     });
 
     route.put('/:devicetype/:id/alias', function(request,resp){
-        response = deviceManager.updateDeviceAlias(request.params.devicetype, parseInt(request.params.id), request.body.alias);
-        resp.send(JSON.stringify(response));
+        deviceManager.updateDeviceAlias(request.params.devicetype, parseInt(request.params.id), request.body.alias, function(response){
+            console.log("inside callback", response);
+           resp.send(JSON.stringify(response)); 
+        }); 
     });
 
     route.put('/sensors/:id/interval', function(request,resp){
-        response = deviceManager.updateSensorInterval(parseInt(request.params.id), request.body.interval);
-        resp.send(JSON.stringify(response));
+        deviceManager.updateSensorInterval(parseInt(request.params.id), request.body.interval, function(response){
+           resp.send(JSON.stringify(response)); 
+        }); 
     });
 
     return route;
