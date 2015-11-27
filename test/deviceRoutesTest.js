@@ -1,41 +1,51 @@
 var expect              = require('chai').expect;
-var request             = require('supertest');
-var api                 = request('http://localhost:3221');
+var api                 = require('superagent');
 var Sensor              = require('../models/sensor');
-var deviceManager       = require('../modules/deviceManager');
-var io                  = {};
+var Actuator            = require('../models/actuator');
+var rethinkManager      = require('../modules/rethinkManager');
 
 describe('Device routing', function() {
 
-    // Add sensors
     before(function (done) {
-        io.emit = function(){};
-        deviceManager.init(io);
-        var device = newDevice(123, 'a', 'woonkamer thermometer');
+
+        var device = newDevice(1000015, 'a');
         device.type = 'sensor';
-        deviceManager.add(device, '192.168.0.45');
-        device = newDevice(3286, 'b', 'woonkamer, lamp');
+
+        api.post('http://localhost:3221/test/devices/add')
+        .send({device : device, remote:{address:'192.186.24.1'}})
+        .end(function (err, res) {
+            if (err) { throw err;}
+        });
+
+        device = newDevice(1000016, 'b');
         device.type = 'actuator';
-        deviceManager.add(device, '192.168.0.46');
+        api.post('http://localhost:3221/test/devices/add')
+        .send({device : device, remote:{address:'192.186.24.2'}})
+        .end(function (err, res) {
+            if (err) { throw err;}
+        })
+
         done();
     });
 
-    beforeEach(function (done) {
-        done();
+    beforeEach(function(done){
+        setTimeout(function() {
+            done();
+        }, 500);
     });
 
     describe('#get all devices', function() {
         it('should receive a list of devices', function (done) {
             api
-                .get('/devices')
-                .send()
-                .expect(200) //Status code
+            .get('http://localhost:3221/devices')
+                //.expect(200) //Status code
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
-                    //console.log(res.body);
-                    expect(res.body.devices.length).to.equal(2);
+                    expect(res.body.devices.actuators.length).to.equal(1);
+                    expect(res.body.devices.actuators[0].config.alias).to.equal('');
+                    expect(res.body.devices.sensors.length).to.equal(1);
                     done();
                 });
         });
@@ -44,15 +54,13 @@ describe('Device routing', function() {
     describe('#get all sensors', function () {
         it('should receive list of sensors', function (done) {
             api
-                .get('/devices/sensors')
-                .send()
-                .expect(200) //Status code
+                .get('http://localhost:3221/devices/sensors')
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
-                    expect(res.body.sensors[0].id).to.be.equal(123);
-                    expect(res.body.sensors.length).to.be.above(1);
+                    expect(res.body.sensors[0].id).to.be.equal(1000015);
+                    expect(res.body.sensors.length).to.equal(1);
                     done();
                 });
         });
@@ -61,63 +69,133 @@ describe('Device routing', function() {
     describe('#get all actuators', function () {
         it('should receive a list of actuators', function (done) {
             api
-                .get('/devices/actuators')
-                .send()
-                .expect(200) //Status code
+                .get('http://localhost:3221/devices/actuators')
+                //.send()
+                //.expect(200) //Status code
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
-                    expect(res.body.actuators[0].id).to.be.equal(3286);
-                    expect(res.body.actuators.length).to.be.above(1);
+                    expect(res.body.actuators[0].id).to.be.equal(1000016);
+                    expect(res.body.actuators.length).to.be.equal(1);
                     done();
                 });
         });
     });
 
-    describe('#updateAliasForDevice', function () {
-        it('Update an alias for a device', function (done) {
+    describe('#Change an alias', function () {
+        it('should change the alias of a sensor', function (done) {
             api
-                .get('/devices/actuators')
-                .send()
-                .expect(200) //Status code
+                .put('http://localhost:3221/devices/sensors/1000015/alias')
+                .send({alias: 'nieuw'})
                 .end(function(err,res) {
                     if (err) {
                         throw err;
                     }
-                    expect(res.body.actuators[0].id).to.be.equal(3286);
-                    expect(res.body.actuators.length).to.be.above(1);
+                    expect(JSON.parse(res.text).success).to.be.equal("Success, alias for 1000015 was successfully updated.");
+                    done();
+                });
+        });
+
+        it('should change the alias of a actuator', function (done) {
+            api
+                .put('http://localhost:3221/devices/actuators/1000016/alias')
+                .send({alias: 'nieuw'})
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    expect(JSON.parse(res.text).success).to.be.equal("Success, alias for 1000016 was successfully updated.");
+                    done();
+                });
+        });
+    });
+
+    describe('#Change an clientIntervalTimer', function () {
+        it('should change the timer of a sensor', function (done) {
+            api
+                .put('http://localhost:3221/devices/sensors/1000015/interval')
+                .send({interval: 18})
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    expect(JSON.parse(res.text).success).to.be.equal("Success, interval for 1000015 was successfully updated.");
                     done();
                 });
         });
     });
 
     after(function (done) {
-        done();
+        var id= 1000015;
+        Sensor.get(id).then(function(sensor) {
+            sensor.delete().then(function() {
+                done();
+            });
+        }).error();
+    });
+
+    after(function(done){
+        var id= 1000016;
+        Actuator.get(id).then(function(actuator) {
+            actuator.delete().then(function() {
+                done();
+            }).error();
+        });
+    });
+
+    after(function(done){
+        api
+        .post("http://localhost:3221/test/devices/delete")
+        .end(function(err,res) {
+            if (err) {
+                throw err;
+            }
+            done();
+        });
     });
 });
 
-function newDevice(id, name, alias) {
-    return new Sensor({
-        id: id,
-        config:{alias: alias},
-        model:{
+function newDevice(id, name ) {
+    return {id: id,
             name: name,
-            sokVersion: 0.11,
+            sokVersion: 1,
             description: 'Temperatuur op 0.1c nauwkeuring',
             image: "niks",
-            commands: [{
-                name: 'c',
-                parameters: ["para", "meter"],
-                requestInterval: 5000,
-                httpMethod: "GET",
-                returns: {
-                    Celsius: 'number',
-                    Fahrenheit: 'number',
-                    Kelvin: 'number'
+            commands: {
+                status:{
+                    name: 'c',
+                    parameters:{},
+                    requestInterval: 5000,
+                    returns: {
+                        Celsius: 'number',
+                        Fahrenheit: 'number',
+                        Kelvin: 'number'
+                    },
+                    description: "geeft de temperatuur"
                 },
-                description: "geeft de temperatuur"
-            }]
+                on:{
+                    name: 'c',
+                    parameters:{},
+                    requestInterval: 5000,
+                    returns: {
+                        Celsius: 'number',
+                        Fahrenheit: 'number',
+                        Kelvin: 'number'
+                    },
+                    description: "geeft de temperatuur"
+                },
+                off:{
+                    name: 'c',
+                    parameters:{},
+                    requestInterval: 5000,
+                    returns: {
+                        Celsius: 'number',
+                        Fahrenheit: 'number',
+                        Kelvin: 'number'
+                    },
+                    description: "geeft de temperatuur"
+                }
+            }
         }
-    });
 }

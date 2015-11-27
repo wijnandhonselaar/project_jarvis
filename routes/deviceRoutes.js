@@ -5,6 +5,7 @@ module.exports = (function() {
     var route = express.Router();
 
     route.get('/', function(request, resp) {
+        console.log(deviceManager.getAll());
         resp.send({devices: deviceManager.getAll()});
     });
 
@@ -17,27 +18,31 @@ module.exports = (function() {
     });
 
     route.get('/:devicetype/:id/:command', function(request, resp){
-        var device = deviceManager.getActuator(request.params.id);
+        var device = deviceManager.getActuator(parseInt(request.params.id));
         response = comm.get(request.params.command,device, function(){
             resp.send(JSON.stringify(response))
         })
     });
 
-    route.post('/:devicetype/:id/:command', function(request, resp){
+
+    route.post('/:devicetype/:id/:command', function(request,resp){
         var device = deviceManager.getActuator(parseInt(request.params.id));
-        response = comm.post(request.params.command , device,  request.body, function(){
+        response = comm.post(request.params.command , device,command.parameters, function(){
             resp.send(JSON.stringify(response));
         });
     });
 
     route.put('/:devicetype/:id/alias', function(request,resp){
-        response = deviceManager.updateDeviceAlias(request.params.devicetype, request.params.id, request.body.alias);
-        resp.send(JSON.stringify(response));
+        deviceManager.updateDeviceAlias(request.params.devicetype, parseInt(request.params.id), request.body.alias, function(response){
+            console.log("inside callback", response);
+           resp.send(JSON.stringify(response)); 
+        }); 
     });
 
     route.put('/sensors/:id/interval', function(request,resp){
-        response = deviceManager.updateSensorInterval(request.params.id, request.body.interval);
-        resp.send(JSON.stringify(response));
+        deviceManager.updateSensorInterval(parseInt(request.params.id), request.body.interval, function(response){
+           resp.send(JSON.stringify(response)); 
+        }); 
     });
 
     return route;

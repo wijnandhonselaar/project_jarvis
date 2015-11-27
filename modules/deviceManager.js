@@ -16,15 +16,43 @@ var devices =  {
     sensors:[]
 };
 var io = null;
+var rethinkManager = require('./rethinkManager');
 
 /**
  *
  * @param device
  * @param remote
  */
-function addToDeviceList(device, remote) {
-    console.log('Adding device:' + device.id);
 
+function addDevice(device, remote, deviceType) {
+    // lets see if its known in the database
+    rethinkManager.getDevice(device.id, deviceType, function(err, res) {
+        if(res === undefined) {
+            if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
+
+            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status:null};
+            devices[deviceType].push(deviceObj);
+            io.emit("deviceAdded", deviceObj);
+            // Save to the database!
+            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}}, device.type, function(err, res){
+                if(err) {
+                    if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
+                    //if(GLOBAL.logToConsole) console.log(err);
+                } else {
+                    if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
+                }
+            });
+            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+        } else {
+            if(GLOBAL.logToConsole) console.log('Device '+ res.model.name +' is known in the database!');
+            var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
+            devices[deviceType].push(deviceObj);
+            io.emit("deviceAdded", deviceObj);
+        }
+    });
+}
+
+function addToDeviceList(device, remote) {
     var deviceType;
     switch(device.type){
         case 'actuator':
@@ -36,6 +64,8 @@ function addToDeviceList(device, remote) {
     }
     if(devices[deviceType].length !== 0) {
         var exists = false;
+
+        // check the local object
         for(var i = 0; i<devices[deviceType].length; i++){
             if(devices[deviceType][i].id === device.id){
                 exists = true;
@@ -43,21 +73,12 @@ function addToDeviceList(device, remote) {
         }
 
         if(!exists){
-            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status:null};
-            devices[deviceType].push(deviceObj);
-            io.emit("deviceAdded", deviceObj);
-            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+            addDevice(device, remote, deviceType);
         }
-
     } else {
-        console.log('Adding device:' + device.id + 'type: ' + deviceType);
-        var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null};
-        devices[deviceType].push(deviceObj);
-        console.log('Added device: ' + devices[deviceType][devices[deviceType].length - 1].id);
-        io.emit("deviceAdded", deviceObj);
-        if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+        console.log("false");
+        addDevice(device, remote, deviceType);
     }
-    console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
 }
 
 /**
@@ -130,15 +151,23 @@ function updateDeviceStatus(devicetype, id, status) {
  * @param alias
  * @returns {*}
  */
-function updateDeviceAliasFunction(devicetype, id, alias){
-    for (var i = 0; i < devices.devicetype.length; i++) {
-       if(devices.devicetype[i].id === id){
-            devices.devicetype[i].config.alias = alias;
-            return {Success: "Success, alias for "+ devices.devicetype[i].id + " was successfully updated."};
-       }
-    }
+function updateDeviceAliasFunction(devicetype, id, alias, callback){
+    for (var i = 0; i < devices[devicetype].length; i++) {
+        console.log(devices[devicetype][i])
+       if(devices[devicetype][i].id === id){
+            console.log("hier3");
+            devices[devicetype][i].config.alias = alias;
 
-    return {err: "Error, could not find " +devicetype + " with id: " + id + " to update alias."};
+            // save to the database!
+            rethinkManager.updateAlias(id, devicetype, alias, function(err, res) {
+                if(err) {
+                    callback( {err: "Error, could not update " + id + " with id: " + id + " to update alias."});
+                } else {
+                    callback( {success: "Success, alias for "+ id + " was successfully updated."});
+                }
+            });           
+       }
+    }   
 }
 
 /**
@@ -147,15 +176,19 @@ function updateDeviceAliasFunction(devicetype, id, alias){
  * @param clientRequestInterval
  * @returns {*}
  */
-function updateSensorIntervalFunction(id, clientRequestInterval){
+function updateSensorIntervalFunction(id, clientRequestInterval, callback){
     for (var i = 0; i < devices.sensors.length; i++) {
         if(devices.sensors[i].id === id){
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
-            return {Success: "Success, interval for "+ devices.sensors[i].id + " was successfully updated."};
+            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
+                if(err) {
+                     callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
+                } else {
+                    callback({success: "Success, interval for "+ id + " was successfully updated."});
+                }
+            });
         }
     }
-
-    return {err: "Error, could not find sensors with id: " + id + " to update request interval."};
 }
 
 //noinspection JSClosureCompilerSyntax
@@ -183,6 +216,7 @@ module.exports = {
     getSensor: getSensorById,
     getActuator: getActuatorById,
     getAll: function(){return devices;},
+    removeAll: function(){devices.actuators = []; devices.sensors = [];},
     getSensors: function(){return devices.sensors;},
     getActuators: function(){return devices.actuators;},
     updateDeviceAlias: updateDeviceAliasFunction,
