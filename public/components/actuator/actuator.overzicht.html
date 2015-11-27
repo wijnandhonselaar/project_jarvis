@@ -2,23 +2,12 @@
 <!--{{aoc.actuator | json}}-->
 <!--</pre>-->
 <div class="ptop_30">
-    <div class="col m6" ng-repeat="actuator in aoc.actuator">
-        <div class="row">
-            <div class="col m4">
-                <div class="customCard onoff text-center">
-                    <div class="status red"></div>
-                    <div style="background-image:url({{actuator.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
-                    <!--<img src="{{actuator.model.image}}" style="width:25px; margin-top:3px;">-->
-                </div>
-            </div>
-            <div class="col m8" ng-click="aoc.GoToDetail(actuator)" style="margin-left:-8px; margin-top:0px;">
-                <div class="customCard" style="padding:1px;">
-                    <div class="detailcontainer">
-                        {{actuator.model.name}}<br>
-                        <span class="description">{{actuator.model.description.substring(0, 25)}}...</span>
-                    </div>
-                </div>
-            </div>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
         </div>
     </div>
+</div>
+
+<div style="left:285px; width: 12%; position: absolute; bottom:115px;">
+    <div class="swiper-pagination"></div>
 </div>

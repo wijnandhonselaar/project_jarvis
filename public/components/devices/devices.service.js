@@ -99,21 +99,22 @@
             );
         }
 
-        function sendCommand(id, command, type) {
+        function sendCommand(id, command, commandkey, type) {
             return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/'+type+'/' + id + '/' + command.name, command.parameters)
+                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/' + commandkey, { })
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
                             })
-                            .error(function () {
+                            .error(function (err) {
+                                console.log(err);
                                 console.log("error with command");
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
-                        $http.get('http://localhost:3221/'+type+'/' + id + '/' + command.name)
+                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/' + commandkey)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
