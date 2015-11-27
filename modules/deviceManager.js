@@ -215,9 +215,8 @@ module.exports = {
     getByIP:getDeviceByIPAddress,
     getSensor: getSensorById,
     getActuator: getActuatorById,
-    getAll: function(){
-        console.log("hier");
-        return devices;},
+    getAll: function(){return devices;},
+    removeAll: function(){devices.actuators = []; devices.sensors = [];},
     getSensors: function(){return devices.sensors;},
     getActuators: function(){return devices.actuators;},
     updateDeviceAlias: updateDeviceAliasFunction,

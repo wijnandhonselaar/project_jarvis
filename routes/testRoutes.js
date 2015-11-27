@@ -22,4 +22,10 @@ router.post('/devices/add', function(req, res){
     res.send('done');
 });
 
+router.post('/devices/delete', function(req, res){
+	console.log("hier")
+    deviceManager.removeAll();
+    res.send('done');
+});
+
 module.exports = router;

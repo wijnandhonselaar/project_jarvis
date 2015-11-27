@@ -31,7 +31,7 @@ describe('Device routing', function() {
     beforeEach(function(done){
         setTimeout(function() {
             done();
-        }, 10);
+        }, 500);
     });
 
     describe('#get all devices', function() {
@@ -43,8 +43,8 @@ describe('Device routing', function() {
                     if (err) {
                         throw err;
                     }
-                    //expect(res.body.devices.actuators.length).to.equal(1);
-                    //expect(res.body.devices.actuators[0].config.alias).to.equal('');
+                    expect(res.body.devices.actuators.length).to.equal(1);
+                    expect(res.body.devices.actuators[0].config.alias).to.equal('');
                     expect(res.body.devices.sensors.length).to.equal(1);
                     done();
                 });
@@ -140,8 +140,19 @@ describe('Device routing', function() {
         Actuator.get(id).then(function(actuator) {
             actuator.delete().then(function() {
                 done();
-            });
-        }).error();
+            }).error();
+        });
+    });
+
+    after(function(done){
+        api
+        .post("http://localhost:3221/test/devices/delete")
+        .end(function(err,res) {
+            if (err) {
+                throw err;
+            }
+            done();
+        });
     });
 });
 
