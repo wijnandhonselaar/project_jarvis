@@ -23,6 +23,35 @@ var rethinkManager = require('./rethinkManager');
  * @param device
  * @param remote
  */
+
+function addDevice(device, remote, deviceType) {
+    // lets see if its known in the database
+    rethinkManager.getDevice(device.id, deviceType, function(err, res) {
+        if(res === undefined) {
+            if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
+
+            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status:null};
+            devices[deviceType].push(deviceObj);
+            io.emit("deviceAdded", deviceObj);
+            // Save to the database!
+            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}}, device.type, function(err, res){
+                if(err) {
+                    if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
+                    //if(GLOBAL.logToConsole) console.log(err);
+                } else {
+                    if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
+                }
+            });
+            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+        } else {
+            if(GLOBAL.logToConsole) console.log('Device '+ res.model.name +' is known in the database!');
+            var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
+            devices[deviceType].push(deviceObj);
+            io.emit("deviceAdded", deviceObj);
+        }
+    });
+}
+
 function addToDeviceList(device, remote) {
     console.log('Adding device:' + device.id);
 
@@ -37,6 +66,8 @@ function addToDeviceList(device, remote) {
     }
     if(devices[deviceType].length !== 0) {
         var exists = false;
+
+        // check the local object
         for(var i = 0; i<devices[deviceType].length; i++){
             if(devices[deviceType][i].id === device.id){
                 exists = true;
@@ -44,37 +75,11 @@ function addToDeviceList(device, remote) {
         }
 
         if(!exists){
-            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status:null};
-            devices[deviceType].push(deviceObj);
-            io.emit("deviceAdded", deviceObj);
-            // Save to the database!
-            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}}, device.type, function(err, res){
-                if(err) {
-                    if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
-                    if(GLOBAL.logToConsole) console.log(err);
-                } else {
-                    if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
-                }
-            });
-            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+            addDevice(device, remote, deviceType);
         }
 
     } else {
-        console.log('Adding device:' + device.id + 'type: ' + deviceType);
-        var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote, clientRequestInterval: 5000}, status: null};
-        devices[deviceType].push(deviceObj);
-        console.log('Added device: ' + devices[deviceType][devices[deviceType].length - 1].id);
-        io.emit("deviceAdded", deviceObj);
-        // Save to the database!
-        rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status: null}, device.type, function(err, res){
-            if(err) {
-                if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
-                if(GLOBAL.logToConsole) console.log(err);
-            } else {
-                if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
-            }
-        });
-        if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+        addDevice(device, remote, deviceType);
     }
     console.log('Device count: ' + (devices.sensors.length + devices.actuators.length));
 }
