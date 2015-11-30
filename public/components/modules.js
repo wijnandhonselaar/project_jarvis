@@ -5,6 +5,8 @@
         'templatecache',
         'rzModule',
         'jarvis.clock',
+        'jarvis.editdir',
+        'jarvis.header',
         'jarvis.title',
         'jarvis.socketService',
         'jarvis.devices',
@@ -14,5 +16,4 @@
         'jarvis.actuator',
         'jarvis.dashboard'
     ]);
-
 }());

@@ -14,6 +14,11 @@
                 params: { activeMenu: "dashboard" },
                 data: { pageTitle: "Dashboard" },
                 views: {
+                    "headerView" : {
+                        templateUrl: "components/header/header.html",
+                        controller: "HeaderCtrl",
+                        controllerAs: "hc"
+                    },
                     "mainView": {
                         templateUrl: "components/dashboard/dashboard.html",
                         controller: 'DashboardCtrl',

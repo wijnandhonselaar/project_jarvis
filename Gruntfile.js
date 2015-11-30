@@ -55,6 +55,7 @@ module.exports = function(grunt) {
                 },
                 src: [
                     'public/bower_components/Materialize/dist/css/materialize.css',
+                    'public/bower_components/angularjs-slider/dist/rzslider.min.css',
                     'public/bower_components/keyboard/dist/css/keyboard-dark.min.css',
                     'public/bower_components/swiper/dist/css/swiper.min.css',
                     'public/bower_components/angularjs-slider/dist/rzslider.min.css',
