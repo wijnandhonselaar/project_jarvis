@@ -9,7 +9,7 @@
     <div class="col m10">
         <div class="row detaildescrip" style="margin-top:8px;">
             <div class="col m12">
-                {{adc.actuator.model.name}}
+                <input type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="adc.actuatoralias" ng-change="adc.updateAlias('alias',adc.actuatoralias)" style="margin-top:-10px;"/>
             </div>
             <div class="col m12">
                 <p class="description">{{adc.actuator.model.description}}</p>

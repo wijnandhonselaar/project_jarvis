@@ -11,6 +11,8 @@
         var adc = this;
         adc.showCommand = showCommand;
         adc.sendcommand = sendcommand;
+        adc.actuatoralias = "";
+        adc.updateAlias = updateActuator;
 
         //adc.optionSettingsList = [];
         adc.sliderSettings = [];
@@ -18,12 +20,31 @@
         DS.getDeviceById($sp.uid, "actuator")
             .then(function (data) {
                 adc.actuator = data;
+                adc.actuatoralias = data.config.alias;
                 $scope.$apply();
             })
             .catch(function (err) {
                 Materialize.toast("Device not found", 4000);
                 console.error(err);
             });
+
+        DS.setOnDeviceUpdate(function(data){
+            if(data.id === adc.actuator.id) {
+                adc.actuator = data;
+            }
+        });
+
+        function updateActuator(key,value) {
+            if(!key || !value) return console.error("no key or value");
+            DS.updateDevice("actuators",adc.actuator.id,key,value)
+                .then(function(){
+                    Materialize.toast("Successfully updated actuator data", 4000);
+                })
+                .catch(function(err){
+                    console.error(err);
+                    Materialize.toast("Error updating actuator data",4000);
+                });
+        }
 
         function buildPartial(partial, callback) {
             $http.get('components/actuator/partials/' + partial + '.html').success(function (data) {
