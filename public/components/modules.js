@@ -3,6 +3,7 @@
 
     angular.module('jarvis', [
         'templatecache',
+        'rzModule',
         'jarvis.clock',
         'jarvis.title',
         'jarvis.socketService',
