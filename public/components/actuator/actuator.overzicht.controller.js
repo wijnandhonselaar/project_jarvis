@@ -12,12 +12,24 @@
         var swiper = null;
         aoc.actuator = DS.getActuators();
         aoc.GoToDetail = GoToDetail;
-        aoc.slides = null;
-        aoc.toTrusted = toTrusted;
+        aoc.repeater = [];
 
-        function toTrusted(html_code) {
-            return $sce.trustAsHtml(html_code);
+        DS.addDeviceLoader(reloadSwiper);
+        DS.setOnDeviceAdd(reloadSwiper);
+
+        function reloadSwiper() {
+            var amount = Math.ceil( aoc.actuator.length / 8 );
+            aoc.repeater = [];
+            for(var i = 0; i < amount; i++) {
+                aoc.repeater.push(i);
+            }
+            $scope.$apply();
+            swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true
+            });
         }
+        $timeout(reloadSwiper);
 
         function GoToDetail(actuator) {
             $state.go("actuatorDetail");
@@ -27,27 +39,6 @@
             });
         }
 
-        function generateSlides(cb) {
-            var maxNumberOfEntriesOnSlide = 4;
-            var numberOfEntries = aoc.actuator.length;
-            $.get("components/actuator/actuator.overzicht.slide.html", function (data) {
-                for (var currentPos = 0; currentPos < numberOfEntries; currentPos += maxNumberOfEntriesOnSlide) {
-                    var html = $(data);
-                    $('.repeater', $(html)).attr("ng-if", "($index >= " + currentPos + " && $index <= " + maxNumberOfEntriesOnSlide+currentPos+')');
-                    $('.swiper-wrapper').append($compile(html)($scope));
-                }
-                if (cb) cb();
-            });
-        }
-
-        $timeout(function () {
-            generateSlides(function () {
-                swiper = new Swiper('.swiper-container', {
-                    pagination: '.swiper-pagination',
-                    paginationClickable: true
-                });
-            });
-        });
     }
 
 })();

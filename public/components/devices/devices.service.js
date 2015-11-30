@@ -13,11 +13,12 @@
             sensor: []
         };
         var onDeviceLoad = [];
-
+        var onDeviceAdd = null;
 
         socket.socketListener("deviceAdded", function(data){
             devices[data.model.type].push(data);
             $rs.$apply();
+            onDeviceAdd();
         });
 
         loadDevices()
@@ -33,7 +34,9 @@
             getSensors: getSensors,
             getActuators: getActuators,
             getDeviceById: getDeviceById,
-            sendCommand: sendCommand
+            sendCommand: sendCommand,
+            addDeviceLoader: addDeviceLoader,
+            setOnDeviceAdd: setOnDeviceAdd
         };
 
         function loadDevices() {
@@ -126,6 +129,14 @@
                     }
                 }
             );
+        }
+
+        function addDeviceLoader(f) {
+            onDeviceLoad.push(f);
+        }
+
+        function setOnDeviceAdd(f) {
+            onDeviceAdd = f;
         }
 
     }

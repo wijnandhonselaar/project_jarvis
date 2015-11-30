@@ -1,16 +1,3 @@
-/*
- * actuator: [{ id,
- *              model,
- *              config{String alias, String ip, Integer clientRequestInterval},
- *              status
- *           }]
- * sensor:   [{ id,
- *              model,
- *              config{String alias, String ip, Integer clientRequestInterval},
- *              status
- *           }]
- *
- */
 var devices =  {
     actuators:[],
     sensors:[]
