@@ -1,17 +1,21 @@
 var request = require('superagent');
 
-//A message is send from main app to this worken.
+//A message is send from main app to this worker.
 // Message contains a list of sensors
 process.on('message', function(m) {
-	  	if(m.ip === undefined){
+	  	if(m.config.ip === undefined){
 	  		process.send("ERROR: cannot read ip-adress of sensors");
 	  	}
 	  	else{
 	  		request
-	  		.get(m.ip +'/status')
+	  		.get('http://'+ m.config.ip +'/status').send({id: m.id})
 	  		.end(function(err, res){
-	  			//TODO If res object is available
-		     	process.send(m.id);
+	  			if(err){
+	  				console.log(err);
+	  			}
+	  			else{
+		     		process.send({id: m.id, status: res.body.status});
+		     	}
 		  });
 		}
 });
