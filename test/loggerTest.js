@@ -6,6 +6,11 @@ var logger              = require('../modules/logger');
 var Log                 = require('../models/log');
 
 describe('Logging', function() {
+    before(function(done) {
+        Log.delete();
+        done();
+    });
+
     describe('#Log to database', function() {
         it('should log new data.', function(done) {
             logger.log(1000015, 'sensor', 'category', {message: 'message'}, 1, function(err,res) {

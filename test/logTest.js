@@ -2,6 +2,10 @@ var expect = require('chai').expect;
 var Log = require('../models/log.js');
 
 describe('Log', function () {
+    before(function(done) {
+        Log.delete();
+        done();
+    });
     it('Shouldn\'t save a new log, no message', function (done) {
         // create the new log
         var log = new Log({
