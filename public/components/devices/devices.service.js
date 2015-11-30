@@ -14,11 +14,27 @@
         };
         var onDeviceLoad = [];
         var onDeviceAdd = null;
+        var onDeviceUpdate = null;
 
         socket.socketListener("deviceAdded", function(data){
             devices[data.model.type].push(data);
             $rs.$apply();
-            onDeviceAdd();
+            if(onDeviceAdd){
+                onDeviceAdd(data);
+            }
+        });
+
+        socket.socketListener("deviceUpdated", function(data){
+            devices[data.model.type].forEach(function(device){
+                if(device.id == data.id) {
+                    var index = devices[data.model.type].indexOf(device);
+                    devices[data.model.type][index] = data;
+                }
+            });
+            $rs.$apply();
+            if(onDeviceUpdate) {
+                onDeviceUpdate(data);
+            }
         });
 
         loadDevices()
@@ -36,41 +52,10 @@
             getDeviceById: getDeviceById,
             sendCommand: sendCommand,
             addDeviceLoader: addDeviceLoader,
-            setOnDeviceAdd: setOnDeviceAdd
+            setOnDeviceAdd: setOnDeviceAdd,
+            setOnDeviceUpdate: setOnDeviceUpdate,
+            updateDevice: updateDevice
         };
-
-        function loadDevices() {
-            return new Promise(
-                function (resolve, reject) {
-                    $http.get("/devices")
-                        .success(function (data) {
-                            data = data.devices;
-                            data.actuators.forEach(function (actuator) {
-                                devices.actuator.push(actuator);
-                            });
-                            data.sensors.forEach(function (sensor) {
-                                devices.sensor.push(sensor);
-                            });
-                            // LOGGING
-                            console.log("Got devices data.");
-                            resolve();
-                        })
-                        .error(function (err) {
-                            // ERROR
-                            console.error("Error loading devices: ", err);
-                            reject(err);
-                        });
-                }
-            );
-        }
-
-        function getSensors() {
-            return devices.sensor;
-        }
-
-        function getActuators() {
-            return devices.actuator;
-        }
 
         function getDeviceById(uid, type) {
             return new Promise(
@@ -102,6 +87,51 @@
             );
         }
 
+        function getSensors() {
+            return devices.sensor;
+        }
+
+        function getActuators() {
+            return devices.actuator;
+        }
+
+        function setOnDeviceAdd(f) {
+            onDeviceAdd = f;
+        }
+
+        function setOnDeviceUpdate(f) {
+            onDeviceUpdate = f;
+        }
+
+        function addDeviceLoader(f) {
+            onDeviceLoad.push(f);
+        }
+
+        function loadDevices() {
+            return new Promise(
+                function (resolve, reject) {
+                    $http.get("/devices")
+                        .success(function (data) {
+                            data = data.devices;
+                            data.actuators.forEach(function (actuator) {
+                                devices.actuator.push(actuator);
+                            });
+                            data.sensors.forEach(function (sensor) {
+                                devices.sensor.push(sensor);
+                            });
+                            // LOGGING
+                            console.log("Got devices data.");
+                            resolve();
+                        })
+                        .error(function (err) {
+                            // ERROR
+                            console.error("Error loading devices: ", err);
+                            reject(err);
+                        });
+                }
+            );
+        }
+
         function sendCommand(id, command, commandkey, type) {
             return new Promise(
                 function (resolve, reject) {
@@ -112,8 +142,8 @@
                                 resolve(data);
                             })
                             .error(function (err) {
-                                console.log(err);
-                                console.log("error with command");
+                                console.error(err);
+                                console.error("error with command");
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
@@ -123,7 +153,7 @@
                                 resolve(data);
                             })
                             .error(function () {
-                                console.log("error with command");
+                                console.error("error with command");
                                 reject(new Error("Command failed "));
                             });
                     }
@@ -131,12 +161,22 @@
             );
         }
 
-        function addDeviceLoader(f) {
-            onDeviceLoad.push(f);
-        }
-
-        function setOnDeviceAdd(f) {
-            onDeviceAdd = f;
+        function updateDevice(type, uid, field, value) {
+            return new Promise(
+                function(resolve, reject) {
+                    var data = {};
+                    data[field] = value;
+                    $http.put("/devices/" + type + "/" + uid + "/" + field, data)
+                        .success(function(data){
+                            if(data.err) return reject(new Error(data.err));
+                            resolve();
+                        })
+                        .error(function(err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
         }
 
     }

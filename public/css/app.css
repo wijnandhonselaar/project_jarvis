@@ -216,3 +216,12 @@ body{
 .no-overflow{
     overflow:hidden;
 }
+
+.ui-keyboard {
+    z-index: 9999;
+}
+
+input:focus {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+}

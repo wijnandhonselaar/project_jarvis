@@ -14,6 +14,11 @@
                 params: { activeMenu: "sensors" },
                 data: { pageTitle: "Sensoren" },
                 views: {
+                    "headerView" : {
+                        templateUrl: "components/header/header.html",
+                        controller: "HeaderCtrl",
+                        controllerAs: "hc"
+                    },
                     "mainView": {
                         templateUrl: "components/sensor/sensor.overzicht.html",
                         controller: 'SensorOverzichtCtrl',
@@ -36,6 +41,11 @@
                 params: { data: null, activeMenu: "sensors" },
                 data: { pageTitle: "Sensoren detail" },
                 views: {
+                    "headerView" : {
+                        templateUrl: "components/header/header.html",
+                        controller: "HeaderCtrl",
+                        controllerAs: "hc"
+                    },
                     "mainView": {
                         templateUrl: "components/sensor/sensor.detail.html",
                         controller: 'SensorDetailCtrl',

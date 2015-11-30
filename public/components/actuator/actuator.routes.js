@@ -14,6 +14,11 @@
                 params: { activeMenu: "actuators" },
                 data: { pageTitle: "Actuatoren" },
                 views: {
+                    "headerView" : {
+                        templateUrl: "components/header/header.html",
+                        controller: "HeaderCtrl",
+                        controllerAs: "hc"
+                    },
                     "mainView": {
                         templateUrl: "components/actuator/actuator.overzicht.html",
                         controller: 'ActuatorOverzichtCtrl',
@@ -36,6 +41,11 @@
                 params: { data: null, activeMenu: "actuators" },
                 data: { pageTitle: "Actuator Detail" },
                 views: {
+                    "headerView" : {
+                        templateUrl: "components/header/header.html",
+                        controller: "HeaderCtrl",
+                        controllerAs: "hc"
+                    },
                     "mainView": {
                         templateUrl: "components/actuator/actuator.detail.html",
                         controller: 'ActuatorDetailCtrl',
