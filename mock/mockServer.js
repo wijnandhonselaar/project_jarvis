@@ -8,6 +8,8 @@ var http = require('superagent');
 var stdin       = process.stdin;
 var supportedSOKVersions = ['0.0.1'];
 var index = 0;
+var request = require('superagent');
+var ip = null;
 
 server.listen(80);
 
@@ -15,6 +17,17 @@ var devices =  {
     actuators:[],
     sensors:[]
 };
+
+request
+.post('127.0.0.1/sensorMelding').send({id: 1})
+.end(function(err, res){
+    if(err){
+        console.log(err);
+    }
+    else{
+    //process.send({id: m.id, status: res.body.status});
+    }
+});
 
 //create 30 actuators and 30 sensors
 for (var i = 0; i < 10; i++) {
@@ -41,17 +54,19 @@ function broadcastUDPPacket(){
     client.bind();
     client.on("listening", function () {
         client.setBroadcast(true);
-        client.send(message, 0, message.length, 3221, broadcastAddress, function(err, bytes) {
-            client.close();
-        });
+        if(index <10){
+            client.send(message, 0, message.length, 3221, broadcastAddress, function(err, bytes) {
+                client.close();
+            });
+        }
     });
 }
 
 //send all devices at once
  app.get('/sok', function(req,res){
-    //console.log(index);
+    console.log(req.connection.remoteAddress);
     if(index == 10){
-        index = 0;
+        
     }
     if(index < 7){
         //console.log(devices.actuators[index]);
@@ -62,6 +77,22 @@ function broadcastUDPPacket(){
         res.send(JSON.stringify(devices.sensors[index-7]));
         index ++;
     }
+});
+
+app.get('/status', function(req,res){
+    res.send({status:'ok'});
+});
+
+app.post('/on', function(req,res){
+    res.send({status: true})
+});
+
+app.post('/off', function(req,res){
+    res.send({status: false})
+});
+
+app.post('/changeIntensity', function(req, res){
+    res.send({status: req.body.paramList})
 });
 
 
@@ -277,7 +308,7 @@ function determineKind(id){
             status:{
                 name : 'status',
                 parameters: {},
-                requestInterval: 5000,
+                requestInterval: 20000,
                 httpMethod: 'GET',
                 returns: {
                     Lux : 'integer'
@@ -309,7 +340,7 @@ function determineKind(id){
             status:{
                 name : 'status',
                 parameters: {},
-                requestInterval: 5000,
+                requestInterval: 10000,
                 httpMethod: 'GET',
                 returns: {
                    Celcius: 'float'

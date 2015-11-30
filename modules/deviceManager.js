@@ -15,25 +15,31 @@ function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function(err, res) {
         if(res === undefined) {
-            if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
+            //if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
 
-            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}, status:null};
+            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status:null};
             devices[deviceType].push(deviceObj);
+            if(device.type === 'sensor'){
+                initiateStatusPolling(deviceObj);
+            }
             io.emit("deviceAdded", deviceObj);
             // Save to the database!
-            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: 5000}}, device.type, function(err, res){
+            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}}, device.type, function(err, res){
                 if(err) {
-                    if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
+                    //if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
                     //if(GLOBAL.logToConsole) console.log(err);
                 } else {
-                    if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
+                    //if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
                 }
             });
-            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+            //if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
         } else {
-            if(GLOBAL.logToConsole) console.log('Device '+ res.model.name +' is known in the database!');
+           // if(GLOBAL.logToConsole) console.log('Device '+ res.model.name +' is known in the database!');
             var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
             devices[deviceType].push(deviceObj);
+            if(device.type === 'sensor'){
+                initiateStatusPolling(deviceObj);
+            }
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -63,7 +69,6 @@ function addToDeviceList(device, remote) {
             addDevice(device, remote, deviceType);
         }
     } else {
-        console.log("false");
         addDevice(device, remote, deviceType);
     }
 }
@@ -140,9 +145,7 @@ function updateDeviceStatus(devicetype, id, status) {
  */
 function updateDeviceAliasFunction(devicetype, id, alias, callback){
     for (var i = 0; i < devices[devicetype].length; i++) {
-        console.log(devices[devicetype][i])
        if(devices[devicetype][i].id === id){
-            console.log("hier3");
             devices[devicetype][i].config.alias = alias;
 
             // save to the database!
@@ -178,6 +181,17 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback){
     }
 }
 
+function initiateStatusPolling(sensor){
+    workerManager.pullData(sensor);
+}
+
+function updateSensorStatusFunction(obj){
+    sensor = getSensorById(obj.id);
+    if(sensor.status !== obj.status){
+        sensor.status = obj.status;
+        io.emit("deviceUpdated", sensor);
+    }
+}
 //noinspection JSClosureCompilerSyntax
 /**
  *
@@ -208,5 +222,9 @@ module.exports = {
     getActuators: function(){return devices.actuators;},
     updateDeviceAlias: updateDeviceAliasFunction,
     updateDeviceStatus: updateDeviceStatus,
-    updateSensorInterval: updateSensorIntervalFunction
+    updateSensorInterval: updateSensorIntervalFunction,
+    updateSensorStatus: updateSensorStatusFunction
 };
+
+//circular dependency (export must be first)
+var workerManager = require('./workerManager');
