@@ -18,7 +18,14 @@ module.exports = (function() {
     });
 
     route.get('/:devicetype/:id/:command', function(request, resp){
-        var device = deviceManager.getActuator(parseInt(request.params.id));
+        var devicetype = request.params.devicetype;
+        var device = '';
+        if(devicetype === 'actuator'){
+            device = deviceManager.getActuator(parseInt(request.params.id));
+        }
+        if(devicetype === 'sensor'){
+            device = deviceManager.getSensor(parseInt(request.params.id));
+        }
         response = comm.get(request.params.command,device, function(){
             resp.send(JSON.stringify(response))
         })
