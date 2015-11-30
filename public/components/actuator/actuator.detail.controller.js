@@ -22,9 +22,14 @@
                 console.error(err);
             });
 
+        function generateInputByCommand(command){
+
+        }
+
         function showCommand(id, command, commandkey, type){
             if(Object.keys(command.parameters).length > 0) {
                 $('#commandTitle').text(command.name);
+                $('.modalWrapper').html(generateInputByCommand(command));
                 $('#commandModal').openModal();
             } else {
                 sendcommand(id, command, commandkey, type);
