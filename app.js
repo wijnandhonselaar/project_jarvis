@@ -10,7 +10,6 @@ var bodyParser = require('body-parser')
 var autoDiscover = require('./modules/autodiscover');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
-var dobbieComm = require('./modules/interperter/comm');
 
 server.listen(GLOBAL.port);
 autoDiscover.init(server, io);
