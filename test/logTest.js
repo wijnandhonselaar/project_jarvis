@@ -57,6 +57,7 @@ describe('Log', function () {
             type: 'sensor',
             message: {message: 'message'},
             severity: 1,
+            category: 'manual',
             timestamp: JSON.stringify(Date.now())
         });
         // save the new log
@@ -65,6 +66,10 @@ describe('Log', function () {
         }).error(function(err){
             console.log(err);
         });
+    });
+    after(function(done) {
+        Log.delete();
+        done();
     });
 });
 

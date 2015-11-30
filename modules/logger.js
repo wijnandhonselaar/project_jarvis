@@ -2,10 +2,11 @@
 
 var Log = require('../models/log');
 
-function log(device, type, message, severity, cb) {
+function log(device, type, category, message, severity, cb) {
     var log = new Log({
         device: device,
         type: type,
+        category: category,
         message: message,
         severity: severity,
         timestamp: JSON.stringify(Date.now())
