@@ -9,8 +9,27 @@
 
     function SensorOverzichtCtrl(DS, $state, $scope, $compile, $timeout, $sce) {
         var soc = this;
+        var swiper = null;
         soc.sensors = DS.getSensors();
         soc.GoToDetail = GoToDetail;
+        soc.repeater = [];
+
+        DS.addDeviceLoader(reloadSwiper);
+        DS.setOnDeviceAdd(reloadSwiper);
+
+        function reloadSwiper() {
+            var amount = Math.ceil( soc.sensors.length / 8 );
+            soc.repeater = [];
+            for(var i = 0; i < amount; i++) {
+                soc.repeater.push(i);
+            }
+            $scope.$apply();
+            swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true
+            });
+        }
+        $timeout(reloadSwiper);
 
         function GoToDetail(sensor) {
             $state.go("sensorDetail");
@@ -19,29 +38,6 @@
                 data: sensor
             });
         }
-
-        function generateSlides(cb) {
-            var maxNumberOfEntriesOnSlide = 4;
-            var numberOfEntries = soc.sensors.length;
-            $.get("components/sensor/sensor.overzicht.slide.html", function (data) {
-                for (var currentPos = 0; currentPos < numberOfEntries; currentPos += maxNumberOfEntriesOnSlide) {
-                    var html = $(data);
-                    $('.repeater', $(html)).attr("ng-if", "($index >= " + currentPos + " && $index <= " + maxNumberOfEntriesOnSlide+currentPos+')');
-                    $('.swiper-wrapper').append($compile(html)($scope));
-                }
-                if (cb) cb();
-            });
-        }
-
-        $timeout(function () {
-            generateSlides(function () {
-                var swiper = new Swiper('.swiper-container', {
-                    pagination: '.swiper-pagination',
-                    paginationClickable: true
-                });
-            });
-        });
-
     }
 
 })();
