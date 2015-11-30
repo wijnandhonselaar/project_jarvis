@@ -8,6 +8,59 @@
     </div>
 </div>
 
-<div style="left:285px; width: 12%; position: absolute; bottom:115px;">
-    <div class="swiper-pagination"></div>
+<div class="swiper-container">
+
+    <div class="swiper-wrapper">
+
+        <div class="swiper-slide" ng-repeat="repeat in aoc.repeater">
+            <div class="col m6 repeater" ng-if="$index >= ($parent.$index * 8) && $index < (($parent.$index+1) * 8)" ng-repeat="actuator in aoc.actuator">
+                <div class="row">
+                    <div class="col m4">
+                        <div class="customCard onoff text-center">
+                            <div class="status red"></div>
+                            <div style="background-image:url({{actuator.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
+                        </div>
+                    </div>
+                    <div class="col m8" ng-click="aoc.GoToDetail(actuator)"
+                         style="margin-left:-8px; margin-top:0px;">
+                        <div class="customCard" style="padding:1px;">
+                            <div class="detailcontainer">
+                                {{actuator.config.alias}}<br>
+                                <span class="description">{{actuator.model.description.substring(0, 25)}}...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
+
+<div style="left:285px; width: 12%; position: absolute; bottom:115px;">
+
+    <div class="swiper-pagination">
+    </div>
+
+</div>
+
+<!--<div class="swiper-container" style="height:200px;">-->
+    <!--&lt;!&ndash; Additional required wrapper &ndash;&gt;-->
+    <!--<div class="swiper-wrapper">-->
+        <!--&lt;!&ndash; Slides &ndash;&gt;-->
+        <!--<div class="swiper-slide">Slide 1</div>-->
+        <!--<div class="swiper-slide">Slide 2</div>-->
+        <!--<div class="swiper-slide">Slide 3</div>-->
+        <!--...-->
+    <!--</div>-->
+    <!--&lt;!&ndash; If we need pagination &ndash;&gt;-->
+    <!--<div class="swiper-pagination"></div>-->
+
+    <!--&lt;!&ndash; If we need navigation buttons &ndash;&gt;-->
+    <!--<div class="swiper-button-prev"></div>-->
+    <!--<div class="swiper-button-next"></div>-->
+
+    <!--&lt;!&ndash; If we need scrollbar &ndash;&gt;-->
+    <!--<div class="swiper-scrollbar"></div>-->
+<!--</div>-->
