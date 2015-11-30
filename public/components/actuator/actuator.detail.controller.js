@@ -10,6 +10,7 @@
     function ActuatorDetailCtrl(DS, $sp, $scope, $timeout) {
         var adc = this;
         adc.showCommand = showCommand;
+        adc.sendcommand = sendcommand;
 
         DS.getDeviceById($sp.uid,"actuator")
             .then(function(data){
@@ -21,10 +22,12 @@
                 console.error(err);
             });
 
-        function showCommand(command){
+        function showCommand(id, command, commandkey, type){
             if(Object.keys(command.parameters).length > 0) {
                 $('#commandTitle').text(command.name);
                 $('#commandModal').openModal();
+            } else {
+                sendcommand(id, command, commandkey, type);
             }
         }
 
@@ -32,17 +35,17 @@
             $('.tooltipped').tooltip({delay: 50});
         });
         
-        //$scope.sendcommand = function(command, type){
-        //    DS.sendCommand($sp.uid, command, type)
-        //        .then(function(data){
-        //            Materialize.toast("Command successfull excecuted", 4000);
-        //            console.log(data);
-        //        })
-        //        .catch(function(err){
-        //            Materialize.toast("Command error", 4000);
-        //            console.log(err);
-        //        });
-        //};
+        function sendcommand(id, command, commandkey, type){
+            DS.sendCommand(id, command, commandkey, type)
+                .then(function(data){
+                    Materialize.toast("Command successfull excecuted", 4000);
+                    console.log(data);
+                })
+                .catch(function(err){
+                    Materialize.toast("Command error", 4000);
+                    console.log(err);
+                });
+        }
 
     }
 

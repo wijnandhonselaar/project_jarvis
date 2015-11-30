@@ -11,8 +11,11 @@ var postMethod = function(command, deviceObject, paramList, callback){
         }
         if(everythingIsValidated) {
             superAgent.post('http://' + deviceObject.config.ip + '/' + command).send(paramList).end(function (err, res) {
-                if(err) console.log(err);
-                callback(res.text);
+                if(err) {
+                    console.log(err);
+                } else {
+                    callback(res.text);
+                }
             });
         } else {
             callback(data);

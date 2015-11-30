@@ -1,6 +1,5 @@
 var devices = require('../deviceManager');
 
-
 /**
  * validator function mapped to the paramter types which are defineable in the SOK protocol definiton
  * List, number, boolean and string
@@ -73,16 +72,15 @@ var validators = {
  * @param callback -- speaks for itself (returns object with all parameters and if they are validated or not)
  */
 
-function validateCommand(command, object, paramList, callback) {
+function validateCommand(command, device, paramList, callback) {
 
     var validatedParams = {};
 
-    for (var param in object.commands[command].parameters) {
-
-        if (object.commands[command].parameters.hasOwnProperty(param)) {
+    for (var param in device.model.commands[command].parameters) {
+        if (device.model.commands[command].parameters.hasOwnProperty(param)) {
             validatedParams[param] = {};
             validatedParams[param].validated = true;
-            var paramObj = object.commands[command].parameters[param];
+            var paramObj = device.model.commands[command].parameters[param];
             var accepts = paramObj.accepts;
 
             if (param in paramList) {

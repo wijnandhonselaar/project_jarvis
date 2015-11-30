@@ -10,8 +10,8 @@
         'jarvis.log',
         'jarvis.menu',
         'jarvis.sensor',
-        'jarvis.actuator'
-
+        'jarvis.actuator',
+        'jarvis.dashboard'
     ]);
 
 }());
