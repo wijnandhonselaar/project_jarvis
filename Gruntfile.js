@@ -33,6 +33,7 @@ module.exports = function(grunt) {
                 src: [
                     'public/bower_components/jquery/dist/jquery.js',
                     'public/bower_components/angular/angular.js',
+                    'public/bower_components/angularjs-slider/dist/rzslider.min.js',
                     'public/bower_components/angular-ui-router/release/angular-ui-router.min.js',
                     'public/bower_components/Materialize/dist/js/materialize.js',
                     'public/bower_components/socket.io-client/socket.io.js',
@@ -54,6 +55,7 @@ module.exports = function(grunt) {
                 },
                 src: [
                     'public/bower_components/Materialize/dist/css/materialize.css',
+                    'public/bower_components/angularjs-slider/dist/rzslider.min.css',
                     'public/bower_components/keyboard/dist/css/keyboard-dark.min.css',
                     'public/bower_components/swiper/dist/css/swiper.min.css',
                     'public/css/app.css'
