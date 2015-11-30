@@ -5,7 +5,7 @@ describe('Log', function () {
     it('Shouldn\'t save a new log, no message', function (done) {
         // create the new log
         var log = new Log({
-            device: 'device'
+            device: 1
         });
         // save the new sensor
         Log.save(log).then(function(res) {
@@ -17,7 +17,7 @@ describe('Log', function () {
     it('Shouldn\'t save a new log, no device', function (done) {
         // create the new loh
         var log = new Log({
-            message: 'message'
+            message: {message: 'message'}
         });
         // save the new log
         Log.save(log).then(function(res) {
@@ -28,8 +28,21 @@ describe('Log', function () {
     it('Shouldn\'t save a new log, no severity', function (done) {
         // create the new log
         var log = new Log({
-            device: 'device',
-            message: 'message'
+            device: 1,
+            message: {message: 'message'}
+        });
+        // save the new log
+        Log.save(log).then(function(res) {
+        }).error(function(){
+            done();
+        });
+    });
+    it('Shouldn\'t save a new log, no type', function (done) {
+        // create the new log
+        var log = new Log({
+            device: 1,
+            message: {message: 'message'},
+            severity: 1
         });
         // save the new log
         Log.save(log).then(function(res) {
@@ -40,9 +53,11 @@ describe('Log', function () {
     it('Should save a new log', function (done) {
         // create the new log
         var log = new Log({
-            device: 'device',
-            message: 'message',
-            severity: 1
+            device: 1,
+            type: 'sensor',
+            message: {message: 'message'},
+            severity: 1,
+            timestamp: JSON.stringify(Date.now())
         });
         // save the new log
         Log.save(log).then(function(res) {
