@@ -19,7 +19,7 @@ var devices =  {
 };
 
 request
-.post('127.0.0.1/sensorMelding').send({id: 1})
+.post('127.0.0.1:3221/sensorMelding').send({id: 1})
 .end(function(err, res){
     if(err){
         console.log(err);
