@@ -33,5 +33,4 @@ app.get('/', function (req, res) {
 
 app.post('/sensorMelding', function(req,res){
 	console.log('ontvangen');
-})
-
+});
