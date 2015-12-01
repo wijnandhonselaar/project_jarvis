@@ -23,9 +23,8 @@ describe('Device routing', function() {
         .send({device : device, remote:{address:'192.186.24.2'}})
         .end(function (err, res) {
             if (err) { throw err;}
-        })
-
-        done();
+            done();
+        });
     });
 
     beforeEach(function(done){
