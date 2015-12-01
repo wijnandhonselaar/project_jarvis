@@ -9,6 +9,12 @@ dobbie.fileTransfer = {
     bytesSent = 0,
     finished = false
 }
+
+dobbie.masterConnection = {
+    connected = false,
+    ip = nil
+}
+
 dobbie.httpRequests = require 'routes'
 
 function dobbie.handle(conn,request)
@@ -33,7 +39,12 @@ function dobbie.handle(conn,request)
      if dobbie.fileTransfer.hasFile == false then
         dobbie.headersHaveBeenSent = false
      end
-       request = nil
+
+     if dobbie.masterConnection.ip == nil then
+        dobbie.masterConnection.ip = conn:getpeer();
+     end
+     
+     request = nil
      collectgarbage()
 end
 
