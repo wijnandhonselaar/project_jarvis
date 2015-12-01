@@ -37,12 +37,15 @@ function dobbie.handle(conn,request)
         message = "HTTP method not supported"
     end      
      if dobbie.fileTransfer.hasFile == false then
+        send(conn, message, string.len(tostring(message)))
         dobbie.headersHaveBeenSent = false
      end
 
      if dobbie.masterConnection.ip == nil then
         dobbie.masterConnection.ip = conn:getpeer();
      end
+
+     
      
      request = nil
      collectgarbage()

@@ -32,7 +32,9 @@ module.exports = {
         server = svr;
         deviceManager.init(io);
         listenForUDPPackets(function (msg, remote) {
-            if (supportedSOKVersions.indexOf(msg.version) !== -1) {
+            if("id" in msg && "msg" in msg && "key" in msg && "severity" in msg){
+                console.log('****EVENT RECEIVED**** deviceID: '+msg.id+ ' message: '+msg.msg+' event: '+msg.key)
+            } else if (supportedSOKVersions.indexOf(msg.version) !== -1) {
                 if (!httpPending[remote.address] || httpPending[remote.address] == undefined && devices.getByIP(remote.address)) {
                     http
                         .get('http://' + remote.address + '/sok')
