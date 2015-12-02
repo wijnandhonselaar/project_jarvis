@@ -10,13 +10,11 @@ local udpserver = require 'udpserver'
 local http = require 'http'
 
 simplewifisettings.setupWifiMode( function() 
+    
     udpserver.broadcast()   
-    unrequire('udpserver')
     http.start()
-    tmr.alarm(0, 15000, 1, function() 
-       http.stop(function()
-            udpserver.broadcast('{"id":1337,"msg":"koffiezetapparaat is klaar","key":"onFinish","severity":5}')
---            http.start()
-        end)
+    tmr.alarm(0, 30000, 1, function() 
+        udpserver.broadcast('{"id":1337,"msg":"koffiezetapparaat is klaar","key":"onFinish","severity":5}')
     end)
+
 end)

@@ -10,7 +10,6 @@ function udpserver.broadcast(msg)
      print("Broadcasting");
      srv:send(msg);
      srv:close();
-     srv = nil; 
 end
 
 return udpserver;

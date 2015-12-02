@@ -28,14 +28,12 @@ function http.stop(action)
     if dobbie.fileTransfer.hasFile then
         if dobbie.fileTransfer.finished then
             srv:close();
-            svr = nil;
             print("closing http server")
             tmr.stop(0)
             action()
         end
     elseif dobbie.masterConnection.ip ~= nil then
         srv:close();
-        svr = nil;
         print("closing http server")
         tmr.stop(0)
         action()
