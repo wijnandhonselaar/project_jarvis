@@ -50,6 +50,7 @@ module.exports = (function() {
         var device = deviceManager.getActuator(parseInt(request.params.id));
         comm.post(request.params.command , device,  request.body, function(response){
             deviceManager.updateActuatorState(device.id, response);
+            resp.send(JSON.stringify(response));
         });
     });
 

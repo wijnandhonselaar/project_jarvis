@@ -16,14 +16,15 @@ function addDevice(device, remote, deviceType) {
     rethinkManager.getDevice(device.id, deviceType, function(err, res) {
         if(res === undefined) {
             if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
-            var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status:null};
+            var deviceObj = {id: device.id, model: device, config: {alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status: {state:false}};
             devices[deviceType].push(deviceObj);
             if(device.type === 'sensor'){
                 initiateStatusPolling(deviceObj);
             }
+            console.log(deviceObj);
             io.emit("deviceAdded", deviceObj);
             // Save to the database!
-            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}}, device.type, function(err, res){
+            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}}, device.type, function(err, res){
                 if(err) {
                     //if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
                     //if(GLOBAL.logToConsole) console.log(err);
@@ -207,6 +208,7 @@ function updateSensorStatusFunction(obj){
 
 function updateActuatorState(id, state){
     actuator = getActuatorById(id);
+    console.log(state);
     actuator.status = state;
     console.log(actuator);
     io.emit("deviceUpdated", actuator);
