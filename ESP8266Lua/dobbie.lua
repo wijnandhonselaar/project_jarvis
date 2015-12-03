@@ -17,6 +17,12 @@ dobbie.masterConnection = {
 
 dobbie.httpRequests = require 'routes'
 
+function dobbie.setEventTimer()
+    tmr.alarm(0, 30000, 0, function() 
+        dobbie.udp.broadcast('{"id":1337,"msg":"koffiezetapparaat is klaar","key":"onFinish","severity":5}')
+    end)
+end
+
 function dobbie.handle(conn,request)
     http_method = getHttpMethod(request)
      if http_method == "POST" then
@@ -44,11 +50,7 @@ function dobbie.handle(conn,request)
      if dobbie.masterConnection.ip == nil then
         dobbie.masterConnection.ip = conn:getpeer();
      end
-
-     
-     
      request = nil
-     collectgarbage()
 end
 
 function getHttpMethod(request)

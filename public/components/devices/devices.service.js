@@ -37,6 +37,10 @@
             event.fadeIn(800);
         });
 
+        $('#event').click(function(){
+           $(this).fadeOut(800);
+        });
+
         socket.socketListener("deviceUpdated", function(data){
             devices[data.model.type].forEach(function(device){
                 if(device.id == data.id) {
