@@ -217,7 +217,7 @@ body{
     overflow:hidden;
 }
 
-#alert{
+#event{
     z-index: 9999;
     width: 800px;
     height: 100vh;
@@ -227,6 +227,7 @@ body{
     color:white;
     font-size:28px;
     padding-top:20vh;
+    display: none;
 }
 
 .invert{
@@ -234,7 +235,7 @@ body{
     filter: brightness(0) invert(1);
 }
 
-.gradient{
+.severity5{
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f77d59+0,ff6060+53,ff4949+100 */
     background: #f77d59; /* Old browsers */
     background: -moz-linear-gradient(left,  #f77d59 0%, #ff6060 53%, #ff4949 100%); /* FF3.6-15 */

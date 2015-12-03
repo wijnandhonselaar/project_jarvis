@@ -24,6 +24,19 @@
             }
         });
 
+        socket.socketListener('deviceEvent', function(data){
+            console.log(data);
+            var severityLevels = [1,2,3,4,5];
+            var event =  $('#event');
+            for(var i = 0; i<severityLevels.length; i++){
+                event.removeClass('severity'+severityLevels[i]);
+            }
+            event.addClass('severity'+data.event.severity);
+            $('#eventImage').attr('src', data.device.model.image);
+            $('#eventMessage').text(data.event.msg);
+            event.fadeIn(800);
+        });
+
         socket.socketListener("deviceUpdated", function(data){
             devices[data.model.type].forEach(function(device){
                 if(device.id == data.id) {

@@ -43,6 +43,15 @@ function addDevice(device, remote, deviceType) {
         }
     });
 }
+/**
+ * Broadcasts event from device. it's triggered from the autodiscover module
+ * @param msg
+ */
+function broadcastEvent(msg){
+    var device = getActuatorById(msg.id);
+    if(!device) deviceId = getSensorById(msg.id);
+    io.emit('deviceEvent', {device:device, event:msg})
+}
 
 function addToDeviceList(device, remote) {
     var deviceType;
@@ -215,6 +224,7 @@ module.exports = {
     getByIP:getDeviceByIPAddress,
     getSensor: getSensorById,
     getActuator: getActuatorById,
+    broadcastEvent:broadcastEvent,
     getAll: function(){return devices;},
     removeAll: function(){devices.actuators = []; devices.sensors = [];},
     getSensors: function(){return devices.sensors;},
