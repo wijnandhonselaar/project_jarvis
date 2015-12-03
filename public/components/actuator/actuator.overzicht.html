@@ -16,8 +16,8 @@
             <div class="col m6 repeater" ng-if="$index >= ($parent.$index * 8) && $index < (($parent.$index+1) * 8)" ng-repeat="actuator in aoc.actuator">
                 <div class="row">
                     <div class="col m4">
-                        <div class="customCard onoff text-center">
-                            <div class="status red"></div>
+                        <div ng-click="aoc.toggleState(actuator)" class="customCard onoff text-center">
+                            <div class="status" ng-class="actuator.status.state ? 'green' : 'red'"></div>
                             <div style="background-image:url({{actuator.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
                         </div>
                     </div>

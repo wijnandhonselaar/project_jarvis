@@ -25,7 +25,7 @@
                         <div class="customCard" style="padding:1px;">
                             <div class="detailcontainer">
                                 {{sensor.config.alias}}<br>
-                        <span class="description" ng-repeat="(key, value) in sensor.model.commands.status.returns"
+                        <span class="description" ng-repeat="(key, value) in sensor.status"
                               ng-if="$index == 0">{{key}}: {{value}}</span>
                             </div>
                         </div>

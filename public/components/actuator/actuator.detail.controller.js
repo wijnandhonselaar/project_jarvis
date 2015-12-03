@@ -13,7 +13,7 @@
         adc.sendcommand = sendcommand;
         adc.actuatoralias = "";
         adc.updateAlias = updateActuator;
-
+        adc.toggleState = toggleState;
         //adc.optionSettingsList = [];
         adc.sliderSettings = [];
 
@@ -118,6 +118,14 @@
         $timeout(function () {
             $('.tooltipped').tooltip({delay: 50});
         });
+
+        function toggleState(actuator){
+            if(actuator.status.state === true){
+                sendcommand(actuator.id, actuator.model.commands.off,'off',actuator.model.type);
+            } else {
+                sendcommand(actuator.id, actuator.model.commands.on,'on',actuator.model.type);
+            }
+        }
 
         function sendcommand(id, command, commandkey, type) {
             DS.sendCommand(id, command, commandkey, type)

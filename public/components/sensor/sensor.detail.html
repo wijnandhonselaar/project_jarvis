@@ -20,7 +20,7 @@
     <div class="col m6 nopad">
         <div class="row">
             <div class="col m12">
-                <div class="command nopad valign-wrapper card"  ng-repeat="(key, value) in sdc.sensor.model.commands.status.returns">
+                <div class="command nopad valign-wrapper card"  ng-repeat="(key, value) in sdc.sensor.status">
                     <div class="touch valign" style="display: inline-block; width: 85%;">{{key}} {{value}}</div>
                     <div data-position="top" data-delay="50" data-tooltip="{{command.description}}" class="tooltipped text-center" style="display: inline-block; width:15%; background-color:#F84E19; color:white; font-size:24px;">i</div>
                 </div>
