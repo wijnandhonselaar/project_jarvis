@@ -58,6 +58,7 @@ module.exports = function(grunt) {
                     'public/bower_components/angularjs-slider/dist/rzslider.min.css',
                     'public/bower_components/keyboard/dist/css/keyboard-dark.min.css',
                     'public/bower_components/swiper/dist/css/swiper.min.css',
+                    'public/bower_components/angularjs-slider/dist/rzslider.min.css',
                     'public/css/app.css'
                 ],
                 dest: 'public/css/dist.css'

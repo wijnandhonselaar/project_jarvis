@@ -1,5 +1,4 @@
 local pins = require 'pins'
- globalmethods = require 'globalmethods'
 local routes = {
     GET = {
         sok = function(conn)
@@ -21,6 +20,7 @@ local routes = {
         on = function(conn, postParams)
             gpio.mode(pins.powerPin, gpio.OUTPUT)
             gpio.write(pins.powerPin, gpio.HIGH)
+            dobbie.setEventTimer()
             return "true";
         end,
         off = function(conn, postParams)

@@ -15,8 +15,7 @@ function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function(err, res) {
         if(res === undefined) {
-            //if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
-
+            if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
             var deviceObj = {id: device.id, model: device, config: {alias: '', ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status:null};
             devices[deviceType].push(deviceObj);
             if(device.type === 'sensor'){
@@ -32,7 +31,7 @@ function addDevice(device, remote, deviceType) {
                     //if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
                 }
             });
-            //if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
+            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
         } else {
            // if(GLOBAL.logToConsole) console.log('Device '+ res.model.name +' is known in the database!');
             var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
@@ -43,6 +42,15 @@ function addDevice(device, remote, deviceType) {
             io.emit("deviceAdded", deviceObj);
         }
     });
+}
+/**
+ * Broadcasts event from device. it's triggered from the autodiscover module
+ * @param msg
+ */
+function broadcastEvent(msg){
+    var device = getActuatorById(msg.id);
+    if(!device) deviceId = getSensorById(msg.id);
+    io.emit('deviceEvent', {device:device, event:msg})
 }
 
 function addToDeviceList(device, remote) {
@@ -219,6 +227,7 @@ module.exports = {
     getByIP:getDeviceByIPAddress,
     getSensor: getSensorById,
     getActuator: getActuatorById,
+    broadcastEvent:broadcastEvent,
     getAll: function(){return devices;},
     removeAll: function(){devices.actuators = []; devices.sensors = [];},
     getSensors: function(){return devices.sensors;},

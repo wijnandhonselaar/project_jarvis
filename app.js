@@ -1,4 +1,4 @@
-GLOBAL.logToConsole = true;
+GLOBAL.logToConsole = false;
 GLOBAL.dev = true;
 GLOBAL.port = 3221;
 
