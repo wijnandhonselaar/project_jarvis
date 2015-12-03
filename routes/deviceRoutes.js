@@ -3,6 +3,7 @@ module.exports = (function() {
     var express= require('express');
     var comm = require('../modules/interperter/comm.js');
     var route = express.Router();
+    var logger = require('../modules/logger');
 
     route.get('/', function(request, resp) {
         console.log(deviceManager.getAll());
@@ -18,10 +19,31 @@ module.exports = (function() {
     });
 
     route.get('/:devicetype/:id/:command', function(request, resp){
-        var device = deviceManager.getActuator(parseInt(request.params.id));
+        var devicetype = request.params.devicetype;
+        var device = '';
+        if(devicetype === 'actuator'){
+            device = deviceManager.getActuator(parseInt(request.params.id));
+        }
+        if(devicetype === 'sensor'){
+            device = deviceManager.getSensor(parseInt(request.params.id));
+        }
         response = comm.get(request.params.command,device, function(){
             resp.send(JSON.stringify(response))
-        })
+        });
+    });
+
+    route.get('/actuators/log', function(request, resp) {
+        var log = '';
+        resp.send(JSON.stringify(log));
+    });
+
+    route.get('/sensors/log', function(request, resp) {
+        resp.send(JSON.stringify(logger.getSenors()));
+    });
+
+    route.get('/:devicetype/:id/log', function(request, resp) {
+        var log ='';
+        resp.send(JSON.stringify(log));
     });
 
     route.post('/:devicetype/:id/:command', function(request, resp){
