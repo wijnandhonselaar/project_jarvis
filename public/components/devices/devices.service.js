@@ -16,6 +16,7 @@
         var onDeviceAdd = null;
         var onDeviceUpdate = null;
 
+
         socket.socketListener("deviceAdded", function(data){
             devices[data.model.type].push(data);
             $rs.$apply();
