@@ -1,37 +1,11 @@
-function unrequire(m)
-    package.loaded[m] = nil
-    _G[m] = nil
-end
+tmr.delay(10000)
 
-simplewifisettings = require 'simplewificonfig'
-dobbie = require 'dobbie'
+local simplewifisettings = require 'simplewificonfig'
+local udpserver = require 'udpserver'
+local http = require 'http'
 
 simplewifisettings.setupWifiMode( function() 
-
-    srv = nil;
-   
-    srv=net.createConnection(net.UDP,0);
-    srv:connect(3221, "255.255.255.255");
-    print("Broadcasting");
-    srv:send('{"type":"SOK","version":"0.0.1"}');
-    srv:close();
-    srv = nil;
-
-    srv=net.createServer(net.TCP)
-    print("Now listening on port 80"); 
-    srv:listen(80,function(conn) 
-    print("Recieving request")
-    conn:on("sent", function(conn)
-        if dobbie.fileTransfer.hasFile then
-            dobbie.streamFile(conn,"sok.json",true)
-        end
-    end)
-    conn:on("receive",function(conn, payload) 
-        dobbie.handle(conn, payload);
-        if dobbie.fileTransfer.hasFile == false then
-            conn:close()
-        end
-        end)   
-    end)
+    udpserver.broadcast()   
+    http.start()
+    dobbie.udp = udpserver
 end)
-   

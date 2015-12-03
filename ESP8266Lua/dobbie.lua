@@ -1,6 +1,6 @@
 local dobbie = {}
 local json = require "cjson"
-
+globalmethods = require 'globalmethods'
 dobbie.headersHaveBeenSent = false
 dobbie.fileTransfer = {
     hasFile = false,
@@ -9,7 +9,19 @@ dobbie.fileTransfer = {
     bytesSent = 0,
     finished = false
 }
+
+dobbie.masterConnection = {
+    connected = false,
+    ip = nil
+}
+
 dobbie.httpRequests = require 'routes'
+
+function dobbie.setEventTimer()
+    tmr.alarm(0, 30000, 0, function() 
+        dobbie.udp.broadcast('{"id":1337,"msg":"koffiezetapparaat is klaar","key":"onFinish","severity":5}')
+    end)
+end
 
 function dobbie.handle(conn,request)
     http_method = getHttpMethod(request)
@@ -31,10 +43,14 @@ function dobbie.handle(conn,request)
         message = "HTTP method not supported"
     end      
      if dobbie.fileTransfer.hasFile == false then
+        send(conn, message, string.len(tostring(message)))
         dobbie.headersHaveBeenSent = false
      end
-       request = nil
-     collectgarbage()
+
+     if dobbie.masterConnection.ip == nil then
+        dobbie.masterConnection.ip = conn:getpeer();
+     end
+     request = nil
 end
 
 function getHttpMethod(request)

@@ -1,95 +1,95 @@
-<div class="row" style="margin-top:15px;">
-    <div class="col m6">
-        <div class="card pin1-4">
-            <div class="row nopad">
-                <div class="col m5 nopad">
-                    <img src="images/icon_thermometer.png" width="100%">
-                </div>
-                <div class="col m7">
-                    {{db.tempSensor.model.name}}<hr>
-                    <div ng-repeat="(unit, value) in db.tempSensor.model.commands.status.returns">
-                        <div class="row nopad">
-                            <div class="col m6 nopad">
-                                {{unit}}
-                            </div>
-                            <div class="col m6 nopad">
-                                {{value}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col m6">
-        <div class="card pin1-4">
-            <div class="row nopad">
-                <div class="col m5 nopad">
-                    <img src="{{db.lightSensor.model.image}}" width="100%">
-                </div>
-                <div class="col m7">
-                    {{db.lightSensor.model.name}}<hr>
-                    <div ng-repeat="(unit, value) in db.lightSensor.model.commands.status.returns">
-                        <div class="row nopad">
-                            <div class="col m6 nopad">
-                                {{unit}}
-                            </div>
-                            <div class="col m6 nopad">
-                                {{value}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div class="row" style="margin-top:15px;">-->
+    <!--<div class="col m6">-->
+        <!--<div class="card pin1-4">-->
+            <!--<div class="row nopad">-->
+                <!--<div class="col m5 nopad">-->
+                    <!--<img src="images/icon_thermometer.png" width="100%">-->
+                <!--</div>-->
+                <!--<div class="col m7">-->
+                    <!--{{db.tempSensor.model.name}}<hr>-->
+                    <!--<div ng-repeat="(unit, value) in db.tempSensor.model.commands.status.returns">-->
+                        <!--<div class="row nopad">-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{unit}}-->
+                            <!--</div>-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{value}}-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="col m6">-->
+        <!--<div class="card pin1-4">-->
+            <!--<div class="row nopad">-->
+                <!--<div class="col m5 nopad">-->
+                    <!--<img src="{{db.lightSensor.model.image}}" width="100%">-->
+                <!--</div>-->
+                <!--<div class="col m7">-->
+                    <!--{{db.lightSensor.model.name}}<hr>-->
+                    <!--<div ng-repeat="(unit, value) in db.lightSensor.model.commands.status.returns">-->
+                        <!--<div class="row nopad">-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{unit}}-->
+                            <!--</div>-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{value}}-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
-<div class="row" style="margin-top:-25px;">
-    <div class="col m6">
-        <div class="card pin1-4">
-            <div class="row nopad">
-                <div class="col m5 nopad">
-                    <div class="status red"></div>
-                    <img src="{{db.lamp.model.image}}" width="100%">
-                </div>
-                <div class="col m7">
-                    {{db.lamp.model.name}}<hr>
-                    <div ng-repeat="(unit, value) in db.lamp.model.commands.status.returns">
-                        <div class="row nopad">
-                            <div class="col m6 nopad">
-                                {{unit}}
-                            </div>
-                            <div class="col m6 nopad">
-                                {{value}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col m6">
-        <div class="card pin1-4">
-            <div class="row nopad">
-                <div class="col m5 nopad">
-                    <div class="status red"></div>
-                    <img src="{{db.tv.model.image}}" width="100%">
-                </div>
-                <div class="col m7">
-                    {{db.tv.model.name}}<hr>
-                    <div ng-repeat="(unit, value) in db.tv.model.commands.status.returns">
-                        <div class="row nopad">
-                            <div class="col m6 nopad">
-                                {{unit}}
-                            </div>
-                            <div class="col m6 nopad">
-                                {{value}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div class="row" style="margin-top:-25px;">-->
+    <!--<div class="col m6">-->
+        <!--<div class="card pin1-4">-->
+            <!--<div class="row nopad">-->
+                <!--<div class="col m5 nopad">-->
+                    <!--<div class="status red"></div>-->
+                    <!--<img src="{{db.lamp.model.image}}" width="100%">-->
+                <!--</div>-->
+                <!--<div class="col m7">-->
+                    <!--{{db.lamp.model.name}}<hr>-->
+                    <!--<div ng-repeat="(unit, value) in db.lamp.model.commands.status.returns">-->
+                        <!--<div class="row nopad">-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{unit}}-->
+                            <!--</div>-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{value}}-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="col m6">-->
+        <!--<div class="card pin1-4">-->
+            <!--<div class="row nopad">-->
+                <!--<div class="col m5 nopad">-->
+                    <!--<div class="status red"></div>-->
+                    <!--<img src="{{db.tv.model.image}}" width="100%">-->
+                <!--</div>-->
+                <!--<div class="col m7">-->
+                    <!--{{db.tv.model.name}}<hr>-->
+                    <!--<div ng-repeat="(unit, value) in db.tv.model.commands.status.returns">-->
+                        <!--<div class="row nopad">-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{unit}}-->
+                            <!--</div>-->
+                            <!--<div class="col m6 nopad">-->
+                                <!--{{value}}-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->

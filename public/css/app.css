@@ -216,3 +216,39 @@ body{
 .no-overflow{
     overflow:hidden;
 }
+
+#event{
+    z-index: 9999;
+    width: 800px;
+    height: 100vh;
+    position: absolute;
+    background-color: #F84E19;
+    text-align: center;
+    color:white;
+    font-size:28px;
+    padding-top:20vh;
+    display: none;
+}
+
+.invert{
+    -webkit-filter: brightness(0) invert(1);
+    filter: brightness(0) invert(1);
+}
+
+.severity5{
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f77d59+0,ff6060+53,ff4949+100 */
+    background: #f77d59; /* Old browsers */
+    background: -moz-linear-gradient(left,  #f77d59 0%, #ff6060 53%, #ff4949 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #f77d59 0%,#ff6060 53%,#ff4949 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #f77d59 0%,#ff6060 53%,#ff4949 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f77d59', endColorstr='#ff4949',GradientType=1 ); /* IE6-9 */
+}
+
+.ui-keyboard {
+    z-index: 9999;
+}
+
+input:focus {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+}
