@@ -200,8 +200,16 @@ function updateSensorStatusFunction(obj){
     if(sensor.status !== obj.status){
         console.log("Niet hetzelfde");
         sensor.status = obj.status;
+        console.log(sensor.status);
         io.emit("deviceUpdated", sensor);
     }
+}
+
+function updateActuatorState(id, state){
+    actuator = getActuatorById(id);
+    actuator.status = state;
+    console.log(actuator);
+    io.emit("deviceUpdated", actuator);
 }
 //noinspection JSClosureCompilerSyntax
 /**
@@ -235,7 +243,8 @@ module.exports = {
     updateDeviceAlias: updateDeviceAliasFunction,
     updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,
-    updateSensorStatus: updateSensorStatusFunction
+    updateSensorStatus: updateSensorStatusFunction,
+    updateActuatorState: updateActuatorState
 };
 
 //circular dependency (export must be first)

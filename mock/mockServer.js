@@ -24,17 +24,6 @@ var devices =  {
     sensors:[]
 };
 
-request
-.post('127.0.0.1:3221/sensorMelding').send({id: 1})
-.end(function(err, res){
-    if(err){
-        console.log(err);
-    }
-    else{
-    //process.send({id: m.id, status: res.body.status});
-    }
-});
-
 //create 30 actuators and 30 sensors
 for (var i = 0; i < 10; i++) {
         if(i < 7){
@@ -93,20 +82,32 @@ app.get('/status', function(req,res){
 
 app.post('/on', function(req,res){
     actuator = getActuatorById(req.body.id);
-    status = determineStateActuator(actuator, null);
-    res.send(status);
+    if(req.body.id === 0){
+        actuator.status = {state: true, intensity:255}
+    }
+    else{
+        actuator.status = {state: true};
+    }
+    //status = determineStateActuator(actuator, null);
+    res.send(actuator.status);
 });
 
 app.post('/off', function(req,res){
     actuator = getActuatorById(req.body.id);
-    status = determineStateActuator(actuator, null);
-    res.send(status);
+    if(req.body.id === 0){
+        actuator.status = {state: false ,intensity:0}
+    }  
+    else{
+        actuator.status = {state: false}
+    }
+    //status = determineStateActuator(actuator, null);
+    res.send(actuator.status);
 });
 
 app.post('/changeIntensity', function(req, res){
     actuator = getActuatorById(req.body.id);
-    status = determineStateActuator(actuator, req.body);
-    res.send(status);
+    actuator.status = {state: true ,intensity:req.body}
+    res.send(actuator.status);
 });
 
 
