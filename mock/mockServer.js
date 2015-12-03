@@ -93,20 +93,23 @@ app.get('/status', function(req,res){
 
 app.post('/on', function(req,res){
     actuator = getActuatorById(req.body.id);
-    status = determineStateActuator(actuator, null);
-    res.send(status);
+    actuator.status = {state: true, intensity:255}
+    //status = determineStateActuator(actuator, null);
+    res.send(actuator.status);
 });
 
 app.post('/off', function(req,res){
     actuator = getActuatorById(req.body.id);
-    status = determineStateActuator(actuator, null);
-    res.send(status);
+    actuator.status = {state: false ,intensity:0}
+    //status = determineStateActuator(actuator, null);
+    res.send(actuator.status);
 });
 
 app.post('/changeIntensity', function(req, res){
     actuator = getActuatorById(req.body.id);
-    status = determineStateActuator(actuator, req.body);
-    res.send(status);
+    actuator.status = {state: true ,intensity:req.body}
+    //status = determineStateActuator(actuator, req.body);
+    res.send(actuator.status);
 });
 
 
