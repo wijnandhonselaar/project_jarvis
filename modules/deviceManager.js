@@ -195,7 +195,10 @@ function initiateStatusPolling(sensor){
 
 function updateSensorStatusFunction(obj){
     sensor = getSensorById(obj.id);
+    console.log(sensor.status);
+    console.log(obj.status);
     if(sensor.status !== obj.status){
+        console.log("Niet hetzelfde");
         sensor.status = obj.status;
         io.emit("deviceUpdated", sensor);
     }

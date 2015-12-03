@@ -3,6 +3,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var path = require('path');
+var bodyParser = require('body-parser');
 var dgram = require('dgram');
 var http = require('superagent');
 var stdin       = process.stdin;
@@ -12,6 +13,11 @@ var request = require('superagent');
 var ip = null;
 
 server.listen(80);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 var devices =  {
     actuators:[],
@@ -80,19 +86,27 @@ function broadcastUDPPacket(){
 });
 
 app.get('/status', function(req,res){
-    res.send({status:'ok'});
+    sensor = getSensorById(req.body.id);
+    status = determineState(sensor);
+    res.send(status);
 });
 
 app.post('/on', function(req,res){
-    res.send({status: true})
+    actuator = getActuatorById(req.body.id);
+    status = determineStateActuator(actuator, null);
+    res.send(status);
 });
 
 app.post('/off', function(req,res){
-    res.send({status: false})
+    actuator = getActuatorById(req.body.id);
+    status = determineStateActuator(actuator, null);
+    res.send(status);
 });
 
 app.post('/changeIntensity', function(req, res){
-    res.send({status: req.body.paramList})
+    actuator = getActuatorById(req.body.id);
+    status = determineStateActuator(actuator, req.body);
+    res.send(status);
 });
 
 
@@ -121,7 +135,7 @@ function determineKind(id){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'Boolean',
+                returns: 'boolean',
                 description: device.name +' wordt aangezet.'
             },
             off:{
@@ -129,7 +143,7 @@ function determineKind(id){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'Boolean',
+                returns: 'boolean',
                 description: device.name +' wordt uitgezet.'
             },
             changeIntensity:{
@@ -161,7 +175,8 @@ function determineKind(id){
                     requestInterval: 5000,
                     httpMethod: 'GET',
                     returns: {
-                        intensity: 'number',
+                        state: 'boolean',
+                        intensity: 'integer',
                     },
                     description: 'Haalt de status op van ' + device.name
                 }   
@@ -178,8 +193,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
+                    state: 'boolean',
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -198,8 +212,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
+                    state: 'boolean',
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -218,8 +231,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
+                   state: 'boolean',
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -254,8 +266,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    on: 'boolean',
-                    off: 'boolean'
+                    state: 'boolean',
                 },
                 description: 'Haalt de status op van ' + device.name
             }
@@ -272,8 +283,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
+                    state: 'boolean',
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -291,8 +301,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    open: 'boolean',
-                    closed: 'boolean'
+                    state: 'boolean',
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -358,7 +367,7 @@ function getOpenCommand(name){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'Boolean',
+                returns: 'boolean',
                 description: name + ' zal open gaan.'
             };
 }
@@ -369,7 +378,7 @@ function getCloseCommand(name){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'Boolean',
+                returns: 'boolean',
                 description: name + ' zal dicht gaan.'
             };
 }
@@ -420,3 +429,84 @@ stdin.on('data',function(chunk){
 }).on('end',function(){
     console.log('stdin:closed');
 });
+
+function getSensorById(id) {
+    for (var i = 0; i < devices.sensors.length; i++) {
+        if(devices.sensors[i].id === id){
+            return devices.sensors[i];
+        }
+    }
+    return {err: "Error, could not find sensor with id: " + id + "."};
+}
+
+function getActuatorById(id) {
+    for (var i = 0; i < devices.actuators.length; i++) {
+        if(devices.actuators[i].id === id){
+            return devices.actuators[i];
+        }
+    }
+    return {err: "Error, could not find actuator with id: " + id + "."};
+}
+
+function determineState(sensor){
+    returns =sensor.commands.status.returns;
+    
+    for(key in returns) {
+        var status = {};
+        if(returns.hasOwnProperty(key)) {
+        var value = returns[key];
+
+            switch(value) {
+                case 'float':
+                returnValue = (Math.random() * (32.0 - 10.0) + 10).toFixed(2)
+                    status[key] = returnValue;
+                    break;
+                case 'integer':
+                returnValue = (Math.random() * 100).toFixed(0)
+                    status[key] = returnValue;
+                    break;
+            }
+        }
+    }
+    return {status: status}
+}
+
+function determineStateActuator(actuator, params){
+    console.log(actuator);
+    returns = actuator.commands.status.returns;
+    for(key in returns) {
+        console.log(key)
+        var status = {};
+        if(returns.hasOwnProperty(key)) {
+            console.log(value);
+        var value = returns[key];
+
+            switch(value) {
+                case 'boolean':
+                    if(params !== null && params !== 0){
+                        returnValue = true;
+                        status[key] = returnValue;
+                    }
+                    else{
+                        chance =(Math.random() * 100).toFixed(0);
+                        console.log(chance);
+                        if(chance > 50){
+                            returnValue = true;
+                            status[key] = returnValue;
+                        }
+                        else{
+                            returnValue = true;
+                            status[key] = returnValue;
+                        }
+                    }
+                    break;
+                case 'integer':
+                    returnValue = params;
+                    status[key] = returnValue;
+                    break;
+            }
+        }
+    }
+    console.log(status);
+    return {status: status}
+}
