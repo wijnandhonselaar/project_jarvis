@@ -38,8 +38,24 @@
 
 <div id="commandModal" class="modal" style="margin-top:-25px;">
     <div class="modal-content">
-        <h4 id="commandTitle">Modal Header</h4>
-        <div class="modalWrapper"></div>
+        <h4 id="commandTitle">{{adc.currentcommand.name}}</h4>
+        <div class="modalWrapper">
+            <div class="command">
+                <div class="parameters" ng-repeat="(paramkey, param) in adc.currentcommand.parameters">
+                    <div ng-if="adc.checkInputType(param.accepts[0], 'slider')">
+                        <rzslider rz-slider-model="adc.currentvalues[paramkey]" rz-slider-options="{floor: param.accepts[0].limit[0].min, ceil: param.accepts[0].limit[0].max}"></rzslider>
+                    </div>
+                    <div ng-if="adc.checkInputType(param.accepts[0], 'input')">
+                        <input type="text" ng-model="adc.currentvalues[paramkey]"/>
+                    </div>
+                    <div ng-if="adc.checkInputType(param.accepts[0], 'checkbox')">
+                        <input type="checkbox" ng-model="adc.currentvalues[paramkey]"/>{{paramkey}}
+                    </div>
+                </div>
+                <br><br>
+                <button class="btn btn-primary" ng-click="adc.HandleCommand()">hi</button>
+            </div>
+        </div>
     </div>
 </div>
 
