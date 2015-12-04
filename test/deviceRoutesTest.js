@@ -43,7 +43,7 @@ describe('Device routing', function() {
                         throw err;
                     }
                     expect(res.body.devices.actuators.length).to.equal(1);
-                    expect(res.body.devices.actuators[0].config.alias).to.equal('');
+                    expect(res.body.devices.actuators[0].config.alias).to.equal('b');
                     expect(res.body.devices.sensors.length).to.equal(1);
                     done();
                 });
