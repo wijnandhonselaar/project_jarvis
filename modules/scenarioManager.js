@@ -2,7 +2,8 @@
 
 var Scenario = require('../models/scenario');
 
-function create(scenario) {
+function create(name, description, cb) {
+    var scenario = new Scenario({name: name, description: description});
     Scenario.save(scenario).then(function(res) {
         cb(null, res);
     }).error(function(err){
@@ -11,7 +12,7 @@ function create(scenario) {
 }
 
 function get(id, cb) {
-    Scenario.filter({id: id}).then(function(res) {
+    Scenario.get(id).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
@@ -27,7 +28,7 @@ function getAll(cb) {
 }
 
 function update(scenario, cb) {
-    Scenario.save(scenario).then(function(res) {
+    scenario.save().then(function(res) {
         cb(null, res);
     }).error(function(err) {
        cb({error: "Cannot update scenario.", message: err});
