@@ -12,6 +12,7 @@ var autoDiscover = require('./modules/autodiscover');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
 var alertRoutes = require('./routes/alertRoutes');
+var scenarioRoutes = require('./routes/scenarioRoutes');
 
 server.listen(GLOBAL.port);
 autoDiscover.init(server, io);
@@ -26,7 +27,8 @@ if(GLOBAL.dev) {
 
 // Middleware
 app.use(express.static('public'));
-app.use("/devices",deviceRoutes);
+app.use("/devices", deviceRoutes);
+app.use("/scenario", scenarioRoutes);
 //app.use("/alerts", alertRoutes);
 
 app.get('/', function (req, res) {

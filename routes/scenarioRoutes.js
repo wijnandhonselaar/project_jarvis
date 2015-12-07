@@ -8,7 +8,7 @@ module.exports = (function() {
     route.get('/', function(req, res) {
         scenarioManager.getAll(function(err, result) {
             if(err) throw err;
-            this.res.send({scenarios: result});
+            res.send({scenarios: result});
         });
     });
 
@@ -20,16 +20,16 @@ module.exports = (function() {
     });
 
     route.post('/', function(req, res) {
-        scenarioManager.new(req.body, function(err, result) {
+        scenarioManager.new(req.body.name, req.body.description, function(err, result) {
             if(err) throw err;
             res.redirect('/scenario/'+result.id);
         });
     });
 
-    route.put('/:id', function(req, res) {
-        scenarioManager.update(req.params.id, req.body.scenario, function(err, result) {
-           if(err) throw err;
-            res.send({success: "success"});
+    route.put('/', function(req, res) {
+        scenarioManager.update(req.body.scenario, function(err, result) {
+            if(err) throw err;
+            res.send({scenario: result});
         });
     });
 

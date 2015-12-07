@@ -14,21 +14,74 @@ describe('Scenario routing', function() {
         }, 500);
     });
 
-    describe('#get all devices', function() {
-        it('should receive a list of devices', function (done) {
-            done();
-            //api
-            //    .get('http://localhost:3221/scenario')
-            //    //.expect(200) //Status code
-            //    .end(function(err,res) {
-            //        if (err) {
-            //            throw err;
-            //        }
-            //        expect(res.body.devices.actuators.length).to.equal(1);
-            //        expect(res.body.devices.actuators[0].config.alias).to.equal('b');
-            //        expect(res.body.devices.sensors.length).to.equal(1);
-            //        done();
-            //    });
+    describe('#new scenario', function() {
+        it('should create a new scenario', function(done) {
+           api
+               .post('http://localhost:3221/scenario')
+               .send({name: 'Thuiskomst', description: 'Verwarming aan, koffiezet apparaat aan.'})
+               .end(function(err,res) {
+                    if (err) throw err;
+                    done();
+               });
+        });
+    });
+
+    describe('#get all scenario\'s', function() {
+        it('should receive a list of scenario\'s', function (done) {
+            api
+                .get('http://localhost:3221/scenario')
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    done();
+                });
+        });
+    });
+
+    describe('#get scenario', function() {
+        it('should get scenario by id', function (done) {
+            var scenario = null;
+            api
+                .get('http://localhost:3221/scenario')
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    scenario = res.body.scenarios[0];
+                    api
+                        .get('http://localhost:3221/scenario/'+scenario.id)
+                        .end(function(err,res) {
+                            if (err) {
+                                throw err;
+                            }
+                            expect(res.body.scenario.name).to.equal(scenario.name);
+                            done();
+                        });
+                });
+        });
+    });
+
+    describe('#update scenario', function() {
+        it('should update a scenario', function (done) {
+            var scenario = null;
+            api
+                .get('http://localhost:3221/scenario')
+                .end(function(err,res) {
+                    if (err) {
+                        throw err;
+                    }
+                    scenario = res.body.scenarios[0];
+                    scenario.name = 'Aangepast';
+                    api
+                        .put('http://localhost:3221/scenario')
+                        .send({scenario: scenario})
+                        .end(function(err,res) {
+                            if (err) throw err;
+                            expect(res.body.scenario.name).to.equal(scenario.name);
+                            done();
+                        });
+                });
         });
     });
 
