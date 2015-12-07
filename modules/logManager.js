@@ -69,19 +69,19 @@ function getEvents(deviceid, cb) {
  * @param severity (optional)
  * @param cb
  */
-//function getAllEvents(severity, cb) {
-//    if(severity > 0 || severity < 6) {
-//        severity = severity;
-//    } else {
-//        severity = 5; // TODO default severity
-//    }
-//
-//    eventLog.filter(eventLog.row('severity').lt(severity)).run(function(res) {
-//        cb(null, res);
-//    }).error(function(err) {
-//        cb({error: "Not found.", message: err});
-//    });
-//}
+function getAllEvents(severity, cb) {
+    if(severity > 0 || severity < 6) {
+        severity = severity;
+    } else {
+        severity = 5; // TODO default severity
+    }
+
+    eventLog.filter(r.row('severity').lt(severity)).run(function(res) {
+        cb(null, res);
+    }).error(function(err) {
+        cb({error: "Not found.", message: err});
+    });
+}
 
 /**
  * get a list of data for 1 sensor
@@ -108,13 +108,12 @@ function getStatus(deviceid, cb) {
         cb({error: "Not found.", message: err});
     });
 }
-" "
+
 module.exports = {
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
-    //getAllEvents: getAllEvents,
+    getAllEvents: getAllEvents,
     getData: getData,
     getStatus: getStatus
-};
-:::¨
+}
