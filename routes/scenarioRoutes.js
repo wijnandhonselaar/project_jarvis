@@ -1,13 +1,37 @@
 module.exports = (function() {
     var express= require('express');
     var route = express.Router();
+    var scenarioManager = require('../modules/scenarioManager');
     var logger = require('../modules/logManager');
 
-    route.get('/', function(request, resp) {
-        resp.send({scenarios: scenarioManager.getAll()});
+    // TODO replace thrown errors by error responses.
+    route.get('/', function(req, res) {
+        scenarioManager.getAll(function(err, result) {
+            if(err) throw err;
+            this.res.send({scenarios: result});
+        });
     });
 
-    
+    route.get('/:id', function(req, res) {
+       scenarioManager.get(req.params.id, function(err, result) {
+           if(err) throw err;
+           res.send({scenario: result});
+       });
+    });
+
+    route.post('/', function(req, res) {
+        scenarioManager.new(req.body, function(err, result) {
+            if(err) throw err;
+            res.redirect('/scenario/'+result.id);
+        });
+    });
+
+    route.put('/:id', function(req, res) {
+        scenarioManager.update(req.params.id, req.body.scenario, function(err, result) {
+           if(err) throw err;
+            res.send({success: "success"});
+        });
+    });
 
     return route;
 })();
