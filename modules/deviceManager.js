@@ -12,34 +12,29 @@ var rethinkManager = require('./rethinkManager');
  */
 
 function addDevice(device, remote, deviceType) {
-    // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function(err, res) {
         if(res === undefined) {
-            if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
             var deviceObj = {id: device.id, model: device, config: {alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status: {state:false}};
             devices[deviceType].push(deviceObj);
             if(device.type === 'sensor'){
                 initiateStatusPolling(deviceObj);
             }
-            console.log(deviceObj);
             io.emit("deviceAdded", deviceObj);
-            // Save to the database!
+
             rethinkManager.saveDevice({id: device.id, model: device, config: {alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}}, device.type, function(err, res){
                 if(err) {
-                    //if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
-                    //if(GLOBAL.logToConsole) console.log(err);
+                    //LOG EVENT ERR
                 } else {
-                    //if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
+                    //LOG EVENT
                 }
             });
-            if(GLOBAL.logToConsole) console.log("Discovered "+ device.name + " on "+remote.address+ ' length: '+devices[deviceType].length);
         } else {
-           // if(GLOBAL.logToConsole) console.log('Device '+ res.model.name +' is known in the database!');
             var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
             devices[deviceType].push(deviceObj);
             if(device.type === 'sensor'){
                 initiateStatusPolling(deviceObj);
             }
+            //LOG EVENT
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -51,6 +46,7 @@ function addDevice(device, remote, deviceType) {
 function broadcastEvent(msg){
     var device = getActuatorById(msg.id);
     if(!device) deviceId = getSensorById(msg.id);
+    //LOG EVENT
     io.emit('deviceEvent', {device:device, event:msg})
 }
 
@@ -160,8 +156,11 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback){
             // save to the database!
             rethinkManager.updateAlias(id, devicetype, alias, function(err, res) {
                 if(err) {
+                    //LOG EVENT
                     callback( {err: "Error, could not update " + id + " with id: " + id + " to update alias."});
                 } else {
+                    //LOG EVENT
+                    io.emit("deviceUpdated", devices[devicetype][i]);
                     callback( {success: "Success, alias for "+ id + " was successfully updated."});
                 }
             });           
@@ -181,8 +180,11 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback){
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
             rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
                 if(err) {
+                     //LOG EVENT
                      callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
                 } else {
+                    //LOG EVENT
+                    io.emit("deviceUpdated", devices.sensors[i]);
                     callback({success: "Success, interval for "+ id + " was successfully updated."});
                 }
             });
@@ -196,21 +198,17 @@ function initiateStatusPolling(sensor){
 
 function updateSensorStatusFunction(obj){
     sensor = getSensorById(obj.id);
-    console.log(sensor.status);
-    console.log(obj.status);
     if(sensor.status !== obj.status){
-        console.log("Niet hetzelfde");
         sensor.status = obj.status;
-        console.log(sensor.status);
+        //LOG DATA
         io.emit("deviceUpdated", sensor);
     }
 }
 
 function updateActuatorState(id, state){
     actuator = getActuatorById(id);
-    console.log(state);
     actuator.status = state;
-    console.log(actuator);
+    //LOG DATA
     io.emit("deviceUpdated", actuator);
 }
 //noinspection JSClosureCompilerSyntax

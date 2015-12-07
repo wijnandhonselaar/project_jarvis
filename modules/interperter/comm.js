@@ -16,11 +16,12 @@ var postMethod = function(command, deviceObject, paramList, callback){
                 if(err) {
                     console.log(err);
                 } else {
-                    console.log(res.body);
+                    //LOG EVENT (command executed)
                     callback(res.body);
                 }
             });
         } else {
+            //Log EVENT (COMMAND FAILED)
             callback(data);
         }
     })

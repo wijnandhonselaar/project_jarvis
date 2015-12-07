@@ -27,7 +27,7 @@ module.exports = (function() {
         if(devicetype === 'sensor'){
             device = deviceManager.getSensor(parseInt(request.params.id));
         }
-        response = comm.get(request.params.command,device, function(){
+        comm.get(request.params.command,device, function(response){
             resp.send(JSON.stringify(response))
         });
     });
@@ -56,7 +56,6 @@ module.exports = (function() {
 
     route.put('/:devicetype/:id/alias', function(request,resp){
         deviceManager.updateDeviceAlias(request.params.devicetype, parseInt(request.params.id), request.body.alias, function(response){
-            console.log("inside callback", response);
            resp.send(JSON.stringify(response)); 
         }); 
     });
