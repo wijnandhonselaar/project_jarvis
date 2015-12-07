@@ -2,6 +2,10 @@
 
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
+var thinky = require('thinky')();
+var r = thinky.r;
+
+
 /**
  * log event data
  * @param device
@@ -23,6 +27,7 @@ function logEvent(device, type, category, message, severity, cb) {
         message: message,
         severity: severity
     });
+
     eventLog.save(log).then(function(res) {
         cb(null, res);
     }).error(function(err){
@@ -69,19 +74,21 @@ function getEvents(deviceid, cb) {
  * @param severity (optional)
  * @param cb
  */
-//function getAllEvents(severity, cb) {
-//    if(severity > 0 || severity < 6) {
-//        severity = severity;
-//    } else {
-//        severity = 5; // TODO default severity
-//    }
-//
-//    eventLog.filter(eventLog.row('severity').lt(severity)).run(function(res) {
-//        cb(null, res);
-//    }).error(function(err) {
-//        cb({error: "Not found.", message: err});
-//    });
-//}
+function getAllEvents(severity, cb) {
+    if(severity > 0 || severity < 6) {
+
+    } else {
+        severity = 5; // TODO default severity
+    }
+
+    eventLog.filter(function (log) {
+        return log("severity").lt(severity + 1);
+    }).then(function(res) {
+        cb(null, res);
+    }).error(function(err) {
+        cb({error: "Not found.", message: err});
+    });
+}
 
 /**
  * get a list of data for 1 sensor
@@ -102,19 +109,18 @@ function getData(deviceid, cb) {
  * @param cb
  */
 function getStatus(deviceid, cb) {
-    dataLog.filter({device: {id:deviceid}}).orderBy('timestamp').limit(0).run(function(res) {
+    dataLog.filter({device: {id:deviceid}}).orderBy((r.desc('timestamp'))).limit(1).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
     });
 }
-" "
+
 module.exports = {
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
-    //getAllEvents: getAllEvents,
+    getAllEvents: getAllEvents,
     getData: getData,
     getStatus: getStatus
 };
-:::¨
