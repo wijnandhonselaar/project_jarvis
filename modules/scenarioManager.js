@@ -27,11 +27,24 @@ function getAll(cb) {
     });
 }
 
+function updateById(id, scenario, cb) {
+    Scenario.get(id).then(function(old) {
+        old.merge(scenario);
+        old.save().then(function (res) {
+            cb(null, res);
+        }).error(function (err) {
+            cb({error: "Cannot update scenario.", message: err});
+        });
+    }).error(function (err) {
+        cb({error: "Cannot update scenario.", message: err});
+    });
+}
+
 function update(scenario, cb) {
     scenario.save().then(function(res) {
         cb(null, res);
     }).error(function(err) {
-       cb({error: "Cannot update scenario.", message: err});
+        cb({error: "Cannot update scenario.", message: err});
     });
 }
 
@@ -39,5 +52,6 @@ module.exports = {
     new: create,
     get: get,
     getAll: getAll,
-    update: update
+    update: update,
+    updateById: updateById
 };

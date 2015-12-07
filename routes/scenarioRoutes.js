@@ -26,8 +26,8 @@ module.exports = (function() {
         });
     });
 
-    route.put('/', function(req, res) {
-        scenarioManager.update(req.body.scenario, function(err, result) {
+    route.put('/:id', function(req, res) {
+        scenarioManager.updateById(req.params.id, req.body.scenario, function(err, result) {
             if(err) throw err;
             res.send({scenario: result});
         });

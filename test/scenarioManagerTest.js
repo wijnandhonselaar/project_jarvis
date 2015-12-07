@@ -61,6 +61,19 @@ describe('Scenario Manager', function() {
                 });
             });
         });
+        it('Should update scenario name and description with given id.', function(done) {
+            ScenarioManager.get(id,function(err, res) {
+                if(err) throw err;
+                var scenario = res;
+                scenario.name = 'Aangepast';
+                scenario.description = 'New description';
+                ScenarioManager.updateById(id, scenario, function(err, res) {
+                    if(err) throw err;
+                    expect(res.name).to.equal('Aangepast');
+                    done();
+                });
+            });
+        });
         it('Should not update scenario when name is undefined.', function(done) {
             ScenarioManager.get(id,function(err, res) {
                 if(err) throw err;

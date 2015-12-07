@@ -74,7 +74,7 @@ describe('Scenario routing', function() {
                     scenario = res.body.scenarios[0];
                     scenario.name = 'Aangepast';
                     api
-                        .put('http://localhost:3221/scenario')
+                        .put('http://localhost:3221/scenario/'+scenario.id)
                         .send({scenario: scenario})
                         .end(function(err,res) {
                             if (err) throw err;
