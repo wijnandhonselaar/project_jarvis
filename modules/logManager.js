@@ -1,6 +1,7 @@
 "use strict";
 
 var Log = require('../models/log');
+var io = null;
 
 function log(device, type, category, message, severity, cb) {
     var log = new Log({
@@ -12,6 +13,7 @@ function log(device, type, category, message, severity, cb) {
         timestamp: JSON.stringify(Date.now())
     });
     Log.save(log).then(function(res) {
+        io.emit('logAdded', log);
         cb(null, res);
     }).error(function(err){
         cb({error: "Not found.", message: err});
@@ -51,6 +53,9 @@ function getActuators(cb) {
 }
 
 module.exports = {
+    init: function (socket) {
+            io = socket;
+         },
     log: log,
     get: get,
     getAll: getAll,
