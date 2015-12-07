@@ -1,7 +1,4 @@
 html{
-    height: 480px !important;
-    width: 800px !important;
-    overflow: hidden !important;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -54,6 +51,7 @@ body{
 .menucontainer{
     border-top:1px solid RGBA(149, 149, 149, 1);
     height: 100vh;
+    z-index: 9999;
 }
 
 .backpanel_dark{
@@ -217,10 +215,10 @@ body{
     overflow:hidden;
 }
 
-#event{
+.event{
     z-index: 9999;
     width: 800px;
-    height: 100vh;
+    height: 100%;
     position: absolute;
     background-color: #F84E19;
     text-align: center;
@@ -228,6 +226,7 @@ body{
     font-size:28px;
     padding-top:20vh;
     display: none;
+    top: 0;
 }
 
 .invert{

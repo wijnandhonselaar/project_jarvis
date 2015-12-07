@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var Log = require('../models/log.js');
+var Log = require('../models/eventLog.js');
 
 describe('Log', function () {
     before(function(done) {
