@@ -2,7 +2,7 @@ var expect              = require('chai').expect;
 var api                 = require('superagent');
 var Sensor              = require('../models/sensor');
 var Actuator            = require('../models/actuator');
-var logger              = require('../modules/logger');
+var logger              = require('../modules/logManager');
 var Log                 = require('../models/log');
 
 describe('Logging', function() {
