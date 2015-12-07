@@ -1,0 +1,78 @@
+<div class="row" style="margin-top:15px;">
+    <div class="col m1">
+        <div style="margin-top:5px; background-image:url({{rec.actuator.model.image}}); width: 25px; height:30px; background-size:cover;"></div>
+    </div>
+    <div class="col m11">
+        <select ng-model="rec.selectedCommand" style="display: block;">
+            <option ng-selected="true" value="">Selecteer een actie</option>
+            <option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"
+                    ng-if="command.name != 'status'">{{command.name}}
+            </option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col m3">
+        <select ng-model="rec.threshold.device" style="display: block;" ng-change="rec.updateFieldList()">
+            <option value="">Sensor</option>
+            <option ng-repeat="sensor in rec.sensors" value="{{sensor.id}}">{{sensor.config.alias}}</option>
+        </select>
+    </div>
+    <div class="col m3">
+        <select ng-model="rec.threshold.field" style="display: block;">
+            <option value="">Veld</option>
+            <option ng-repeat="(key, val) in rec.selectedSensor.model.commands.status.returns" value="{{key}}">{{key}}</option>
+        </select>
+    </div>
+    <div class="col m3">
+        <select ng-model="rec.threshold.operator" style="display: block;">
+            <option value="">Operator</option>
+            <option value="==="> Gelijk aan</option>
+            <option value="<"> Kleiner dan</option>
+            <option value=">"> Groter dan</option>
+        </select>
+    </div>
+    <div class="col m2">
+        <input ng-model="rec.threshold.value" placeholder="Waarde" id="value" type="text">
+    </div>
+    <div class="col m1">
+        <button ng-click="rec.addToThresholds()"> +</button>
+    </div>
+</div>
+
+
+<div class="row" style="height: 10px;">
+    <div class="col m12" style="margin-top:-25px;">
+        <p>Voer {{rec.selectedCommand}} uit op {{rec.actuator.config.alias}} als</p>
+    </div>
+</div>
+
+<div style="overflow: scroll; height: 140px; width:100%;">
+    <div class="row" style="padding-top:5px; background-color: #F4F4F4"
+         ng-repeat="rule in rec.ruleObjects[rec.selectedCommand].thresholds">
+        <div class="col m3">
+            <select ng-model="rule.device" style="display: block;">
+                <option value="">Sensor</option>
+                <option ng-repeat="sensor in rec.sensors" value="{{sensor.id}}">{{sensor.config.alias}}</option>
+            </select>
+        </div>
+        <div class="col m3">
+            <select ng-model="rule.field" style="display: block;">
+                <option ng-repeat="(key, val) in rec.getSensorFields(rule.device)" value="{{key}}">{{key}}</option>
+            </select>
+        </div>
+        <div class="col m3">
+            <select ng-model="rule.operator" style="display: block;">
+                <option value="">Operator</option>
+                <option value="==="> Gelijk aan</option>
+                <option value="<"> Kleiner dan</option>
+                <option value=">"> Groter dan</option>
+            </select>
+        </div>
+        <div class="col m3">
+            <input ng-model="rule.value" placeholder="Waarde" type="text">
+        </div>
+    </div>
+</div>
+        
