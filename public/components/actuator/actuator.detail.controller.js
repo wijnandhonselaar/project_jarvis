@@ -90,7 +90,7 @@
         }
 
         function HandleCommand() {
-            sendcommand(adc.actuator.id, adc.currentcommand, adc.commandkey, 'actuator', adc.currentvalues);
+             sendcommand(adc.actuator.id, adc.currentcommand, adc.commandkey, 'actuator', adc.currentvalues);
         }
 
     }

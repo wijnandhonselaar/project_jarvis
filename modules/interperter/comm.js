@@ -2,6 +2,7 @@ var validator = require('./validator');
 var superAgent = require('superagent');
 
 var postMethod = function(command, deviceObject, paramList, callback){
+    console.log("PARAMLISTERT: \n", paramList);
     validator.validate(command, deviceObject, paramList, function(data){
         var everythingIsValidated = true;
         for (var property in data) {
