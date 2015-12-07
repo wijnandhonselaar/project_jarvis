@@ -7,7 +7,12 @@ var Scenario = thinky.createModel("Scenario", {
     actuators: [
         {
             deviceid: type.number().required(),
-            action: type.string().required()
+            action: type.object({
+                command: type.string().required(),
+                parameters: [
+                    type.object()
+                ]
+            }).required()
         }
     ]
 });
