@@ -33,6 +33,7 @@ describe('Logging', function() {
 
     describe('#Log more data to the database', function() {
         it('should log more new data.', function(done) {
+            this.timeout(1000);
             logger.logData({id:1000015, model:{name:'temperatuur'}, config:{alias:"woonkamer temp"}}, 6, function(err,res) {
                 if(err) { throw err; }
                 done();
