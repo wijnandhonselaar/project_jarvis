@@ -14,7 +14,6 @@
         adc.actuatoralias = "";
         adc.updateAlias = updateActuator;
         adc.toggleState = toggleState;
-        //adc.optionSettingsList = [];
         adc.sliderSettings = [];
 
         DS.getDeviceById($sp.uid, "actuator")

@@ -12,7 +12,7 @@ local routes = {
         end,
         status = function(conn)
             return json.encode({ 
-                power = gpio.read(pins.powerPin)
+                state = gpio.read(pins.powerPin)
             })
         end
     },
@@ -21,12 +21,12 @@ local routes = {
             gpio.mode(pins.powerPin, gpio.OUTPUT)
             gpio.write(pins.powerPin, gpio.HIGH)
             dobbie.setEventTimer()
-            return "true";
+            return "true"
         end,
         off = function(conn, postParams)
             gpio.mode(pins.powerPin, gpio.OUTPUT)
             gpio.write(pins.powerPin, gpio.LOW)
-            return "true";
+            return "true"
         end
     }
 }
