@@ -3,7 +3,7 @@ module.exports = (function() {
     var express= require('express');
     var comm = require('../modules/interperter/comm.js');
     var route = express.Router();
-    var logger = require('../modules/logger');
+    var logger = require('../modules/logManager');
 
     route.get('/', function(request, resp) {
         console.log(deviceManager.getAll());

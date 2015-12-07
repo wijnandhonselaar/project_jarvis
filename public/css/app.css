@@ -215,10 +215,10 @@ body{
     overflow:hidden;
 }
 
-#event{
+.event{
     z-index: 9999;
     width: 800px;
-    height: 100vh;
+    height: 100%;
     position: absolute;
     background-color: #F84E19;
     text-align: center;
@@ -226,6 +226,7 @@ body{
     font-size:28px;
     padding-top:20vh;
     display: none;
+    top: 0;
 }
 
 .invert{
