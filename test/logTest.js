@@ -57,12 +57,15 @@ describe('Log', function () {
     it('Should save a new log', function (done) {
         // create the new log
         var log = new Log({
-            device: 1,
+            device: {
+                id: 1,
+                name: "blaat",
+                alias: "schaap"
+            },
             type: 'sensor',
-            message: {message: 'message'},
+            message: 'message',
             severity: 1,
-            category: 'manual',
-            timestamp: JSON.stringify(Date.now())
+            category: 'manual'
         });
         // save the new log
         Log.save(log).then(function(res) {
