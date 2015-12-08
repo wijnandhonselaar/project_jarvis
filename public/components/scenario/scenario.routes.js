@@ -22,7 +22,7 @@
                     "mainView": {
                         templateUrl: "components/scenario/scenario.overzicht.html",
                         controller: 'ScenarioOverzichtctrl',
-                        controllerAs: "scene"
+                        controllerAs: "scena"
                     },
                     "logView": {
                         templateUrl: "components/log/log.html",
@@ -35,7 +35,62 @@
                         controllerAs: "mc"
                     }
                 }
-            });
+            })
+            .state('scenarioNew', {
+                url: "/scenarios/new",
+                params: { data: null, activeMenu: "scenario" },
+                data: { pageTitle: "new scenario" },
+                views: {
+                    "headerView" : {
+                        templateUrl: "components/header/header.html",
+                        controller: "HeaderCtrl",
+                        controllerAs: "hc"
+                    },
+                    "mainView": {
+                        templateUrl: "components/scenario/scenario.new.html",
+                        controller: 'ScenarioNewctrl',
+                        controllerAs: 'scennew'
+                    },
+                    "logView": {
+                        templateUrl: "components/log/log.html",
+                        controller: "LogCtrl",
+                        controllerAs: "lc"
+                    },
+                    "menuView": {
+                        templateUrl: "components/menu/menu.html",
+                        controller: "MenuCtrl",
+                        controllerAs: "mc"
+                    }
+                }
+            })
+    .state('scenarioDetail', {
+            url: "/scenarios/:uid",
+            params: { data: null, activeMenu: "scenario" },
+            data: { pageTitle: "Scenario detail" },
+            views: {
+                "headerView" : {
+                    templateUrl: "components/header/header.html",
+                    controller: "HeaderCtrl",
+                    controllerAs: "hc"
+                },
+                "mainView": {
+                    templateUrl: "components/scenario/scenario.detail.html",
+                    controller: 'ScenarioDetailctrl',
+                    controllerAs: 'scendet'
+                },
+                "logView": {
+                    templateUrl: "components/log/log.html",
+                    controller: "LogCtrl",
+                    controllerAs: "lc"
+                },
+                "menuView": {
+                    templateUrl: "components/menu/menu.html",
+                    controller: "MenuCtrl",
+                    controllerAs: "mc"
+                }
+            }
+        });
+
     }
 
 })();
