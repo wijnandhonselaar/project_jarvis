@@ -37,6 +37,17 @@
             }
         });
 
+        function updateRules(id, obj){
+            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules:obj})
+                .success(function (data) {
+                    console.log("succesfully saved");
+                })
+                .error(function (err) {
+                    console.error(err);
+                    console.error("error with command");
+                });
+        }
+
         // Buildevent en de socketlistener moeten naar logservice
         function buildEvent(severity, imgsrc, msg) {
             var eventEl = document.createElement("div");
@@ -93,7 +104,8 @@
             addDeviceLoader: addDeviceLoader,
             setOnDeviceAdd: setOnDeviceAdd,
             setOnDeviceUpdate: setOnDeviceUpdate,
-            updateDevice: updateDevice
+            updateDevice: updateDevice,
+            updateRules: updateRules
         };
 
         function getDeviceById(uid, type) {

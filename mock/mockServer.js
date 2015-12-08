@@ -69,7 +69,7 @@ function broadcastUDPPacket(){
         index ++;
     }
     else if(index < 20){
-        res.send(JSON.stringify(devices.sensors[index-7]));
+        res.send(JSON.stringify(devices.sensors[index-10]));
         index ++;
     }
 });

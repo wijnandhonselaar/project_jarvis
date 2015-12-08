@@ -16,7 +16,7 @@ var postMethod = function(command, deviceObject, paramList, callback){
                 if(err) {
                     console.log(err);
                 } else {
-                    console.log(res.body);
+                    //console.log(res.body);
                     callback(res.body);
                 }
             });
