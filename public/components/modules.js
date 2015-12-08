@@ -14,6 +14,7 @@
         'jarvis.menu',
         'jarvis.sensor',
         'jarvis.actuator',
-        'jarvis.dashboard'
+        'jarvis.dashboard',
+        'jarvis.scenario'
     ]);
 }());
