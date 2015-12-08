@@ -43,7 +43,7 @@ var Actuator = thinky.createModel("Actuator", {
 				onEvents: [
 					{
 						device: type.number().required(),
-						event: type.string().required
+						event: type.string().required()
 					}
 				],
 				thresholds: [
