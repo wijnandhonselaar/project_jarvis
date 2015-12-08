@@ -3,7 +3,29 @@ var devices =  {
     sensors:[]
 };
 var io = null;
+var ruleEngine = null;
 var rethinkManager = require('./rethinkManager');
+var rules = {
+    on: {
+        command: 'on',
+        onEvents: [
+            {
+                device: 1337,
+                event: 'onFinish'
+            }
+        ],
+        thresholds: [
+            {
+                device: 16,
+                field: 'Celcius',
+                operator: '>',
+                value: 0,
+                gate: 'AND'
+            }
+        ]
+
+    }
+};
 
 /**
  *
@@ -16,7 +38,7 @@ function addDevice(device, remote, deviceType) {
     rethinkManager.getDevice(device.id, deviceType, function(err, res) {
         if(res === undefined) {
             if(GLOBAL.logToConsole) console.log('Device unkown in the database!');
-            var deviceObj = {id: device.id, model: device, config: {alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status: {state:false}};
+            var deviceObj = {id: device.id, model: device, config: {rules:rules, alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}, status: {state:false}};
             devices[deviceType].push(deviceObj);
             if(device.type === 'sensor'){
                 initiateStatusPolling(deviceObj);
@@ -24,7 +46,7 @@ function addDevice(device, remote, deviceType) {
             console.log(deviceObj);
             io.emit("deviceAdded", deviceObj);
             // Save to the database!
-            rethinkManager.saveDevice({id: device.id, model: device, config: {alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}}, device.type, function(err, res){
+            rethinkManager.saveDevice({id: device.id, model: device, config: {rules:rules, alias: device.name, ip: remote.address, clientRequestInterval: device.commands.status.requestInterval}}, device.type, function(err, res){
                 if(err) {
                     //if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
                     //if(GLOBAL.logToConsole) console.log(err);
@@ -136,13 +158,25 @@ function getActuatorById(id) {
  * @returns {*}
  */
 function updateDeviceStatus(devicetype, id, status) {
-    for (var i = 0; i < devices.devicetype.length; i++) {
-        if(devices.devicetype[i].id === id){
-            devices.devicetype[i].config.status = status;
-            return {Success: "Success, status for "+ devices.devicetype[i].id + " was successfully updated."};
+    devicetype = parseDeviceType(devicetype);
+    for (var i = 0; i < devices[devicetype].length; i++) {
+        if(devices[devicetype][i].id === id){
+            devices[devicetype][i].config.status = status;
+            return {Success: "Success, status for "+ devices[devicetype][i].id + " was successfully updated."};
         }
     }
     return {err: "Error, could not find " +devicetype + " with id: " + id + " to update status."};
+}
+
+function parseDeviceType(devicetype){
+    switch(devicetype){
+        case 'actuator':
+            return 'actuators';
+            break;
+        case 'sensor':
+            return 'sensors';
+            break;
+    }
 }
 
 /**
@@ -196,12 +230,15 @@ function initiateStatusPolling(sensor){
 
 function updateSensorStatusFunction(obj){
     sensor = getSensorById(obj.id);
-    console.log(sensor.status);
-    console.log(obj.status);
+    //console.log(sensor.status);
+    //console.log(obj.status);
     if(sensor.status !== obj.status){
-        console.log("Niet hetzelfde");
+       for(var i = 0; i<getActuators().length; i++){
+            ruleEngine.apply(getActuators()[i]);
+        }
+        //console.log("Niet hetzelfde");
         sensor.status = obj.status;
-        console.log(sensor.status);
+        //console.log(sensor.status);
         io.emit("deviceUpdated", sensor);
     }
 }
@@ -213,6 +250,11 @@ function updateActuatorState(id, state){
     console.log(actuator);
     io.emit("deviceUpdated", actuator);
 }
+
+function getActuators(){
+    return devices.actuators;
+}
+
 //noinspection JSClosureCompilerSyntax
 /**
  *
@@ -230,8 +272,9 @@ function updateActuatorState(id, state){
 *         }}
  */
 module.exports = {
-    init: function(socketio){
+    init: function(socketio, rEngine){
         io = socketio;
+        ruleEngine = rEngine;
     },
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
@@ -241,7 +284,7 @@ module.exports = {
     getAll: function(){return devices;},
     removeAll: function(){devices.actuators = []; devices.sensors = [];},
     getSensors: function(){return devices.sensors;},
-    getActuators: function(){return devices.actuators;},
+    getActuators: getActuators,
     updateDeviceAlias: updateDeviceAliasFunction,
     updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,

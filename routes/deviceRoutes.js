@@ -32,6 +32,10 @@ module.exports = (function() {
         });
     });
 
+    route.post('/actuators/:id/rules', function(req,res){
+
+    });
+
     route.get('/actuators/log', function(request, resp) {
         var log = '';
         resp.send(JSON.stringify(log));

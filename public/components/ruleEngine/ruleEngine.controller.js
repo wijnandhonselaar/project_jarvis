@@ -23,18 +23,10 @@
             gate: 'AND'
         };
 
-        rec.ruleObjects = {
-            on: {
-                command: null,
-                onEvents: [],
-                thresholds: []
-            }
-        };
-
-
         function getSensorFields(id){
             for(var i = 0; i<rec.sensors.length; i++){
                 if(rec.sensors[i].id == id){
+                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.sensors[i].model.commands.status.returns;
                 }
             }
@@ -63,17 +55,8 @@
 
 
         $timeout(function () {
-            for (var property in rec.actuator.model.commands) {
-                if (rec.actuator.model.commands.hasOwnProperty(property)) {
-                    if (property !== 'status') {
-                        rec.ruleObjects[property] = {
-                            command: property,
-                            onEvents: [],
-                            thresholds: []
-                        };
-                    }
-                }
-            }
+            rec.ruleObjects = rec.actuator.config.rules;
+            console.log(rec.ruleObjects);
         });
 
         DS.getDeviceById($sp.uid, "actuator")

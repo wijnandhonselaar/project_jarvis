@@ -12,9 +12,14 @@ var autoDiscover = require('./modules/autodiscover');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
 var alertRoutes = require('./routes/alertRoutes');
+var ruleEngine = require('./modules/ruleEngine');
 
 server.listen(GLOBAL.port);
+
 autoDiscover.init(server, io);
+deviceManager.init(io, ruleEngine);
+ruleEngine.init(deviceManager);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -26,9 +31,15 @@ if(GLOBAL.dev) {
 
 // Middleware
 app.use(express.static('public'));
-app.use("/devices",deviceRoutes);
+app.use("/devices", deviceRoutes);
 //app.use("/alerts", alertRoutes);
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
+});
+
+
+app.get('/testRule', function(req,res){
+    ruleEngine.apply(deviceManager.getActuator(0));
+    res.send('');
 });
