@@ -53,10 +53,11 @@
             };
         }
 
-
         $timeout(function () {
             rec.ruleObjects = rec.actuator.config.rules;
-            console.log(rec.ruleObjects);
+            $scope.$watch('rec.ruleObjects', function(newVal, oldVal){
+                DS.updateRules(rec.actuator.id, newVal);
+            }, true);
         });
 
         DS.getDeviceById($sp.uid, "actuator")

@@ -33,7 +33,11 @@ module.exports = (function() {
     });
 
     route.post('/actuators/:id/rules', function(req,res){
-
+        var object = {
+            id:parseInt(req.params.id),
+            rules:req.body.rules
+        };
+        res.json(deviceManager.setRules(object))
     });
 
     route.get('/actuators/log', function(request, resp) {

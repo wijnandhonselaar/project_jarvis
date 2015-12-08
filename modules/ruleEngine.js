@@ -58,8 +58,6 @@ function apply(device) {
                         });
                         break;
                 }
-            } else {
-                console.log('Statement is false');
             }
         }
     }
