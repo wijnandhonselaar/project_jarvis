@@ -2,6 +2,10 @@
 
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
+var thinky = require('thinky')();
+var r = thinky.r;
+
+
 /**
  * log event data
  * @param device
@@ -23,6 +27,7 @@ function logEvent(device, type, category, message, severity, cb) {
         message: message,
         severity: severity
     });
+
     eventLog.save(log).then(function(res) {
         cb(null, res);
     }).error(function(err){
@@ -71,12 +76,14 @@ function getEvents(deviceid, cb) {
  */
 function getAllEvents(severity, cb) {
     if(severity > 0 || severity < 6) {
-        severity = severity;
     } else {
         severity = 5; // TODO default severity
     }
 
-    eventLog.filter(r.row('severity').lt(severity)).run(function(res) {
+
+    eventLog.filter(function (log) {
+        return log("severity").lt(severity + 1);
+    }).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
@@ -102,7 +109,7 @@ function getData(deviceid, cb) {
  * @param cb
  */
 function getStatus(deviceid, cb) {
-    dataLog.filter({device: {id:deviceid}}).orderBy('timestamp').limit(0).run(function(res) {
+    dataLog.filter({device: {id:deviceid}}).orderBy((r.desc('timestamp'))).limit(1).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
