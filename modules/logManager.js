@@ -25,7 +25,8 @@ function logEvent(device, type, category, message, severity, cb) {
         type: type,
         category: category,
         message: message,
-        severity: severity
+        severity: severity,
+        timestamp: Math.round((new Date()).getTime() / 1000)
     });
 
     eventLog.save(log).then(function(res) {
@@ -48,7 +49,8 @@ function logData(device, value, cb) {
             name: device.model.name,
             alias: device.config.alias
         },
-        value: value
+        value: value,
+        timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
         cb(null, res);

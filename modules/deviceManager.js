@@ -53,6 +53,7 @@ function addDevice(device, remote, deviceType) {
             if (GLOBAL.logToConsole) console.log('Device unkown in the database!');
             var deviceObj = {
                 id: device.id,
+                savedAt: Math.round((new Date()).getTime() / 1000),
                 model: device,
                 config: {
                     rules: rules,
@@ -71,6 +72,7 @@ function addDevice(device, remote, deviceType) {
             // Save to the database!
             rethinkManager.saveDevice({
                 id: device.id,
+                savedAt: Math.round((new Date()).getTime() / 1000),
                 model: device,
                 config: {
                     rules: rules,

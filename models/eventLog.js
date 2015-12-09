@@ -18,7 +18,7 @@ var Log = thinky.createModel("eventLog", {
     message: type.string().required(),
     severity: type.number().required(),
     category: type.string().required(),
-    timestamp: type.number().default(Math.round((new Date()).getTime() / 1000)) // unix timestamp
+    timestamp: type.number().required() // unix timestamp
 });
 
 module.exports = Log;
