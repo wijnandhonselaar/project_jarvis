@@ -94,6 +94,10 @@ body{
     color:RGBA(149, 149, 149, 1);
 }
 
+.highlight{
+    color:#F84E19;
+}
+
 .no-shadow{
     -webkit-box-shadow: none;
     -moz-box-shadow:    none;

@@ -17,6 +17,7 @@ var rules = {
         thresholds: [
             {
                 device: 16,
+                priority: 1,
                 field: 'Celcius',
                 operator: '>',
                 value: 20,
@@ -36,7 +37,6 @@ var rules = {
         thresholds: [
 
         ]
-
     }
 };
 
@@ -262,7 +262,7 @@ function initiateStatusPolling(sensor) {
 }
 
 function updateSensorStatusFunction(obj) {
-    sensor = getSensorById(obj.id);
+    var sensor = getSensorById(obj.id);
     //console.log(sensor.status);
     //console.log(obj.status);
     if (sensor.status !== obj.status) {
@@ -277,7 +277,7 @@ function updateSensorStatusFunction(obj) {
 }
 
 function updateActuatorState(id, state) {
-    actuator = getActuatorById(id);
+    var actuator = getActuatorById(id);
     //console.log(state);
     actuator.status = state;
     //console.log(actuator);
