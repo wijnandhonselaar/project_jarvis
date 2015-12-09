@@ -11,13 +11,13 @@
 
         function createScenario(name, description) {
             return new Promise(
-                function(resolve, reject) {
+                function (resolve, reject) {
                     $http.post("/scenario", {name: name, description: description})
-                        .success(function(data) {
-                            if(data.err) return reject(new Error(data.err));
+                        .success(function (data) {
+                            if (data.err) return reject(new Error(data.err));
                             resolve(data);
                         })
-                        .error(function(err) {
+                        .error(function (err) {
                             console.error(err);
                             reject(err);
                         });
@@ -27,8 +27,8 @@
 
         function getScenario(id) {
             return new Promise(
-                function(resolve, reject) {
-                    $http.get("/scenario/"+id)
+                function (resolve, reject) {
+                    $http.get("/scenario/" + id)
                         .success(function (data) {
                             resolve(data);
                         })
@@ -41,7 +41,7 @@
 
         function getScenarios() {
             return new Promise(
-                function(resolve, reject) {
+                function (resolve, reject) {
                     $http.get("/scenario")
                         .success(function (data) {
                             resolve(data);
@@ -53,10 +53,10 @@
                 });
         }
 
-        function UpdateNameorDescription(id,scenario){
+        function UpdateNameorDescription(id, scenario) {
             return new Promise(
-                function(resolve, reject){
-                    $http.put("/scenario/"+id, scenario)
+                function (resolve, reject) {
+                    $http.put("/scenario/" + id, scenario)
                         .success(function (data) {
                             resolve(data);
                             Materialize.toast("Succesful changed", 4000);
@@ -67,7 +67,21 @@
                         });
                 }
             );
+        }
 
+        function getActuators() {
+            return new Promise(
+                function (resolve, reject) {
+                    $http.get('/actuators')
+                        .success(function (data) {
+                            resolve(data);
+                        })
+                        .error(function (err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
         }
 
 
@@ -75,7 +89,8 @@
             getall: getScenarios,
             get: getScenario,
             create: createScenario,
-            update: UpdateNameorDescription
+            update: UpdateNameorDescription,
+            getActuators: getActuators
         };
 
     }

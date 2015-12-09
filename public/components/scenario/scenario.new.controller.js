@@ -16,7 +16,25 @@
         var snc = this;
         snc.create = create;
         snc.goToDetail = goToDetail;
+        snc.modal = actuatoradd;
         snc.scenario = {name: "", description: ""};
+        var swiper = null;
+        snc.repeater = [];
+
+        function actuatoradd(){
+            ScenarioService.getActuators()
+                .then(function(data){
+                    console.log(data);
+                    snc.actuators = data;
+                    $('#actuatorscenario').openModal();
+            })
+                .catch(function(err){
+                    console.error(err);
+                    return err;
+                });
+
+
+        }
 
         /**
          * Create new scenario
@@ -31,7 +49,21 @@
                     console.log("Error creating scenario", err);
                     return err;
                 });
+        }
 
+
+        function reloadSwiper() {
+            var amount = Math.ceil( scena.scenarios.length / 8 );
+            scena.repeater = [];
+            for(var i = 0; i < amount; i++) {
+                scena.repeater.push(i);
+            }
+            console.log(scena.repeater);
+            $scope.$apply();
+            swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true
+            });
         }
 
         /**
