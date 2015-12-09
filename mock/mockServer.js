@@ -106,7 +106,7 @@ app.post('/off', function(req,res){
 
 app.post('/changeIntensity', function(req, res){
     actuator = getActuatorById(req.body.id);
-    actuator.status = {state: true ,intensity:req.body}
+    actuator.status = {state: true ,intensity:req.body.intensity, teststring: req.body.teststring, testbool: req.body.testbool};
     res.send(actuator.status);
 });
 
@@ -162,6 +162,22 @@ function determineKind(id){
                                         max: '255' 
                                     }
                                 ]
+                            }]
+                        },
+                        teststring: {
+                            name: "teststring",
+                            required: true,
+                            accepts: [{
+                                type: "string",
+                                limit: []
+                            }]
+                        },
+                        testbool: {
+                            name: "testbool",
+                            required: true,
+                            accepts: [{
+                                type: "boolean",
+                                limit: []
                             }]
                         }
                     },

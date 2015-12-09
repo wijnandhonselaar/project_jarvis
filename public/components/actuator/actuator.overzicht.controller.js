@@ -19,7 +19,7 @@
         DS.setOnDeviceAdd(reloadSwiper);
 
         function toggleState(actuator){
-            console.log(actuator.status);
+            console.log(actuator);
             if(actuator.status.state === true){
                 sendcommand(actuator.id, actuator.model.commands.off,'off',actuator.model.type);
             } else {

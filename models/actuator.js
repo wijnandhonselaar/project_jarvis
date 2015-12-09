@@ -4,7 +4,7 @@ var type = thinky.type;
 var Actuator = thinky.createModel("Actuator", {
 	id: type.number().required(),
 	model: {
-		savedAt: type.number().default(Math.round((new Date()).getTime() / 1000)), // unix timestamp
+		savedAt: type.number().required(), // unix timestamp
 		name: type.string().required(),
 		sokVersion: type.number().required(),
 		description: type.string(),
@@ -37,6 +37,26 @@ var Actuator = thinky.createModel("Actuator", {
 		ip: type.string().required(),
 		alias: type.string(),
 		active: type.boolean().default(true),
+		rules: {
+			on: {
+				command: type.string().required(),
+				onEvents: [
+					{
+						device: type.number().required(),
+						event: type.string().required()
+					}
+				],
+				thresholds: [
+					{
+						device: type.number().required(),
+						field: type.string().required(),
+						operator: type.string().required(),
+						value: type.number().required(),
+						gate : type.string().required()
+					}
+				]
+			}
+		}
 	}
 });
 
