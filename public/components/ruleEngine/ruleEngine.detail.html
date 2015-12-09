@@ -94,6 +94,7 @@
                 <p>
                     Als {{rec.getSensorById(rec.activeRule.device).config.alias}} {{rec.activeRule.field}} {{rec.translateOperator(rec.activeRule.operator)}} {{rec.activeRule.value}} dan <span class="highlight">{{rec.selectedCommand}}</span> anders:
                     <select style="display: block;">
+                        <option value="">Geen actie</option>
                         <option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"
                                 ng-if="command.name != 'status'">{{command.name}}
                         </option>
