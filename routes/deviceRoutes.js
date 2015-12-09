@@ -32,7 +32,6 @@ module.exports = (function() {
     });
 
     route.post('/:devicetype/:id/:command', function(request, resp){
-        console.log(request.body);
         var device = deviceManager.getActuator(parseInt(request.params.id));
         response = comm.post(request.params.command , device,  request.body, function(){
             resp.send(JSON.stringify(response));
