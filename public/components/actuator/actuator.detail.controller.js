@@ -19,7 +19,7 @@
         adc.currentcommand = null;
         adc.currentvalues = {};
         adc.checkInputType = checkInputType;
-        
+
         adc.GoToDetail = GoToDetail;
         adc.toggleState = toggleState;
 
