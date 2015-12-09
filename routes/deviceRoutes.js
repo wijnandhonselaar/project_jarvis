@@ -47,7 +47,6 @@ module.exports = (function() {
     });
 
     route.post('/:devicetype/:id/:command', function(request, resp){
-        console.log(request.body);
         var device = deviceManager.getActuator(parseInt(request.params.id));
         comm.post(request.params.command , device,  request.body, function(response){
             deviceManager.updateActuatorState(device.id, response);

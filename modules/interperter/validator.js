@@ -92,7 +92,7 @@ function validateCommand(command, device, paramList, callback) {
 
                 for (var i = 0; i < accepts.length; i++) {
                     var acceptObj = accepts[i];
-                    if (paramObj.list.length > 0) {
+                    if (paramObj.list && paramObj.list.length > 0) {
                         validatedParams[param] = validators.inList(value, paramObj.list);
                     } else {
                         for (var b = 0; b < acceptObj.limit.length; b++) {

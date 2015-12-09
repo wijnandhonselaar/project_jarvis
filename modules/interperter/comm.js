@@ -7,7 +7,7 @@ var postMethod = function(command, deviceObject, paramList, callback){
         var everythingIsValidated = true;
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
-                if(!property.validated) everythingIsValidated = false
+                if(!data[property].validated) everythingIsValidated = false
             }
         }
         if(everythingIsValidated) {
@@ -17,7 +17,6 @@ var postMethod = function(command, deviceObject, paramList, callback){
                 if(err) {
                     console.log(err);
                 } else {
-                    console.log(res.body);
                     callback(res.body);
                 }
             });

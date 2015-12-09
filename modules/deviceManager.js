@@ -208,9 +208,7 @@ function updateSensorStatusFunction(obj){
 
 function updateActuatorState(id, state){
     actuator = getActuatorById(id);
-    console.log(state);
     actuator.status = state;
-    console.log(actuator);
     io.emit("deviceUpdated", actuator);
 }
 //noinspection JSClosureCompilerSyntax
