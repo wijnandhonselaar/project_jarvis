@@ -5,7 +5,9 @@ html{
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    /*cursor: none;*/
 }
+
 
 body{
     height: 480px !important;
@@ -132,6 +134,15 @@ body{
 
 .status.on{
     background-color: RGBA(189, 244, 106, 1);
+}
+
+.statusscenario {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    position: absolute;
+    right: 33%;
+    top: 28%;
 }
 
 .status{

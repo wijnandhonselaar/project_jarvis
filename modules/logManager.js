@@ -25,7 +25,8 @@ function logEvent(device, type, category, message, severity, cb) {
         type: type,
         category: category,
         message: message,
-        severity: severity
+        severity: severity,
+        timestamp: Math.round((new Date()).getTime() / 1000)
     });
 
     eventLog.save(log).then(function(res) {
@@ -41,14 +42,15 @@ function logEvent(device, type, category, message, severity, cb) {
  * @param device
  * @param value
  */
-function logData(device, value, cb) {
+function logData(device, status, cb) {
     var log = new dataLog({
         device: {
             id: device.id,
             name: device.model.name,
             alias: device.config.alias
         },
-        value: value
+        status: status,
+        timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
         cb(null, res);
@@ -72,18 +74,31 @@ function getEvents(deviceid, cb) {
 /**
  * get all events for all devices
  * @param severity (optional)
+ * @param offset skip results
+ * @param limit limit the number of results
  * @param cb
  */
-function getAllEvents(severity, cb) {
-    if(severity > 0 || severity < 6) {
+
+function getAllEvents(severity, offset, limit, cb) {
+    if((severity > 0 || severity < 6) && severity !== null) {
+
     } else {
-        severity = 5; // TODO default severity
+        severity = 5;
     }
 
+    if(isNaN(offset)){
+        offset = 0;
+    }
+
+    if(isNaN(limit)) {
+        limit = 50;
+    } else if(limit === 0) {
+        limit = 50;
+    }
 
     eventLog.filter(function (log) {
         return log("severity").lt(severity + 1);
-    }).then(function(res) {
+    }).orderBy((r.desc('timestamp'))).skip(offset).limit(limit).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
