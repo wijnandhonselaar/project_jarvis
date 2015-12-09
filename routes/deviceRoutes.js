@@ -63,14 +63,14 @@ module.exports = (function() {
     route.put('/:devicetype/:id/alias', function(req,res){
         deviceManager.updateDeviceAlias(req.params.devicetype, parseInt(req.params.id), req.body.alias, function(response){
             console.log("inside callback", response);
-           res.send(JSON.stringify(response)); 
-        }); 
+            res.send(JSON.stringify(response));
+        });
     });
 
     route.put('/sensors/:id/interval', function(req,res){
         deviceManager.updateSensorInterval(parseInt(req.params.id), req.body.interval, function(response){
-           res.send(JSON.stringify(response)); 
-        }); 
+            res.send(JSON.stringify(response));
+        });
     });
 
     return route;
