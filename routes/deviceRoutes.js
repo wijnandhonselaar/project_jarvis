@@ -40,8 +40,7 @@ module.exports = (function() {
     });
 
     route.get('/actuators/log', function(request, resp) {
-        var log = '';
-        res.send(JSON.stringify(log));
+        //res.send(JSON.stringify(logger.));
     });
 
     route.get('/sensors/log', function(req, res) {
