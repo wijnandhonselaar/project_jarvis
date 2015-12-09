@@ -37,6 +37,17 @@
             }
         });
 
+        function updateRules(id, obj){
+            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules:obj})
+                .success(function (data) {
+                    console.log("succesfully saved");
+                })
+                .error(function (err) {
+                    console.error(err);
+                    console.error("error with command");
+                });
+        }
+
         // Buildevent en de socketlistener moeten naar logservice
         function buildEvent(severity, imgsrc, msg) {
             var eventEl = document.createElement("div");
@@ -93,7 +104,8 @@
             addDeviceLoader: addDeviceLoader,
             setOnDeviceAdd: setOnDeviceAdd,
             setOnDeviceUpdate: setOnDeviceUpdate,
-            updateDevice: updateDevice
+            updateDevice: updateDevice,
+            updateRules: updateRules
         };
 
         function getDeviceById(uid, type) {
@@ -171,11 +183,12 @@
             );
         }
 
-        function sendCommand(id, command, commandkey, type) {
+        function sendCommand(id, command, commandkey, type, values) {
             return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/' + commandkey, { })
+                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey, { })
+
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
@@ -186,7 +199,7 @@
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
-                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/' + commandkey)
+                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);

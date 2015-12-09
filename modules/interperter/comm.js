@@ -3,11 +3,12 @@ var superAgent = require('superagent');
 var logger = require('../logManager');
 
 var postMethod = function(command, deviceObject, paramList, callback){
+    console.log("PARAMLISTERT: \n", paramList);
     validator.validate(command, deviceObject, paramList, function(data){
         var everythingIsValidated = true;
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
-                if(!property.validated) everythingIsValidated = false
+                if(!data[property].validated) everythingIsValidated = false
             }
         }
         if(everythingIsValidated) {

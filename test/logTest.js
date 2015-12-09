@@ -1,18 +1,19 @@
 var expect = require('chai').expect;
-var Log = require('../models/eventLog.js');
+var eventLog = require('../models/eventLog.js');
+var dataLog = require('../models/dataLog.js');
 
-describe('Log', function () {
+describe('eventLog', function () {
     before(function(done) {
-        Log.delete();
+        eventLog.delete();
         done();
     });
     it('Shouldn\'t save a new log, no message', function (done) {
         // create the new log
-        var log = new Log({
+        var log = new eventLog({
             device: 1
         });
         // save the new sensor
-        Log.save(log).then(function(res) {
+        eventLog.save(log).then(function(res) {
             //done('saved with no status object');
         }).error(function(){
             done();
@@ -20,61 +21,127 @@ describe('Log', function () {
     });
     it('Shouldn\'t save a new log, no device', function (done) {
         // create the new loh
-        var log = new Log({
+        var log = new eventLog({
             message: {message: 'message'}
         });
         // save the new log
-        Log.save(log).then(function(res) {
+        eventLog.save(log).then(function(res) {
         }).error(function(){
             done();
         });
     });
     it('Shouldn\'t save a new log, no severity', function (done) {
         // create the new log
-        var log = new Log({
+        var log = new eventLog({
             device: 1,
             message: {message: 'message'}
         });
         // save the new log
-        Log.save(log).then(function(res) {
+        eventLog.save(log).then(function(res) {
         }).error(function(){
             done();
         });
     });
     it('Shouldn\'t save a new log, no type', function (done) {
         // create the new log
-        var log = new Log({
+        var log = new eventLog({
             device: 1,
             message: {message: 'message'},
             severity: 1
         });
         // save the new log
-        Log.save(log).then(function(res) {
+        eventLog.save(log).then(function(res) {
         }).error(function(){
             done();
         });
     });
     it('Should save a new log', function (done) {
         // create the new log
-        var log = new Log({
-            device: 1,
+        var log = new eventLog({
+            device: {
+                id: 1,
+                name: "blaat",
+                alias: "schaap"
+            },
             type: 'sensor',
-            message: {message: 'message'},
+            message: 'message',
             severity: 1,
-            category: 'manual',
-            timestamp: JSON.stringify(Date.now())
+            category: 'manual'
         });
         // save the new log
-        Log.save(log).then(function(res) {
+        eventLog.save(log).then(function(res) {
             done();
         }).error(function(err){
             console.log(err);
         });
     });
     after(function(done) {
-        Log.delete();
+        eventLog.delete();
         done();
     });
 });
 
 
+describe('dataLog', function () {
+    before(function (done) {
+        dataLog.delete();
+        done();
+    });
+
+    it('Shouldn\'t save a new log, no value', function (done) {
+        // create the new log
+        var log = new dataLog({
+            device: {
+                id: 1,
+                name: "blaat",
+                alias: "schaap"
+            }
+        });
+        // save the new sensor
+        dataLog.save(log).then(function(res) {
+            done('saved without value...');
+        }).error(function(){
+            done();
+        });
+    });
+
+
+    it('Shouldn\'t save a new log, no device id', function (done) {
+        // create the new log
+        var log = new dataLog({
+            device: {
+                name: "blaat",
+                alias: "schaap"
+            }
+        });
+        // save the new sensor
+        dataLog.save(log).then(function(res) {
+            done('saved without device id...');
+        }).error(function(){
+            done();
+        });
+    });
+
+    it('Should save a new log', function (done) {
+        // create the new log
+        var log = new dataLog({
+            device: {
+                id: 1,
+                name: "blaat",
+                alias: "schaap"
+            },
+            value: 22
+        });
+        // save the new log
+        dataLog.save(log).then(function(res) {
+            done();
+        }).error(function(err){
+            done(err);
+        });
+    });
+
+    after(function(done) {
+        dataLog.delete();
+        done();
+    });
+});

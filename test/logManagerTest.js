@@ -15,7 +15,7 @@ describe('Logging', function() {
 
     describe('#Log an event to the database', function() {
         it('should log new data.', function(done) {
-            logger.logEvent({id:1000015, model:{name:'temperatuur'}, config:{alias:"woonkamer temp"}}, 'sensor', 'automatic', 'reageert niet meer', 1, function(err,res) {
+            logger.logEvent({id:1000015, model:{name:'temperatuur'}, config:{alias:"woonkamer temp"}}, 'sensor', 'automatic', 'reageert niet meer', 4, function(err,res) {
                 if(err) { throw err; }
                 done();
             });
@@ -24,7 +24,17 @@ describe('Logging', function() {
 
     describe('#Log data to the database', function() {
         it('should log new data.', function(done) {
-            logger.logData({id:1000015, model:{name:'temperatuur'}, config:{alias:"woonkamer temp"}}, 21, function(err,res) {
+            logger.logData({id:1000015, model:{name:'temperatuur'}, config:{alias:"woonkamer temp"}}, 4, function(err,res) {
+                if(err) { throw err; }
+                done();
+            });
+        });
+    });
+
+    describe('#Log more data to the database', function() {
+        it('should log more new data.', function(done) {
+            this.timeout(1000);
+            logger.logData({id:1000015, model:{name:'temperatuur'}, config:{alias:"woonkamer temp"}}, 6, function(err,res) {
                 if(err) { throw err; }
                 done();
             });
@@ -42,8 +52,19 @@ describe('Logging', function() {
 
     describe('#Get all event logs', function() {
         it('should get all event logs', function (done) {
-            logger.getAllEvents(null, function(err,res) {
+            logger.getAllEvents(4, function(err,res) {
                 if(err) throw err;
+                expect(res).to.have.length.above(1);
+                done();
+            });
+        });
+    });
+
+    describe('#Get no event logs', function() {
+        it('shouldt get a event log because there is none with severity 2 or lower', function (done) {
+            logger.getAllEvents(2, function(err,res) {
+                if(err) throw err;
+                expect(res).to.be.empty;
                 done();
             });
         });
@@ -54,15 +75,17 @@ describe('Logging', function() {
         it('should get data logs', function (done) {
             logger.getData(1000015, function(err,res) {
                 if(err) throw err;
+                expect(res).to.have.length.above(1);
                 done();
             });
         });
     });
 
     describe('#Get 1 most recent data log for a specific device', function() {
-        it('should the most recent data log', function (done) {
+        it('should get the most recent data log', function (done) {
             logger.getStatus(1000015, function(err,res) {
                 if(err) throw err;
+                expect(res[0].device.id).to.equal(1000015);
                 done();
             });
         });

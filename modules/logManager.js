@@ -3,6 +3,8 @@
 var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
+var thinky = require('thinky')();
+var r = thinky.r;
 
 /**
  * log event data
@@ -23,8 +25,10 @@ function logEvent(device, type, category, message, severity) {
         type: type,
         category: category,
         message: message,
-        severity: severity
+        severity: severity,
+        timestamp: Math.round((new Date()).getTime() / 1000)
     });
+
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
     }).error(function(err){
@@ -37,17 +41,19 @@ function logEvent(device, type, category, message, severity) {
  * @param device
  * @param value
  */
-function logData(device, value) {
+
+function logData(device) {
     var log = new dataLog({
         device: {
             id: device.id,
             name: device.model.name,
             alias: device.config.alias
         },
-        value: value
+        status: device.status,
+        timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
-        io.emit('logAdded', log);
+        //io.emit('logAdded', log);
     }).error(function(err){
         logEvent(device, device.model.type, "Automatisch", err, 2);
     });
@@ -68,16 +74,31 @@ function getEvents(deviceid, cb) {
 /**
  * get all events for all devices
  * @param severity (optional)
+ * @param offset skip results
+ * @param limit limit the number of results
  * @param cb
  */
-function getAllEvents(severity, cb) {
-    if(severity > 0 || severity < 6) {
-        severity = severity;
+
+function getAllEvents(severity, offset, limit, cb) {
+    if((severity > 0 || severity < 6) && severity !== null) {
+
     } else {
-        severity = 5; // TODO default severity
+        severity = 5;
     }
 
-    eventLog.filter(r.row('severity').lt(severity)).run(function(res) {
+    if(isNaN(offset)){
+        offset = 0;
+    }
+
+    if(isNaN(limit)) {
+        limit = 50;
+    } else if(limit === 0) {
+        limit = 50;
+    }
+
+    eventLog.filter(function (log) {
+        return log("severity").lt(severity + 1);
+    }).orderBy((r.desc('timestamp'))).skip(offset).limit(limit).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
@@ -103,7 +124,7 @@ function getData(deviceid, cb) {
  * @param cb
  */
 function getStatus(deviceid, cb) {
-    dataLog.filter({device: {id:deviceid}}).orderBy('timestamp').limit(0).run(function(res) {
+    dataLog.filter({device: {id:deviceid}}).orderBy((r.desc('timestamp'))).limit(1).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
