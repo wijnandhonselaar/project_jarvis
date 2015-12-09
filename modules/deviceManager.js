@@ -6,37 +6,37 @@ var io = null;
 var ruleEngine = null;
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
-var rules = {};
-//     on: {
-//         command: 'on',
-//         onEvents: [
-//             {
-//                 device: 1337,
-//                 event: 'onFinish'
-//             }
-//         ],
-//         thresholds: [
-//             {
-//                 device: 16,
-//                 priority: 1,
-//                 field: 'Celcius',
-//                 operator: '>',
-//                 value: 20,
-//                 gate: 'AND'
-//             }
-//         ]
-//     },
-//     off: {
-//         command: 'off',
-//         onEvents: [
-//             {
-//                 device: 1337,
-//                 event: 'onFinish'
-//             }
-//         ],
-//         thresholds: []
-//     }
-// };
+var rules = {
+    on: {
+        command: 'on',
+        onEvents: [
+            {
+                device: 1337,
+                event: 'onFinish'
+            }
+        ],
+        thresholds: [
+            {
+                device: 16,
+                priority: 1,
+                field: 'Celcius',
+                operator: '>',
+                value: 20,
+                gate: 'AND'
+            }
+        ]
+    },
+    off: {
+        command: 'off',
+        onEvents: [
+            {
+                device: 1337,
+                event: 'onFinish'
+            }
+        ],
+        thresholds: []
+    }
+};
 /**
  *
  * @param device
