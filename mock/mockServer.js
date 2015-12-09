@@ -63,13 +63,13 @@ function broadcastUDPPacket(){
     if(index == 20){
         
     }
-    if(index < 10){
+    else if(index < 10){
         //console.log(devices.actuators[index]);
         res.send(JSON.stringify(devices.actuators[index]));
         index ++;
     }
     else if(index < 20){
-        res.send(JSON.stringify(devices.sensors[index-7]));
+        res.send(JSON.stringify(devices.sensors[index-10]));
         index ++;
     }
 });
@@ -311,7 +311,7 @@ function determineKind(id){
     //     }
     // }
 
-    else if(id < 13){
+    else if(id < 13) {
         device.name = 'LichtSensor';
         device.image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGUAAABHCAYAAAAeGInyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAADZGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOkMzODNCRjdFM0YzMkUxMTFBQUJGRjM5QUQyODYwN0QxIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjBDQTIxRDkyMzI0NTExRTE4RjlCRDg3QTczQzkwQjg1IiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjBDQTIxRDkxMzI0NTExRTE4RjlCRDg3QTczQzkwQjg1IiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzUgV2luZG93cyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkM3ODNCRjdFM0YzMkUxMTFBQUJGRjM5QUQyODYwN0QxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkMz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';
         device.commands = {
@@ -384,28 +384,6 @@ function getCloseCommand(name){
             };
 }
 
-function playScenario(name) {
-    switch(name) {
-        case 'opstaan':
-            console.log('Harry heeft iedere ochtend zijn wekker staan om 7 uur.');
-            var device = getDevice('actuator', 'Lamp');
-            console.log(device.commands.on.description);
-            break;
-        case 'vertrek':
-            break;
-        case 'aankomst':
-            break;
-        case 'bedtijd':
-            break;
-        case 'dode sensor':
-            devices.sensors.pop();
-            break;
-        case 'dode actuator':
-            devices.actuators.pop();
-            break;
-    }
-}
-
 function getDevice(type, name) {
     switch (type) {
         case 'sensor':
@@ -422,14 +400,6 @@ function getDevice(type, name) {
             break;
     }
 }
-
-stdin.resume();
-stdin.on('data',function(chunk){
-    var scenario=chunk.toString().replace(/\n/,'');
-    playScenario(scenario);
-}).on('end',function(){
-    console.log('stdin:closed');
-});
 
 function getSensorById(id) {
     for (var i = 0; i < devices.sensors.length; i++) {

@@ -13,7 +13,7 @@ var dataLog = require('../models/dataLog');
  * @param severity
  * @param cb
  */
-function logEvent(device, type, category, message, severity, cb) {
+function logEvent(device, type, category, message, severity) {
     var log = new eventLog({
         device: {
             id: device.id,
@@ -26,10 +26,9 @@ function logEvent(device, type, category, message, severity, cb) {
         severity: severity
     });
     eventLog.save(log).then(function(res) {
-        cb(null, res);
+        io.emit('logAdded', log);
     }).error(function(err){
-        console.log(err);
-        cb({error: "Not found.", message: err});
+        logEvent(device, type, category, err, 2);
     });
 }
 
@@ -38,7 +37,7 @@ function logEvent(device, type, category, message, severity, cb) {
  * @param device
  * @param value
  */
-function logData(device, value, cb) {
+function logData(device, value) {
     var log = new dataLog({
         device: {
             id: device.id,
@@ -48,9 +47,9 @@ function logData(device, value, cb) {
         value: value
     });
     dataLog.save(log).then(function(res) {
-        cb(null, res);
+        io.emit('logAdded', log);
     }).error(function(err){
-        cb({error: "Not found.", message: err});
+        logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }
 /**
@@ -112,22 +111,13 @@ function getStatus(deviceid, cb) {
 }
 
 module.exports = {
-<<<<<<< HEAD
     init: function (socket) {
             io = socket;
          },
-    log: log,
-    get: get,
-    getAll: getAll,
-    getSensors: getSensors,
-    getActuators: getActuators
-};
-=======
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,
     getStatus: getStatus
-}
->>>>>>> development
+};

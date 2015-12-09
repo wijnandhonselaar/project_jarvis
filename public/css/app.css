@@ -1,4 +1,5 @@
 html{
+    box-sizing:;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -149,12 +150,21 @@ body{
 
 .loglevel{
     border-right: 1px solid white;
-    height: 40px;
+    height: 100%;
     width: 4px !important;
 }
 
-.loglevel.alert{
-    background-color: RGBA(247, 78, 26, 1);
+.loglevel.n1{
+    background-color: RGBA(255, 0, 0, 1);
+}
+.loglevel.n2{
+    background-color: RGBA(255, 0, 0, 1);
+}
+.loglevel.n3{
+    background-color: RGBA(255, 154, 0, 1);
+}
+.loglevel.n4{
+    background-color: RGBA(0, 102, 204, 1);
 }
 
 .loglevel.newdevice{
@@ -164,20 +174,33 @@ body{
 .loglevel.auto{
     background-color: #45B5C3;
 }
-
+.log-container{
+    height:450px;
+    overflow-y:hidden;
+    overflow: scroll;
+}
+::-webkit-scrollbar { 
+    display: none; 
+}
 .lognotice{
+    height: 65%;
     font-size: 12px;
     padding-top:2px;
 }
 
-.lognotice .date{
+.lognotice.date{
     font-size:11px;
+    margin-left: 10px;
     color:RGBA(149, 149, 149, 1);
 }
 
 .logentry{
-    height: 41px;
+    box-sizing: content-box;
+    height: 53px;
     border-bottom: 1px solid white;
+}
+.row.logentry{
+    margin-bottom:0px;
 }
 
 .detaildescrip{
