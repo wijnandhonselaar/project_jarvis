@@ -187,7 +187,7 @@
             return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/' + commandkey, { })
+                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey, { })
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
@@ -198,7 +198,7 @@
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
-                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/' + commandkey)
+                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);

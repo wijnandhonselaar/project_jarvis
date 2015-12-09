@@ -18,7 +18,7 @@ module.exports = (function() {
         resp.send({sensors: deviceManager.getSensors()});
     });
 
-    route.get('/:devicetype/:id/:command', function(request, resp){
+    route.get('/:devicetype/:id/commands/:command', function(request, resp){
         var devicetype = request.params.devicetype;
         var device = '';
         if(devicetype === 'actuator'){
@@ -40,21 +40,32 @@ module.exports = (function() {
         res.json(deviceManager.setRules(object))
     });
 
-    route.get('/actuators/log', function(request, resp) {
-        var log = '';
-        resp.send(JSON.stringify(log));
+    /**
+     * START LOG ROUTES
+     */
+    // example: http://localhost:3221/devices/logs?severity=5&offset=20&limit=20
+    route.get('/logs', function(req, res) {
+        logger.getAllEvents(req.query.severity, req.query.offset, req.query.limit, function(err, result) {
+            res.send(JSON.stringify(result));
+         });
     });
 
-    route.get('/sensors/log', function(request, resp) {
-        resp.send(JSON.stringify(logger.getSenors()));
+    route.get('/:devicetype/:id/eventlogs', function(req, res) {
+        logger.getEvents(parseInt(req.params.id), function(err, result) {
+            res.send(JSON.stringify(result));
+        });
     });
 
-    route.get('/:devicetype/:id/log', function(request, resp) {
-        var log ='';
-        resp.send(JSON.stringify(log));
+    route.get('/sensors/:id/datalogs', function(req, res) {
+        logger.getData(parseInt(req.params.id), function(err, result) {
+            res.send(JSON.stringify(result));
+        });
     });
+    /**
+     * END LOG SHIZZLE ROUTES
+     */
 
-    route.post('/:devicetype/:id/:command', function(request, resp){
+    route.post('/:devicetype/:id/commands/:command', function(request, resp){
         var device = deviceManager.getActuator(parseInt(request.params.id));
         comm.post(request.params.command , device,  request.body, function(response){
             deviceManager.updateActuatorState(device.id, response);
