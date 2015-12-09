@@ -9,12 +9,15 @@
 
     function ruleEngineCtrl(DS, $sp, $scope, $timeout, $http) {
         var rec = this;
-        rec.sensors = DS.getSensors();
+        rec.sensors = [];
+        rec.showDetail = showDetail;
+        rec.getSensorById = getSensorById;
         rec.selectedSensor = null;
         rec.selectedCommand = null;
         rec.updateFieldList = updateFieldList;
         rec.addToThresholds = addToThresholds;
         rec.getSensorFields = getSensorFields;
+        rec.translateOperator = translateOperator;
         rec.threshold = {
             device: null,
             field: null,
@@ -22,6 +25,36 @@
             value: null,
             gate: 'AND'
         };
+
+        rec.activeRule = null;
+        function showDetail(rule){
+            rec.activeRule = rule;
+            $('#ruleModal').openModal();
+        }
+
+        function translateOperator(operator){
+            var r = '';
+            switch(operator){
+                case '>':
+                     r = 'groter dan';
+                    break;
+                case '<':
+                     r = 'kleiner dan';
+                    break;
+                case '===':
+                    r = 'gelijk aan';
+                    break;
+            }
+            return r;
+        }
+
+        function getSensorById(id){
+            for(var i = 0; i<rec.sensors.length; i++) {
+                if (rec.sensors[i].id == id) {
+                    return rec.sensors[i];
+                }
+            }
+        }
 
         function getSensorFields(id){
             for(var i = 0; i<rec.sensors.length; i++){
@@ -54,6 +87,7 @@
         }
 
         $timeout(function () {
+            rec.sensors = JSON.parse(JSON.stringify(DS.getSensors()));
             rec.ruleObjects = rec.actuator.config.rules;
             $scope.$watch('rec.ruleObjects', function(newVal, oldVal){
                 DS.updateRules(rec.actuator.id, newVal);

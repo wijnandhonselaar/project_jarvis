@@ -4,7 +4,7 @@ var type = thinky.type;
 var Actuator = thinky.createModel("Actuator", {
 	id: type.number().required(),
 	model: {
-		savedAt: type.number().default(Math.round((new Date()).getTime() / 1000)), // unix timestamp
+		savedAt: type.number().required(), // unix timestamp
 		name: type.string().required(),
 		sokVersion: type.number().required(),
 		description: type.string(),

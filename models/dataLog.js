@@ -14,8 +14,8 @@ var Log = thinky.createModel("dataLog", {
         name: type.string().required(),
         alias: type.string()
     },
-    value: type.number().required(),
-    timestamp: type.number().default(Math.round((new Date()).getTime() / 1000)) // unix timestamp
+    status: type.object().required(),
+    timestamp: type.number().required() // unix timestamp
 });
 
 module.exports = Log;

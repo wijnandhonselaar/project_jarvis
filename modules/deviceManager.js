@@ -17,6 +17,7 @@ var rules = {
         thresholds: [
             {
                 device: 16,
+                priority: 1,
                 field: 'Celcius',
                 operator: '>',
                 value: 20,
@@ -33,13 +34,9 @@ var rules = {
                 event: 'onFinish'
             }
         ],
-        thresholds: [
-
-        ]
-
+        thresholds: []
     }
 };
-
 /**
  *
  * @param device
@@ -53,6 +50,7 @@ function addDevice(device, remote, deviceType) {
             if (GLOBAL.logToConsole) console.log('Device unkown in the database!');
             var deviceObj = {
                 id: device.id,
+                savedAt: Math.round((new Date()).getTime() / 1000),
                 model: device,
                 config: {
                     rules: rules,
@@ -62,15 +60,17 @@ function addDevice(device, remote, deviceType) {
                 },
                 status: {state: false}
             };
+
             devices[deviceType].push(deviceObj);
             if (device.type === 'sensor') {
                 initiateStatusPolling(deviceObj);
             }
-            //console.log(deviceObj);
+            console.log(deviceObj);
             io.emit("deviceAdded", deviceObj);
             // Save to the database!
             rethinkManager.saveDevice({
                 id: device.id,
+                savedAt: Math.round((new Date()).getTime() / 1000),
                 model: device,
                 config: {
                     rules: rules,
@@ -80,6 +80,7 @@ function addDevice(device, remote, deviceType) {
                 }
             }, device.type, function (err, res) {
                 if (err) {
+
                     //if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
                     //if(GLOBAL.logToConsole) console.log(err);
                 } else {
@@ -103,8 +104,8 @@ function addDevice(device, remote, deviceType) {
  * @param msg
  */
 function broadcastEvent(msg) {
-    var device = getActuatorById(parseInt(msg.id));
-    if (!device) deviceId = getSensorById(parseInt(msg.id));
+    var device = getActuatorById(msg.id);
+    if (!device) deviceId = getSensorById(msg.id);
     io.emit('deviceEvent', {device: device, event: msg})
 }
 
@@ -160,7 +161,6 @@ function getDeviceByIPAddress(ip) {
  * @returns {*}
  */
 function getSensorById(id) {
-    id = parseInt(id);
     for (var i = 0; i < devices.sensors.length; i++) {
         if (devices.sensors[i].id === id) {
             return devices.sensors[i];
@@ -201,8 +201,8 @@ function updateDeviceStatus(devicetype, id, status) {
     return {err: "Error, could not find " + devicetype + " with id: " + id + " to update status."};
 }
 
-function parseDeviceType(devicetype) {
-    switch (devicetype) {
+function parseDeviceType(devicetype){
+    switch(devicetype){
         case 'actuator':
             return 'actuators';
             break;
@@ -262,27 +262,27 @@ function initiateStatusPolling(sensor) {
 }
 
 function updateSensorStatusFunction(obj) {
-    sensor = getSensorById(obj.id);
-    //console.log(sensor.status);
-    //console.log(obj.status);
+    var sensor = getSensorById(obj.id);
+    console.log(sensor.status);
+    console.log(obj.status);
     if (sensor.status !== obj.status) {
         for (var i = 0; i < getActuators().length; i++) {
             ruleEngine.apply(getActuators()[i]);
         }
-        //console.log("Niet hetzelfde");
-        sensor.status = obj.status;
-        //console.log(sensor.status);
-        io.emit("deviceUpdated", sensor);
     }
+    console.log("Niet hetzelfde");
+    sensor.status = obj.status;
+    console.log(sensor.status);
+    io.emit("deviceUpdated", sensor);
 }
 
+
 function updateActuatorState(id, state) {
-    actuator = getActuatorById(id);
-    //console.log(state);
+    var actuator = getActuatorById(id);
     actuator.status = state;
-    //console.log(actuator);
     io.emit("deviceUpdated", actuator);
 }
+
 
 function getActuators() {
     return devices.actuators;
@@ -318,16 +318,15 @@ function setRules(object) {
 *         }}
  */
 module.exports = {
-    init: function (socketio, rEngine) {
+    init: function (socketio, rec) {
         io = socketio;
-        ruleEngine = rEngine;
+        ruleEngine = rec
     },
     add: addToDeviceList,
     getByIP: getDeviceByIPAddress,
     getSensor: getSensorById,
     getActuator: getActuatorById,
     broadcastEvent: broadcastEvent,
-    setRules: setRules,
     getAll: function () {
         return devices;
     },
@@ -343,7 +342,8 @@ module.exports = {
     updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
-    updateActuatorState: updateActuatorState
+    updateActuatorState: updateActuatorState,
+    setRules: setRules
 };
 
 //circular dependency (export must be first)

@@ -18,7 +18,8 @@ module.exports = (function() {
         res.send({sensors: deviceManager.getSensors()});
     });
 
-    route.get('/:devicetype/:id/:command', function(req, res){
+
+    route.get('/:devicetype/:id/commands/:command', function(req, res){
         var devicetype = req.params.devicetype;
         var device = '';
         if(devicetype === 'actuator'){
@@ -39,20 +40,34 @@ module.exports = (function() {
         res.json(deviceManager.setRules(object))
     });
 
-    route.get('/actuators/log', function(request, resp) {
-        //res.send(JSON.stringify(logger.));
+    /**
+     * START LOG ROUTES
+     */
+    // example: http://localhost:3221/devices/logs?severity=5&offset=20&limit=20
+    route.get('/logs', function(req, res) {
+        logger.getAllEvents(parseInt(req.query.severity), parseInt(req.query.offset), parseInt(req.query.limit), function(err, result) {
+            res.send(JSON.stringify(result));
+         });
     });
 
-    route.get('/sensors/log', function(req, res) {
-        res.send(JSON.stringify(logger.getSenors()));
+    route.get('/:devicetype/:id/eventlogs', function(req, res) {
+        logger.getEvents(parseInt(req.params.id), function(err, result) {
+            res.send(JSON.stringify(result));
+        });
     });
 
-    route.get('/:devicetype/:id/log', function(req, res) {
-        var log ='';
-        res.send(JSON.stringify(log));
-    });
+    route.get('/sensors/:id/datalogs', function(req, res) {
+        logger.getData(parseInt(req.params.id), function(err, result) {
+            res.send(JSON.stringify(result));
+        });
 
-    route.post('/:devicetype/:id/:command', function(req, res){
+    });
+    /**
+     * END LOG SHIZZLE ROUTES
+     */
+
+
+    route.post('/:devicetype/:id/commands/:command', function(req, res){
         var device = deviceManager.getActuator(parseInt(req.params.id));
         comm.post(req.params.command , device,  req.body, function(response){
             deviceManager.updateActuatorState(device.id, response);
@@ -63,14 +78,14 @@ module.exports = (function() {
     route.put('/:devicetype/:id/alias', function(req,res){
         deviceManager.updateDeviceAlias(req.params.devicetype, parseInt(req.params.id), req.body.alias, function(response){
             console.log("inside callback", response);
-           res.send(JSON.stringify(response)); 
-        }); 
+            res.send(JSON.stringify(response));
+        });
     });
 
     route.put('/sensors/:id/interval', function(req,res){
         deviceManager.updateSensorInterval(parseInt(req.params.id), req.body.interval, function(response){
-           res.send(JSON.stringify(response)); 
-        }); 
+            res.send(JSON.stringify(response));
+        });
     });
 
     return route;
