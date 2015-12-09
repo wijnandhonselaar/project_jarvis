@@ -27,8 +27,8 @@
         }
         function GoToDetail(scenario) {
             $state.go("scenarioDetail");
-            $state.transitionTo("actuatorDetail", {
-                //uid: scenario.id,
+            $state.transitionTo("scenarioDetail", {
+                uid: scenario.id,
                 data: scenario
             });
         }

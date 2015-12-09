@@ -3,7 +3,6 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var path = require('path');
-var bodyParser = require('body-parser');
 var dgram = require('dgram');
 var http = require('superagent');
 var stdin       = process.stdin;
@@ -14,15 +13,21 @@ var ip = null;
 
 server.listen(80);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-
 var devices =  {
     actuators:[],
     sensors:[]
 };
+
+request
+.post('127.0.0.1:3221/sensorMelding').send({id: 1})
+.end(function(err, res){
+    if(err){
+        console.log(err);
+    }
+    else{
+    //process.send({id: m.id, status: res.body.status});
+    }
+});
 
 //create 30 actuators and 30 sensors
 for (var i = 0; i < 10; i++) {
@@ -61,7 +66,7 @@ function broadcastUDPPacket(){
  app.get('/sok', function(req,res){
     console.log(req.connection.remoteAddress);
     if(index == 10){
-        
+
     }
     if(index < 7){
         //console.log(devices.actuators[index]);
@@ -75,39 +80,19 @@ function broadcastUDPPacket(){
 });
 
 app.get('/status', function(req,res){
-    sensor = getSensorById(req.body.id);
-    status = determineState(sensor);
-    res.send(status);
+    res.send({status:'ok'});
 });
 
 app.post('/on', function(req,res){
-    actuator = getActuatorById(req.body.id);
-    if(req.body.id === 0){
-        actuator.status = {state: true, intensity:255}
-    }
-    else{
-        actuator.status = {state: true};
-    }
-    //status = determineStateActuator(actuator, null);
-    res.send(actuator.status);
+    res.send({status: true})
 });
 
 app.post('/off', function(req,res){
-    actuator = getActuatorById(req.body.id);
-    if(req.body.id === 0){
-        actuator.status = {state: false ,intensity:0}
-    }  
-    else{
-        actuator.status = {state: false}
-    }
-    //status = determineStateActuator(actuator, null);
-    res.send(actuator.status);
+    res.send({status: false})
 });
 
 app.post('/changeIntensity', function(req, res){
-    actuator = getActuatorById(req.body.id);
-    actuator.status = {state: true ,intensity:req.body}
-    res.send(actuator.status);
+    res.send({status: req.body.paramList})
 });
 
 
@@ -136,7 +121,7 @@ function determineKind(id){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'boolean',
+                returns: 'Boolean',
                 description: device.name +' wordt aangezet.'
             },
             off:{
@@ -144,7 +129,7 @@ function determineKind(id){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'boolean',
+                returns: 'Boolean',
                 description: device.name +' wordt uitgezet.'
             },
             changeIntensity:{
@@ -159,7 +144,7 @@ function determineKind(id){
                                     {
                                         type: 'number',
                                         min: '0',
-                                        max: '255' 
+                                        max: '255'
                                     }
                                 ]
                             }]
@@ -176,11 +161,10 @@ function determineKind(id){
                     requestInterval: 5000,
                     httpMethod: 'GET',
                     returns: {
-                        state: 'boolean',
-                        intensity: 'integer',
+                        intensity: 'number',
                     },
                     description: 'Haalt de status op van ' + device.name
-                }   
+                }
         }
     }
 
@@ -194,7 +178,8 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    state: 'boolean',
+                    open: 'boolean',
+                    closed: 'boolean'
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -213,7 +198,8 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    state: 'boolean',
+                    open: 'boolean',
+                    closed: 'boolean'
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -232,7 +218,8 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                   state: 'boolean',
+                    open: 'boolean',
+                    closed: 'boolean'
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -241,7 +228,7 @@ function determineKind(id){
         }
     }
 
-    else if(id < 5){        
+    else if(id < 5){
         device.name = 'Tv ' //+ (id-19);
         device.image = "data:image/png;base64,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";
         device.commands = {
@@ -267,7 +254,8 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    state: 'boolean',
+                    on: 'boolean',
+                    off: 'boolean'
                 },
                 description: 'Haalt de status op van ' + device.name
             }
@@ -284,7 +272,8 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    state: 'boolean',
+                    open: 'boolean',
+                    closed: 'boolean'
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -302,7 +291,8 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    state: 'boolean',
+                    open: 'boolean',
+                    closed: 'boolean'
                 },
                 description: 'Haalt de status op van ' + device.name
             },
@@ -337,7 +327,7 @@ function determineKind(id){
                 requestInterval: 5000,
                 httpMethod: 'GET',
                 returns: {
-                    humidity: 'float'                    
+                    humidity: 'float'
                 },
                 description: 'Haalt de status op van ' + device.name
             }
@@ -368,7 +358,7 @@ function getOpenCommand(name){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'boolean',
+                returns: 'Boolean',
                 description: name + ' zal open gaan.'
             };
 }
@@ -379,7 +369,7 @@ function getCloseCommand(name){
                 parameters: {},
                 requestInterval: 5000,
                 httpMethod: 'POST',
-                returns: 'boolean',
+                returns: 'Boolean',
                 description: name + ' zal dicht gaan.'
             };
 }
@@ -430,84 +420,3 @@ stdin.on('data',function(chunk){
 }).on('end',function(){
     console.log('stdin:closed');
 });
-
-function getSensorById(id) {
-    for (var i = 0; i < devices.sensors.length; i++) {
-        if(devices.sensors[i].id === id){
-            return devices.sensors[i];
-        }
-    }
-    return {err: "Error, could not find sensor with id: " + id + "."};
-}
-
-function getActuatorById(id) {
-    for (var i = 0; i < devices.actuators.length; i++) {
-        if(devices.actuators[i].id === id){
-            return devices.actuators[i];
-        }
-    }
-    return {err: "Error, could not find actuator with id: " + id + "."};
-}
-
-function determineState(sensor){
-    returns =sensor.commands.status.returns;
-    
-    for(key in returns) {
-        var status = {};
-        if(returns.hasOwnProperty(key)) {
-        var value = returns[key];
-
-            switch(value) {
-                case 'float':
-                returnValue = (Math.random() * (32.0 - 10.0) + 10).toFixed(2)
-                    status[key] = returnValue;
-                    break;
-                case 'integer':
-                returnValue = (Math.random() * 100).toFixed(0)
-                    status[key] = returnValue;
-                    break;
-            }
-        }
-    }
-    return {status: status}
-}
-
-function determineStateActuator(actuator, params){
-    console.log(actuator);
-    returns = actuator.commands.status.returns;
-    for(key in returns) {
-        console.log(key)
-        var status = {};
-        if(returns.hasOwnProperty(key)) {
-            console.log(value);
-        var value = returns[key];
-
-            switch(value) {
-                case 'boolean':
-                    if(params !== null && params !== 0){
-                        returnValue = true;
-                        status[key] = returnValue;
-                    }
-                    else{
-                        chance =(Math.random() * 100).toFixed(0);
-                        console.log(chance);
-                        if(chance > 50){
-                            returnValue = true;
-                            status[key] = returnValue;
-                        }
-                        else{
-                            returnValue = true;
-                            status[key] = returnValue;
-                        }
-                    }
-                    break;
-                case 'integer':
-                    returnValue = params;
-                    status[key] = returnValue;
-                    break;
-            }
-        }
-    }
-    console.log(status);
-    return {status: status}
-}
