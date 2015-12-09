@@ -5,15 +5,16 @@
         .module('jarvis.actuator')
         .controller('ActuatorDetailCtrl', ActuatorDetailCtrl);
 
-    ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope", '$timeout', '$http', '$compile'];
+    ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$state", "$scope", '$timeout', '$http', '$compile'];
 
-    function ActuatorDetailCtrl(DS, $sp, $scope, $timeout, $http, $compile) {
+    function ActuatorDetailCtrl(DS, $sp, $state, $scope, $timeout, $http, $compile) {
         var adc = this;
         adc.showCommand = showCommand;
         adc.sendcommand = sendcommand;
         adc.actuatoralias = "";
         adc.updateAlias = updateActuator;
         adc.toggleState = toggleState;
+        adc.GoToDetail = GoToDetail;
         adc.sliderSettings = [];
 
         DS.getDeviceById($sp.uid, "actuator")
@@ -32,6 +33,14 @@
                 adc.actuator = data;
             }
         });
+
+        function GoToDetail(actuator) {
+            $state.go("ruleEngine");
+            $state.transitionTo("ruleEngine", {
+                uid: actuator.id,
+                data: actuator
+            });
+        }
 
         function updateActuator(key,value) {
             if(!key || !value) return console.error("no key or value");

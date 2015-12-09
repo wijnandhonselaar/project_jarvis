@@ -36,7 +36,27 @@ var Actuator = thinky.createModel("Actuator", {
 	config: {
 		ip: type.string().required(),
 		alias: type.string(),
-		active: type.boolean().default(true)
+		active: type.boolean().default(true),
+		rules: {
+			on: {
+				command: type.string().required(),
+				onEvents: [
+					{
+						device: type.number().required(),
+						event: type.string().required()
+					}
+				],
+				thresholds: [
+					{
+						device: type.number().required(),
+						field: type.string().required(),
+						operator: type.string().required(),
+						value: type.number().required(),
+						gate : type.string().required()
+					}
+				]
+			}
+		}
 	}
 });
 

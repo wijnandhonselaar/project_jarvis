@@ -5,20 +5,25 @@
             <div style="background-image:url({{adc.actuator.model.image}}); margin:0 auto; width: 50px; height:55px; background-size:cover;"></div>
             <!--<img src="{{adc.actuator.model.image}}" style="width:40px; margin-top:3px;">-->
         </div>
+
+        <div ng-click="adc.GoToDetail(adc.actuator)" class="card text-center touch waves-light" style="padding:5px; margin-top:-12px;">
+            <img src="images/icon_condition.png" width="25px;">
+        </div>
+
     </div>
     <div class="col m10">
         <div class="row detaildescrip" style="margin-top:8px;">
             <div class="col m12">
                 <input type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="adc.actuatoralias" ng-change="adc.updateAlias('alias',adc.actuatoralias)" style="margin-top:-10px;"/>
             </div>
-            <div class="col m12">
+            <div class="col m12" style="margin-top:-25px;">
                 <p class="description">{{adc.actuator.model.description}}</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
+<div class="row" style="margin-top:-15px;">
     <div class="col m4 nopad">
         <div class="row">
             <div class="col m12">

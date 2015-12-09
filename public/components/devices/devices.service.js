@@ -5,9 +5,9 @@
         .module('jarvis.devices')
         .factory('DevicesService', DevicesService);
 
-    DevicesService.$inject = ['$http', '$rootScope', 'socketService'];
+    DevicesService.$inject = ['$http', '$rootScope', 'socketService', "$timeout"];
 
-    function DevicesService($http, $rs, socket) {
+    function DevicesService($http, $rs, socket, $timeout) {
         var devices = {
             actuator: [],
             sensor: []
@@ -16,7 +16,6 @@
         var onDeviceAdd = null;
         var onDeviceUpdate = null;
 
-
         socket.socketListener("deviceAdded", function(data){
             devices[data.model.type].push(data);
             $rs.$apply();
@@ -24,34 +23,6 @@
                 onDeviceAdd(data);
             }
         });
-
-        socket.socketListener('deviceEvent', function(data){
-            console.log(data);
-            var severityLevels = [1,2,3,4,5];
-            var event =  $('#event');
-            for(var i = 0; i<severityLevels.length; i++){
-                event.removeClass('severity'+severityLevels[i]);
-            }
-            event.addClass('severity'+data.event.severity);
-            $('#eventImage').attr('src', data.device.model.image);
-            $('#eventMessage').text(data.event.msg);
-            event.fadeIn(800);
-        });
-
-        $('#event').click(function(){
-           $(this).fadeOut(800);
-        });
-
-
-        socket.socketListener('deviceUpdated', function(data){
-            for(var i = 0; i<devices[data.model.type].length; i++){
-                if(devices[data.model.type][i].id === data.id){
-                    devices[data.model.type][i] = data;
-                }
-            }
-            $rs.$apply();
-        });
-
 
         socket.socketListener("deviceUpdated", function(data){
             devices[data.model.type].forEach(function(device){
@@ -65,6 +36,56 @@
                 onDeviceUpdate(data);
             }
         });
+
+        function updateRules(id, obj){
+            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules:obj})
+                .success(function (data) {
+                    console.log("succesfully saved");
+                })
+                .error(function (err) {
+                    console.error(err);
+                    console.error("error with command");
+                });
+        }
+
+        // Buildevent en de socketlistener moeten naar logservice
+        function buildEvent(severity, imgsrc, msg) {
+            var eventEl = document.createElement("div");
+            eventEl.className = "event severity" + severity;
+
+            var eventImg = document.createElement("img");
+            eventImg.className = "invert";
+            eventImg.src = imgsrc;
+            eventImg.style.width = "160px";
+            eventImg.style.marginTop = "-25px";
+            eventImg.style.zIndex = 99999999999;
+            eventEl.appendChild(eventImg);
+
+            var eventBr = document.createElement("br");
+            eventEl.appendChild(eventBr);
+
+            var eventMsg = document.createElement("span");
+            eventMsg.style.fontSize = "45px";
+            eventMsg.innerHTML = msg;
+            eventEl.appendChild(eventMsg);
+
+            document.body.appendChild(eventEl);
+
+            var $eventEl = $(eventEl);
+            $eventEl.fadeIn(800);
+
+            function remove() {
+                $eventEl.fadeOut(800);
+                $timeout(function(){
+                    eventEl.parentNode.removeChild(eventEl);
+                },800);
+            }
+            eventEl.addEventListener("click", remove);
+        }
+        socket.socketListener('deviceEvent', function(data){
+            buildEvent(data.event.severity, data.device.model.image, data.event.msg);
+        });
+        // Tot hierzo.
 
         loadDevices()
             .then(function () {
@@ -83,7 +104,8 @@
             addDeviceLoader: addDeviceLoader,
             setOnDeviceAdd: setOnDeviceAdd,
             setOnDeviceUpdate: setOnDeviceUpdate,
-            updateDevice: updateDevice
+            updateDevice: updateDevice,
+            updateRules: updateRules
         };
 
         function getDeviceById(uid, type) {
