@@ -5,9 +5,9 @@
         .module('jarvis.actuator')
         .controller('ActuatorDetailCtrl', ActuatorDetailCtrl);
 
-    ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope", '$timeout', '$http', '$compile'];
+    ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope", '$timeout', '$state'];
 
-    function ActuatorDetailCtrl(DS, $sp, $scope, $timeout, $http, $compile) {
+    function ActuatorDetailCtrl(DS, $sp, $scope, $timeout, $state) {
         var adc = this;
         adc.showCommand = showCommand;
         adc.sendcommand = sendcommand;
