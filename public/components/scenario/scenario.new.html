@@ -1,17 +1,17 @@
-<div class="row">
-    <ng-form class="col m12 offset-m3" style="margin-top: 40px; text-align:center">
-        <div class="row">
-            <label for="name">Naam</label>
-            <input type="text" edit-dir="" id="name" placeholder="Druk hier om de naam aan te passen"
+<div class="col m12">
+    <div class="row detaildescrip" style="margin-top:8px;">
+        <div class="col m10">
+            <label class="col m3" style="margin-top: 10px" for="name">Naam</label>
+            <input class="col m9" type="text" edit-dir="" id="name" placeholder="Druk hier om de naam aan te passen"
                    ng-model="snc.scenario.name"/>
-            <label for="description">Omschrijving</label>
-            <input type="text" edit-dir="" id="description" placeholder="Druk hier om de omschrijving aan te passen"
+        </div>
+        <div class="col m10">
+            <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
+            <input class="col m9" type="text" edit-dir="" id="description" placeholder="Druk hier om de omschrijving aan te passen"
                    ng-model="snc.scenario.description"/>
         </div>
-        <div class="row">
-            <div class="customCard" style="padding:1px; background-color:lightgrey">
-                <div style="text-align: center; margin-top: 10px;" ng-click="snc.create()">Toevoegen</div>
-            </div>
+        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 10px;" ng-click="snc.create()">Opslaan</div>
         </div>
-    </ng-form>
+    </div>
 </div>
