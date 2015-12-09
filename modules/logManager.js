@@ -42,14 +42,14 @@ function logEvent(device, type, category, message, severity, cb) {
  * @param device
  * @param value
  */
-function logData(device, value, cb) {
+function logData(device, status, cb) {
     var log = new dataLog({
         device: {
             id: device.id,
             name: device.model.name,
             alias: device.config.alias
         },
-        value: value,
+        status: status,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
