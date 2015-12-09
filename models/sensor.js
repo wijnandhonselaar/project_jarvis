@@ -3,8 +3,8 @@ var type = thinky.type;
 
 var Sensor = thinky.createModel("Sensor", {
     id: type.number().required(),
+    savedAt: type.number().required(), // unix timestamp
     model: {
-        savedAt: type.number().required(), // unix timestamp
         name: type.string(),
         sokVersion: type.number().required(),
         description: type.string(),

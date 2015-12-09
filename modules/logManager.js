@@ -1,10 +1,10 @@
 "use strict";
 
+var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
 var thinky = require('thinky')();
 var r = thinky.r;
-
 
 /**
  * log event data
@@ -15,7 +15,7 @@ var r = thinky.r;
  * @param severity
  * @param cb
  */
-function logEvent(device, type, category, message, severity, cb) {
+function logEvent(device, type, category, message, severity) {
     var log = new eventLog({
         device: {
             id: device.id,
@@ -30,10 +30,9 @@ function logEvent(device, type, category, message, severity, cb) {
     });
 
     eventLog.save(log).then(function(res) {
-        cb(null, res);
+        io.emit('logAdded', log);
     }).error(function(err){
-        console.log(err);
-        cb({error: "Not found.", message: err});
+        logEvent(device, type, category, err, 2);
     });
 }
 
@@ -42,20 +41,21 @@ function logEvent(device, type, category, message, severity, cb) {
  * @param device
  * @param value
  */
-function logData(device, status, cb) {
+
+function logData(device) {
     var log = new dataLog({
         device: {
             id: device.id,
             name: device.model.name,
             alias: device.config.alias
         },
-        status: status,
+        status: device.status,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
-        cb(null, res);
+        //io.emit('logAdded', log);
     }).error(function(err){
-        cb({error: "Not found.", message: err});
+        logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }
 /**
@@ -132,10 +132,13 @@ function getStatus(deviceid, cb) {
 }
 
 module.exports = {
+    init: function (socket) {
+            io = socket;
+         },
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,
     getStatus: getStatus
-}
+};

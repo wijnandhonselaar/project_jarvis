@@ -1,5 +1,6 @@
 var validator = require('./validator');
 var superAgent = require('superagent');
+var logger = require('../logManager');
 
 var postMethod = function(command, deviceObject, paramList, callback){
     console.log("PARAMLISTERT: \n", paramList);
@@ -17,10 +18,12 @@ var postMethod = function(command, deviceObject, paramList, callback){
                 if(err) {
                     console.log(err);
                 } else {
+                    logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd.", 4);
                     callback(res.body);
                 }
             });
         } else {
+            logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd. Maar er was een error.", 2);
             callback(data);
         }
     })
