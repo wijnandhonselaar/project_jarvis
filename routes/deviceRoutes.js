@@ -45,7 +45,7 @@ module.exports = (function() {
      */
     // example: http://localhost:3221/devices/logs?severity=5&offset=20&limit=20
     route.get('/logs', function(req, res) {
-        logger.getAllEvents(req.query.severity, req.query.offset, req.query.limit, function(err, result) {
+        logger.getAllEvents(parseInt(req.query.severity), parseInt(req.query.offset), parseInt(req.query.limit), function(err, result) {
             res.send(JSON.stringify(result));
          });
     });

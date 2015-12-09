@@ -78,17 +78,19 @@ function getEvents(deviceid, cb) {
  */
 
 function getAllEvents(severity, offset, limit, cb) {
-    limit = parseInt(limit);
-    offset = parseInt(offset);
-    severity = parseInt(severity);
-
     if((severity > 0 || severity < 6) && severity !== null) {
 
     } else {
         severity = 5;
     }
 
-    if(limit === 0) {
+    if(isNaN(offset)){
+        offset = 0;
+    }
+
+    if(isNaN(limit)) {
+        limit = 50;
+    } else if(limit === 0) {
         limit = 50;
     }
 
