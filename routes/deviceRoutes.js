@@ -31,10 +31,16 @@ module.exports = (function() {
             res.send(JSON.stringify(response))
         });
     });
+    route.post('/actuators/:id/rules', function(req,res){
+        var object = {
+            id:parseInt(req.params.id),
+            rules:req.body.rules
+        };
+        res.json(deviceManager.setRules(object))
+    });
 
-    route.get('/actuators/log', function(req, res) {
-        var log = '';
-        res.send(JSON.stringify(log));
+    route.get('/actuators/log', function(request, resp) {
+        //res.send(JSON.stringify(logger.));
     });
 
     route.get('/sensors/log', function(req, res) {

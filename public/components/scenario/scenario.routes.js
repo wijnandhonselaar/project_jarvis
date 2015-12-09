@@ -49,7 +49,7 @@
                     "mainView": {
                         templateUrl: "components/scenario/scenario.new.html",
                         controller: 'ScenarioNewctrl',
-                        controllerAs: 'scennew'
+                        controllerAs: "snc"
                     },
                     "logView": {
                         templateUrl: "components/log/log.html",

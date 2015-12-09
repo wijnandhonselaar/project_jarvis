@@ -78,9 +78,13 @@ function validateCommand(command, device, paramList, callback) {
 
     for (var param in device.model.commands[command].parameters) {
         if (device.model.commands[command].parameters.hasOwnProperty(param)) {
+
             validatedParams[param] = {};
+
             validatedParams[param].validated = true;
+
             var paramObj = device.model.commands[command].parameters[param];
+
             var accepts = paramObj.accepts;
 
             if (param in paramList) {
