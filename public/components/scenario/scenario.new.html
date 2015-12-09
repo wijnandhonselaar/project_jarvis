@@ -1,1 +1,14 @@
-{{scennew.new}}
+
+<div class="row">
+    <ng-form class="col m6 offset-m3" style="text-align:center">
+        <div class="row">
+            <input type="text" edit-dir="" placeholder="Druk hier om de naam aan te passen" ng-model="snc.scenario.name"/>
+        </div>
+        <div class="row">
+            <input type="text" edit-dir="" placeholder="Druk hier om de omschrijving aan te passen" ng-model="snc.scenario.description"/>
+        </div>
+        <div class="row">
+            <input type="button" ng-click="snc.create()" name="Toevoegen">
+        </div>
+    </ng-form>
+</div>

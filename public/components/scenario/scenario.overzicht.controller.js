@@ -11,9 +11,10 @@
         var scena = this;
         getScenarios();
         scena.getScenarios = getScenarios;
-        scena.goToDetail = GoToDetail;
+        scena.goToDetail = goToDetail;
         scena.toggleState = toggleState;
         scena.goToNew = goToNew;
+
         function getScenarios(){
             $http.get("/scenario")
                 .success(function (data) {
@@ -25,10 +26,10 @@
                     return err;
                 });
         }
-        function GoToDetail(scenario) {
+        function goToDetail(scenario) {
             $state.go("scenarioDetail");
             $state.transitionTo("actuatorDetail", {
-                //uid: scenario.id,
+                uid: scenario.id,
                 data: scenario
             });
         }
