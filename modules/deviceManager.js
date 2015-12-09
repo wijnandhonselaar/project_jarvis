@@ -3,8 +3,42 @@ var devices =  {
     sensors:[]
 };
 var io = null;
+var ruleEngine = null;
 var rethinkManager = require('./rethinkManager');
+var rules = {
+    on: {
+        command: 'on',
+        onEvents: [
+            {
+                device: 1337,
+                event: 'onFinish'
+            }
+        ],
+        thresholds: [
+            {
+                device: 16,
+                field: 'Celcius',
+                operator: '>',
+                value: 20,
+                gate: 'AND'
+            }
+        ]
 
+    },
+    off: {
+        command: 'off',
+        onEvents: [
+            {
+                device: 1337,
+                event: 'onFinish'
+            }
+        ],
+        thresholds: [
+
+        ]
+
+    }
+};
 /**
  *
  * @param device
@@ -234,6 +268,26 @@ function updateActuatorState(id, state){
     actuator.status = state;
     io.emit("deviceUpdated", actuator);
 }
+
+
+
+function getActuators() {
+    return devices.actuators;
+}
+
+function setRules(object) {
+    var a = getActuatorById(object.id);
+    if (a.err) {
+        console.error(a.err);
+        return {err: 'Couldn\'t find actuator by id'}
+    } else {
+        console.log('set new rules');
+        a.config.rules = object.rules;
+        console.log(a.config);
+        return {success: 'set'}
+    }
+}
+
 //noinspection JSClosureCompilerSyntax
 /**
  *
@@ -251,8 +305,9 @@ function updateActuatorState(id, state){
 *         }}
  */
 module.exports = {
-    init: function(socketio){
+    init: function(socketio, rec){
         io = socketio;
+        ruleEngine = rec
     },
     add: addToDeviceList,
     getByIP:getDeviceByIPAddress,
@@ -262,12 +317,13 @@ module.exports = {
     getAll: function(){return devices;},
     removeAll: function(){devices.actuators = []; devices.sensors = [];},
     getSensors: function(){return devices.sensors;},
-    getActuators: function(){return devices.actuators;},
+    getActuators: getActuators,
     updateDeviceAlias: updateDeviceAliasFunction,
     updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
-    updateActuatorState: updateActuatorState
+    updateActuatorState: updateActuatorState,
+    setRules: setRules
 };
 
 //circular dependency (export must be first)
