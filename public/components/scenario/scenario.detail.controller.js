@@ -5,53 +5,52 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["$http", "$stateParams", "$scope"];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams", "$scope"];
 
-    function ScenarioDetailctrl($http, $sp, $scope) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $scope) {
         var scd = this;
+        scd.uid = $sp.uid;
+        scd.updatename = updateName;
         scd.updateDescription = updateDescription;
-        scd.updateName = updateName;
 
+        getScenario(scd.uid);
 
-        getScenario();
-
-        function getScenario(){
-            $http.get("/scenario/"+$sp.uid)
-                .success(function (data) {
-                    scd.scenario = data.scenario;
+        function getScenario(id){
+            ScenarioService.get(id)
+                .then(function(data){
+                    scd.scenario = data;
                     scd.scenarioName = data.scenario.name;
                     scd.scenarioDescription = data.scenario.description;
                     return data;
                 })
-                .error(function (err) {
-                    console.log("Error get scenario's", err);
+                .catch(function(err){
+                    console.log("Error get scenario ", err);
                     return err;
                 });
         }
 
-
-        function updateDescription(description){
-            scd.scenario.description = description;
-            $http.put("/scenario/"+$sp.uid, scd.scenario)
-                .success(function (data) {
-                    Materialize.toast("Succesful changed description", 4000);
+        function updateName(id, scenarioName){
+            scd.scenario.scenario.name = scenarioName;
+            ScenarioService.update(id, scd.scenario)
+                .then(function(data){
+                    return data;
                 })
-                .error(function (err) {
-                    console.error(err);
+                .catch(function(err){
+                    console.log("Error with update ", err);
                     return err;
                 });
-        }
+            }
 
-        function updateName (name){
-            scd.scenario.name = name;
-            $http.put("/scenario/"+$sp.uid, scd.scenario)
-                .success(function (data) {
-                    Materialize.toast("Succesful changed name into "+ data.scenario.name, 4000);
+        function updateDescription(id, scenarioDescription){
+            scd.scenario.scenario.description = scenarioDescription;
+            ScenarioService.update(id, scd.scenario)
+                .then(function(data){
+                    return data;
                 })
-                .error(function (err) {
-                    console.error(err);
+                .catch(function(err){
+                    console.log("Error with update description", err);
                     return err;
                 });
+         }
         }
-    }
 })();

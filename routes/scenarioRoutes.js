@@ -29,7 +29,7 @@ module.exports = (function() {
     route.put('/:id', function(req, res) {
         console.log(req.params.id);
         console.log(req.body);
-        scenarioManager.updateById(req.params.id, req.body, function(err, result) {
+        scenarioManager.updateById(req.params.id, req.body.scenario, function(err, result) {
             if(err) throw err;
             res.send({scenario: result});
         });

@@ -25,8 +25,57 @@
             );
         }
 
+        function getScenario(id) {
+            return new Promise(
+                function(resolve, reject) {
+                    $http.get("/scenario/"+id)
+                        .success(function (data) {
+                            resolve(data);
+                        })
+                        .error(function (err) {
+                            console.error("Error get scenario's", err);
+                            reject(err);
+                        });
+                });
+        }
+
+        function getScenarios() {
+            return new Promise(
+                function(resolve, reject) {
+                    $http.get("/scenario")
+                        .success(function (data) {
+                            resolve(data);
+                        })
+                        .error(function (err) {
+                            console.error("Error get scenario's", err);
+                            reject(err);
+                        });
+                });
+        }
+
+        function UpdateNameorDescription(id,scenario){
+            return new Promise(
+                function(resolve, reject){
+                    $http.put("/scenario/"+id, scenario)
+                        .success(function (data) {
+                            resolve(data);
+                            Materialize.toast("Succesful changed", 4000);
+                        })
+                        .error(function (err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
+
+        }
+
+
         return {
-            create: createScenario
+            getall: getScenarios,
+            get: getScenario,
+            create: createScenario,
+            update: UpdateNameorDescription
         };
 
     }
