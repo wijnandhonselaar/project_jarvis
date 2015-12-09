@@ -1,8 +1,18 @@
+<!--<div class="row" style="margin-top:15px;">-->
+    <!--<div class="col m1">-->
+        <!--<div style="margin-top:5px; background-image:url({{rec.actuator.model.image}}); width: 25px; height:30px; background-size:cover;"></div>-->
+    <!--</div>-->
+    <!--<div class="col m11">-->
+        <!--<select ng-model="rec.selectedCommand" style="display: block;">-->
+            <!--<option ng-selected="true" value="">Selecteer een actie</option>-->
+            <!--<option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"-->
+                    <!--ng-if="command.name != 'status'">{{command.name}}-->
+            <!--</option>-->
+        <!--</select>-->
+    <!--</div>-->
+<!--</div>-->
 <div class="row" style="margin-top:15px;">
-    <div class="col m1">
-        <div style="margin-top:5px; background-image:url({{rec.actuator.model.image}}); width: 25px; height:30px; background-size:cover;"></div>
-    </div>
-    <div class="col m11">
+    <div class="col m2">
         <select ng-model="rec.selectedCommand" style="display: block;">
             <option ng-selected="true" value="">Selecteer een actie</option>
             <option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"
@@ -10,15 +20,13 @@
             </option>
         </select>
     </div>
-</div>
-<div class="row">
-    <div class="col m3">
+    <div class="col m2">
         <select ng-model="rec.threshold.device" style="display: block;" ng-change="rec.updateFieldList()">
             <option value="">Sensor</option>
             <option ng-repeat="sensor in rec.sensors" value="{{sensor.id}}">{{sensor.config.alias}}</option>
         </select>
     </div>
-    <div class="col m3">
+    <div class="col m2">
         <select ng-model="rec.threshold.field" style="display: block;">
             <option value="">Veld</option>
             <option ng-repeat="(key, val) in rec.selectedSensor.model.commands.status.returns" value="{{key}}">{{key}}</option>
@@ -47,8 +55,8 @@
     </div>
 </div>
 
-<div style="overflow-y: scroll; height: 140px; width:100%;">
-    <div class="row" style="padding-top:5px; background-color: #F4F4F4"
+<div style="overflow-y: scroll; height: 265px; width:100%;">
+    <div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
          ng-repeat="rule in rec.ruleObjects[rec.selectedCommand].thresholds">
         <div class="col m3">
             <select ng-model="rule.device" style="display: block;">
@@ -69,9 +77,33 @@
                 <option value=">"> Groter dan</option>
             </select>
         </div>
-        <div class="col m3">
+        <div class="col m2">
             <input ng-model="rule.value" edit-dir placeholder="Waarde" type="text">
+        </div>
+        <div class="col m1">
+            <div ng-click="rec.showDetail(rule)" style="width: 100%; height: 45px; color:white; border-radius: 2px; text-align: center; font-size:24px; font-weight: 100; padding-top:4px; cursor:pointer; background-color: #F84E19;">></div>
         </div>
     </div>
 </div>
-        
+
+<div id="ruleModal" class="modal modal-fixed-footer" style="width: 800px; max-height:800px; height: 430px !important;">
+    <div class="modal-content">
+        <h4>Rule</h4>
+        <div class="row" style="margin-top:15px;">
+            <div class="col m12">
+                <p>
+                    Als {{rec.getSensorById(rec.activeRule.device).config.alias}} {{rec.activeRule.field}} {{rec.translateOperator(rec.activeRule.operator)}} {{rec.activeRule.value}} dan <span class="highlight">{{rec.selectedCommand}}</span> anders:
+                    <select style="display: block;">
+                        <option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"
+                                ng-if="command.name != 'status'">{{command.name}}
+                        </option>
+                    </select>
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
+    </div>
+</div>
