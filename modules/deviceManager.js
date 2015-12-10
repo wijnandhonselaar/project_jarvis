@@ -265,7 +265,7 @@ function initiateStatusPolling(sensor) {
 
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
-    console.log(sensor);
+    //console.log(sensor);
     if (sensor.status !== obj.status) {
         for (var i = 0; i < getActuators().length; i++) {
             ruleEngine.apply(getActuators()[i]);
@@ -294,9 +294,9 @@ function setRules(object) {
         console.error(a.err);
         return {err: 'Couldn\'t find actuator by id'}
     } else {
-        console.log('set new rules');
+        //console.log('set new rules');
         a.config.rules = object.rules;
-        console.log(a.config);
+        //console.log(a.config);
         return {success: 'set'}
     }
 }

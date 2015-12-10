@@ -55,7 +55,7 @@
         function create () {
             snc.devices.forEach(function(device) {
                 var action = $('#'+device.id + ' option:selected').data("value");
-                snc.scenario.actuators.push({deviceid: action.deviceid, action: [{command: action.command.name, parameters: []}]});
+                snc.scenario.actuators.push({deviceid: action.deviceid, action: {command: action.command.name, parameters: []}});
             });
             console.log('Actuatoren toegevoegd aan scenario.');
             ScenarioService.create(snc.scenario.name, snc.scenario.description, snc.scenario.actuators)
@@ -90,6 +90,7 @@
          * @param scenario
          */
         function goToDetail(scenario) {
+            console.log(scenario.id);
             $state.go("scenarioDetail");
             $state.transitionTo("scenarioDetail", {
                 uid: scenario.id,
