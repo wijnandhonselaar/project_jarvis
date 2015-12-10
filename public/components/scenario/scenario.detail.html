@@ -1,21 +1,25 @@
 <div class="col m12">
-</div>
-
-<div class="col m12">
     <div class="row detaildescrip" style="margin-top:8px;">
-        <div class="col m9">
-            <input type="text" edit-dir="" placeholder="Scenarionaam" ng-model="scd.scenarioName" ng-change="scd.updatename(scd.uid, scd.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
+        <div class="col m10">
+            <label class="col m3" style="margin-top: 10px" for="name">Naam</label>
+            <input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="scd.scenarioName"
+                   ng-change="scd.updatename(scd.uid, scd.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
         </div>
-        <div class="col m3">
-            <div class="customCard col m12" style="padding:1px; background-color:lightgrey">
-                <div style="text-align: center; margin-top: 3px;" ng-click="scd.delete(scd.scenario)">Scenario verwijderen</div>
-            </div>
+        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 3px;" ng-click="scd.delete(scd.scenario)">Scenario verwijderen</div>
         </div>
         <div class="col m10">
-            <input type="text" edit-dir="" placeholder="" ng-model="scd.scenarioDescription" ng-change="scd.updateDescription(scd.uid, scd.scenarioDescription)" style="margin-top:-10px; margin-bottom:0;">
+            <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
+            <input type="text" edit-dir="" placeholder="" id="description" ng-model="scd.scenarioDescription"
+                   ng-change="scd.updateDescription(scd.uid, scd.scenarioDescription)"
+                   style="margin-top:-10px; margin-bottom:0;">
+        </div>
+        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 3px;" ng-click="scd.addActuator()">Actuator toevoegen</div>
         </div>
     </div>
 </div>
+
 
 <div style="overflow-y: scroll; height: 265px; width:100%;">
     <div class="row"
@@ -27,7 +31,9 @@
         <div class="col m5">
             <select id="{{actuator.id}}" style="display: block;">
                 <option value="">Actie</option>
-                <option ng-repeat="command in actuator.model.commands" data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}</option>
+                <option ng-repeat="command in actuator.model.commands"
+                        data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}
+                </option>
             </select>
         </div>
     </div>

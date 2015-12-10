@@ -4,6 +4,7 @@ var Scenario = require('../models/scenario');
 
 function create(name, description, actuators, cb) {
     var scenario = new Scenario({name: name, description: description, actuators: actuators});
+    console.log(scenario);
     Scenario.save(scenario).then(function(res) {
         cb(null, res);
     }).error(function(err){
