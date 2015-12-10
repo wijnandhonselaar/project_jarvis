@@ -247,10 +247,10 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
             rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
                 if(err) {
-                     logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " niet aangepast.", 3);
+                     //logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " niet aangepast.", 3);
                      callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
                 } else {
-                    logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " ingesteld.", 4);
+                    //logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " ingesteld.", 4);
                     io.emit("deviceUpdated", devices.sensors[i]);
                     callback({success: "Success, interval for "+ id + " was successfully updated."});
                 }

@@ -160,7 +160,7 @@ describe('Actuator', function () {
         // get the sensors
         Actuator.get(id).then(function(actuator) {
             // check if the savedAt exists (which is done by the model)
-            expect(actuator.model.savedAt).to.exist;
+            expect(actuator.savedAt).to.exist;
             done();
             // something went wrong
         }).error(console.log);

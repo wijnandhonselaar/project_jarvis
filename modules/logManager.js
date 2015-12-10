@@ -31,9 +31,13 @@ function logEvent(device, type, category, message, severity, cb) {
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
-        cb(null, res);
+        if (typeof cb === "function") {
+            cb(null, res);
+        }
     }).error(function(err){
-        cb(err);
+        if (typeof cb === "function") {
+            cb(err);
+        }
         logEvent(device, type, category, err, 2);
     });
 }
@@ -55,10 +59,14 @@ function logData(device, cb) {
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
-        cb(null, res);
         //io.emit('logAdded', log);
+        if (typeof cb === "function") {
+            cb(null, res);
+        }
     }).error(function(err){
-        cb(err);
+        if (typeof cb === "function") {
+            cb(err);
+        }
         logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }
