@@ -10,7 +10,8 @@
         </div>
         <div class="col m10">
             <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
-            <input class="col m9" type="text" edit-dir="" id="description" placeholder="Druk hier om de omschrijving aan te passen"
+            <input class="col m9" type="text" edit-dir="" id="description"
+                   placeholder="Druk hier om de omschrijving aan te passen"
                    ng-model="snc.scenario.description"/>
         </div>
         <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
@@ -20,25 +21,25 @@
 </div>
 
 <div style="overflow-y: scroll; height: 265px; width:100%;">
-    <div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
-         ng-repeat="actuator in snc.scenario.actuators">
+    <div class="row"
+         style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
+         ng-repeat="actuator in snc.actuators">
         <div class="col m3">
             <span class="col m3">{{actuator.alias}}</span>
             <select ng-model="actuator.commands" style="display: block;">
-                <option value="">Actie </option>
+                <option value="">Actie</option>
                 <option ng-repeat="command in actuator.commands" value="{{command.name}}">{command.name}}</option>
             </select>
         </div>
     </div>
 </div>
 
-
 <div id="actuatorscenario" class="modal" style="margin-top:-25px;">
     <div class="modal-content">
         <h4 id="commandTitle">Apparaat toevoegen</h4>
+
         <div class="modalWrapper">
             <div class="actuator">
-
 
                 <div class="ptop_30">
                     <div class="swiper-container">
@@ -50,7 +51,8 @@
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide" ng-repeat="repeat in snc.repeater">
-                            <div class="col m6 repeater" ng-if="$index >= ($parent.$index * 8) && $index < (($parent.$index+1) * 8)"
+                            <div class="col m6 repeater"
+                                 ng-if="$index >= ($parent.$index * 6) && $index < (($parent.$index+1) * 6)"
                                  ng-repeat="actuator in snc.actuators">
                                 <div class="row" style="margin-bottom:10px">
                                     <div class="col m8" ng-click="snc.select(actuator)"
@@ -68,9 +70,11 @@
                     </div>
                 </div>
 
+                <div style="left:285px; width: 12%; position: absolute; bottom:30px;">
+                    <div class="swiper-pagination">
+                    </div>
+                </div>
 
-
-                <button class="btn btn-primary" ng-click="adc.HandleCommand()">Send</button>
             </div>
         </div>
     </div>
