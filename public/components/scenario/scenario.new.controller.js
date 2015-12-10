@@ -9,10 +9,11 @@
     /**
      *
      * @param ScenarioService            Scenario Service
-     * @param $state
+     * @param $scope
+    * @param $state
      * @constructor
      */
-    function ScenarioNewctrl(ScenarioService,$scope,  $state) {
+    function ScenarioNewctrl(ScenarioService, $scope,  $state) {
         var snc = this;
         snc.create = create;
         snc.goToDetail = goToDetail;
@@ -26,18 +27,16 @@
         snc.saveChanges = saveChanges;
 
         function addActuator(){
-            ScenarioService.getActuators()
-                .then(function(data){
-                    snc.actuators = data.actuators;
-                    reloadSwiper();
-                    $('#actuatorscenario').openModal();
-            })
-                .catch(function(err){
-                    console.error(err);
-                    return err;
-                });
-
-
+                ScenarioService.getActuators()
+                    .then(function(data){
+                        snc.actuators = data.actuators;
+                        $('#actuatorscenario').openModal();
+                        reloadSwiper();
+                    })
+                    .catch(function(err){
+                        console.error(err);
+                        return err;
+                    });
         }
 
         function saveChanges() {

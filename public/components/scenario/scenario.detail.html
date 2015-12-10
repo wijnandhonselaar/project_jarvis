@@ -1,13 +1,18 @@
 <div class="col m12">
 </div>
 
-<div class="col m10">
+<div class="col m12">
     <div class="row detaildescrip" style="margin-top:8px;">
-        <div class="col m12">
-            <input type="text" edit-dir="" placeholder="Scenarionaam" ng-model="sdc.scenarioName" ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
+        <div class="col m9">
+            <input type="text" edit-dir="" placeholder="Scenarionaam" ng-model="scd.scenarioName" ng-change="scd.updatename(scd.uid, scd.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
         </div>
-        <div class="col m12">
-            <input type="text" edit-dir="" placeholder="" ng-model="sdc.scenarioDescription" ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)" style="margin-top:-10px; margin-bottom:0;">
+        <div class="col m3">
+            <div class="customCard col m12" style="padding:1px; background-color:lightgrey">
+                <div style="text-align: center; margin-top: 3px;" ng-click="scd.delete(scd.scenario)">Scenario verwijderen</div>
+            </div>
+        </div>
+        <div class="col m10">
+            <input type="text" edit-dir="" placeholder="" ng-model="scd.scenarioDescription" ng-change="scd.updateDescription(scd.uid, scd.scenarioDescription)" style="margin-top:-10px; margin-bottom:0;">
         </div>
     </div>
 </div>

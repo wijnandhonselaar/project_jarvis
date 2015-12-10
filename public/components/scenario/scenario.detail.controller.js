@@ -5,13 +5,14 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams", "$scope"];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope"];
 
     function ScenarioDetailctrl(ScenarioService, $sp, $scope) {
         var sdc = this;
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
         sdc.updateDescription = updateDescription;
+        sdc.delete = deleteScenario;
         sdc.devices = [];
 
         /**
@@ -32,19 +33,19 @@
 
         getScenario(sdc.uid);
 
-        function getScenario(id){
+        function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
                     sdc.scenario = data;
                     console.log(data);
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
-                    //sdc.scenario.actuators.forEach(function(actuator) {
-                    //    sdc.devices.push(ScenarioService.getActuatorByID(actuator.deviceid));
-                    //});
+                    sdc.scenario.actuators.forEach(function(actuator) {
+                        sdc.devices.push(ScenarioService.getActuatorByID(actuator.deviceid));
+                    });
                     return data;
                 })
-                .catch(function(err){
+                .catch(function (err) {
                     console.log("Error get scenario ", err);
                     return err;
                 });
@@ -56,11 +57,11 @@
                 .then(function(data){
                     return data;
                 })
-                .catch(function(err){
+                .catch(function (err) {
                     console.log("Error with update ", err);
                     return err;
                 });
-            }
+        }
 
         function updateDescription(id, scenarioDescription){
             sdc.scenario.scenario.description = scenarioDescription;
@@ -68,10 +69,28 @@
                 .then(function(data){
                     return data;
                 })
-                .catch(function(err){
+                .catch(function (err) {
                     console.log("Error with update description", err);
                     return err;
                 });
-         }
         }
-})();
+
+        function deleteScenario(scenario) {
+            ScenarioService.delete(scenario)
+                .then(function (data) {
+                    goToOverview();
+                    return data;
+                })
+                .catch(function (err) {
+                    goToOverview();
+                    console.error(err);
+                    return err;
+                });
+        }
+
+        function goToOverview() {
+            $state.go("scenarioOverzicht");
+        }
+    }
+})
+();

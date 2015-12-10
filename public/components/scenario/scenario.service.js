@@ -73,6 +73,23 @@
             );
         }
 
+        function deleteScenario(scenario){
+            return new Promise(
+                function(resolve, reject){
+                    console.log(scenario.scenario.id);
+                  $http.delete("/scenario/"+scenario.scenario.id)
+                      .success(function(data){
+                          resolve(data);
+                          Materialize.toast("Deleted Scenario", 4000);
+                      })
+                      .error(function(err){
+                          reject(err);
+                          console.error(err);
+                      });
+                }
+            );
+        }
+
         function getActuators() {
             return new Promise(
                 function (resolve, reject) {
@@ -105,6 +122,7 @@
 
 
         return {
+            delete: deleteScenario,
             getall: getScenarios,
             get: getScenario,
             create: createScenario,
