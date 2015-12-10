@@ -15,7 +15,7 @@ var r = thinky.r;
  * @param severity
  * @param cb
  */
-function logEvent(device, type, category, message, severity) {
+function logEvent(device, type, category, message, severity, cb) {
     var log = new eventLog({
         device: {
             id: device.id,
@@ -31,7 +31,9 @@ function logEvent(device, type, category, message, severity) {
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
+        cb(null, res);
     }).error(function(err){
+        cb(err);
         logEvent(device, type, category, err, 2);
     });
 }
@@ -42,7 +44,7 @@ function logEvent(device, type, category, message, severity) {
  * @param value
  */
 
-function logData(device) {
+function logData(device, cb) {
     var log = new dataLog({
         device: {
             id: device.id,
@@ -53,8 +55,10 @@ function logData(device) {
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
+        cb(null, res);
         //io.emit('logAdded', log);
     }).error(function(err){
+        cb(err);
         logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }
@@ -133,8 +137,8 @@ function getStatus(deviceid, cb) {
 
 module.exports = {
     init: function (socket) {
-            io = socket;
-         },
+        io = socket;
+     },
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
