@@ -9,6 +9,7 @@ var io = require('socket.io')(server);
 var deviceManager = require('./modules/deviceManager');
 var bodyParser = require('body-parser');
 var autoDiscover = require('./modules/autodiscover');
+var logManager = require('./modules/logManager')
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
 var alertRoutes = require('./routes/alertRoutes');
@@ -18,6 +19,7 @@ var ruleEngine = require('./modules/ruleEngine');
 server.listen(GLOBAL.port);
 
 autoDiscover.init(server, io);
+logManager.init(io);
 deviceManager.init(io, ruleEngine);
 ruleEngine.init(deviceManager);
 

@@ -25,6 +25,8 @@
             );
         }
 
+
+
         function getScenario(id) {
             return new Promise(
                 function (resolve, reject) {
@@ -72,7 +74,7 @@
         function getActuators() {
             return new Promise(
                 function (resolve, reject) {
-                    $http.get('/actuators')
+                    $http.get('/devices/actuators')
                         .success(function (data) {
                             resolve(data);
                         })

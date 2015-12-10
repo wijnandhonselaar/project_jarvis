@@ -5,27 +5,28 @@
         .module('jarvis.scenario')
         .controller('ScenarioNewctrl', ScenarioNewctrl);
 
-    ScenarioNewctrl.$inject = ["ScenarioService","$state"];
+    ScenarioNewctrl.$inject = ["ScenarioService","$scope", "$state"];
     /**
      *
      * @param ScenarioService            Scenario Service
      * @param $state
      * @constructor
      */
-    function ScenarioNewctrl(ScenarioService, $state) {
+    function ScenarioNewctrl(ScenarioService,$scope,  $state) {
         var snc = this;
         snc.create = create;
         snc.goToDetail = goToDetail;
-        snc.modal = actuatoradd;
-        snc.scenario = {name: "", description: ""};
+        snc.addActuator = addActuator;
+        snc.select = select;
+        snc.scenario = {name: "", description: "", actuators: []};
         var swiper = null;
         snc.repeater = [];
 
-        function actuatoradd(){
+        function addActuator(){
             ScenarioService.getActuators()
                 .then(function(data){
-                    console.log(data);
-                    snc.actuators = data;
+                    snc.actuators = data.actuators;
+                    reloadSwiper();
                     $('#actuatorscenario').openModal();
             })
                 .catch(function(err){
@@ -36,6 +37,12 @@
 
         }
 
+        function select(actuator){
+                    console.log(actuator);
+                    $('#actuatorscenario').closeModal();
+                    snc.scenario.actuators.push(actuator.id);
+            console.log(snc.scenario);
+        }
         /**
          * Create new scenario
          */
@@ -53,12 +60,12 @@
 
 
         function reloadSwiper() {
-            var amount = Math.ceil( scena.scenarios.length / 8 );
-            scena.repeater = [];
+            var amount = Math.ceil( snc.actuators.length / 6 );
+            snc.repeater = [];
+            console.log(snc.repeater);
             for(var i = 0; i < amount; i++) {
-                scena.repeater.push(i);
+                snc.repeater.push(i);
             }
-            console.log(scena.repeater);
             $scope.$apply();
             swiper = new Swiper('.swiper-container', {
                 pagination: '.swiper-pagination',

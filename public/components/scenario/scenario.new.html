@@ -5,17 +5,32 @@
             <input class="col m9" type="text" edit-dir="" id="name" placeholder="Druk hier om de naam aan te passen"
                    ng-model="snc.scenario.name"/>
         </div>
+        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 13px;" ng-click="snc.create()">Opslaan</div>
+        </div>
         <div class="col m10">
             <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
             <input class="col m9" type="text" edit-dir="" id="description" placeholder="Druk hier om de omschrijving aan te passen"
                    ng-model="snc.scenario.description"/>
         </div>
         <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 10px;" ng-click="snc.create()">Opslaan</div>
+            <div style="text-align: center; margin-top: 3px;" ng-click="snc.addActuator()">Actuator toevoegen</div>
         </div>
     </div>
 </div>
 
+<div style="overflow-y: scroll; height: 265px; width:100%;">
+    <div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
+         ng-repeat="actuator in snc.scenario.actuators">
+        <div class="col m3">
+            <span class="col m3">{{actuator.alias}}</span>
+            <select ng-model="actuator.commands" style="display: block;">
+                <option value="">Actie </option>
+                <option ng-repeat="command in actuator.commands" value="{{command.name}}">{command.name}}</option>
+            </select>
+        </div>
+    </div>
+</div>
 
 
 <div id="actuatorscenario" class="modal" style="margin-top:-25px;">
@@ -59,4 +74,4 @@
             </div>
         </div>
     </div>
-</div>
+</div

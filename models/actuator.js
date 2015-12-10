@@ -3,8 +3,8 @@ var type = thinky.type;
 
 var Actuator = thinky.createModel("Actuator", {
 	id: type.number().required(),
+	savedAt: type.number().required(), // unix timestamp
 	model: {
-		savedAt: type.number().required(), // unix timestamp
 		name: type.string().required(),
 		sokVersion: type.number().required(),
 		description: type.string(),
