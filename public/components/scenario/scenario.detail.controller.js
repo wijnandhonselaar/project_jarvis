@@ -36,8 +36,7 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
-                    sdc.scenario = data;
-                    console.log(data);
+                    sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
                     sdc.scenario.actuators.forEach(function(actuator) {

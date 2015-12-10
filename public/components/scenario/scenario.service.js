@@ -111,6 +111,7 @@
                     $http.get('/devices/actuators/'+id)
                         .success(function (data) {
                             resolve(data);
+                            return data;
                         })
                         .error(function (err) {
                             console.error(err);
