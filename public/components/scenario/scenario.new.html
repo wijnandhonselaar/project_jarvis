@@ -23,12 +23,14 @@
 <div style="overflow-y: scroll; height: 265px; width:100%;">
     <div class="row"
          style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
-         ng-repeat="actuator in snc.actuators">
+         ng-repeat="actuator in snc.devices">
         <div class="col m3">
-            <span class="col m3">{{actuator.alias}}</span>
-            <select ng-model="actuator.commands" style="display: block;">
+            <span class="col m3">{{actuator.config.alias}}</span>
+        </div>
+        <div class="col m5">
+            <select id="{{actuator.id}}" style="display: block;">
                 <option value="">Actie</option>
-                <option ng-repeat="command in actuator.commands" value="{{command.name}}">{command.name}}</option>
+                <option ng-repeat="command in actuator.model.commands" data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}</option>
             </select>
         </div>
     </div>
@@ -40,14 +42,6 @@
 
         <div class="modalWrapper">
             <div class="actuator">
-
-                <div class="ptop_30">
-                    <div class="swiper-container">
-                        <div class="swiper-wrapper">
-                        </div>
-                    </div>
-                </div>
-
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide" ng-repeat="repeat in snc.repeater">
@@ -78,4 +72,4 @@
             </div>
         </div>
     </div>
-</div
+</div>

@@ -9,10 +9,12 @@
 
     function ScenarioService($http, $rs, $timeout) {
 
-        function createScenario(name, description) {
+        function createScenario(name, description, actuators) {
+            var actuarorString = JSON.stringify(actuators);
+            console.log(actuarorString);
             return new Promise(
                 function (resolve, reject) {
-                    $http.post("/scenario", {name: name, description: description})
+                    $http.post("/scenario", {name: name, description: description, actuators: actuarorString})
                         .success(function (data) {
                             if (data.err) return reject(new Error(data.err));
                             resolve(data);
@@ -86,13 +88,29 @@
             );
         }
 
+        function getActuatorByID(id) {
+            return new Promise(
+                function(resolve, reject) {
+                    $http.get('/devices/actuators/'+id)
+                        .success(function (data) {
+                            resolve(data);
+                        })
+                        .error(function (err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
+        }
+
 
         return {
             getall: getScenarios,
             get: getScenario,
             create: createScenario,
             update: UpdateNameorDescription,
-            getActuators: getActuators
+            getActuators: getActuators,
+            getActuatorByID: getActuatorByID
         };
 
     }

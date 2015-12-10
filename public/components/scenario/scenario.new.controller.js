@@ -21,6 +21,9 @@
         snc.scenario = {name: "", description: "", actuators: []};
         var swiper = null;
         snc.repeater = [];
+        snc.devices = [];
+        snc.actions = [];
+        snc.saveChanges = saveChanges;
 
         function addActuator(){
             ScenarioService.getActuators()
@@ -37,18 +40,28 @@
 
         }
 
+        function saveChanges() {
+
+        }
+
         function select(actuator){
-                    console.log(actuator);
-                    $('#actuatorscenario').closeModal();
-                    snc.scenario.actuators.push(actuator.id);
+            console.log(actuator);
+            $('#actuatorscenario').closeModal();
+            snc.devices.push(actuator);
             console.log(snc.scenario);
         }
         /**
          * Create new scenario
          */
         function create () {
-            ScenarioService.create(snc.scenario.name, snc.scenario.description)
+            snc.devices.forEach(function(device) {
+                var action = $('#'+device.id + ' option:selected').data("value");
+                snc.scenario.actuators.push({deviceid: action.deviceid, action: [{command: action.command.name, parameters: []}]});
+            });
+            console.log('Actuatoren toegevoegd aan scenario.');
+            ScenarioService.create(snc.scenario.name, snc.scenario.description, snc.scenario.actuators)
                 .then(function(data) {
+                    console.log('Scenario opgeslagen in database.');
                     snc.goToDetail(data.scenario);
                     return null;
                 })
