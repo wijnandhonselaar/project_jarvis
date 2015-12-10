@@ -27,11 +27,17 @@ module.exports = (function() {
     });
 
     route.put('/:id', function(req, res) {
-        console.log(req.params.id);
-        console.log(req.body);
         scenarioManager.updateById(req.params.id, req.body.scenario, function(err, result) {
             if(err) throw err;
             res.send({scenario: result});
+        });
+    });
+
+    route.delete('/:id', function(req,res){
+        console.log(req.params.id);
+        scenarioManager.deleteById(req.params.id, function(err, result){
+            if(err) throw err;
+            res.send("successful", result);
         });
     });
 

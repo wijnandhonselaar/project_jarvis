@@ -39,6 +39,13 @@ function updateById(id, scenario, cb) {
         cb({error: "Cannot update scenario.", message: err});
     });
 }
+function deleteById(id, cb){
+    Scenario.get(id).delete().run(function(res) {
+        cb(null, res);
+    }).error(function(err){
+        cb({error: "cannot delete scenario.", message: err});
+    })
+}
 
 function update(scenario, cb) {
     scenario.save().then(function(res) {
@@ -49,6 +56,7 @@ function update(scenario, cb) {
 }
 
 module.exports = {
+    deleteById: deleteById,
     new: create,
     get: get,
     getAll: getAll,

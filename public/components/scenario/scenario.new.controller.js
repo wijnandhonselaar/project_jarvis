@@ -9,10 +9,11 @@
     /**
      *
      * @param ScenarioService            Scenario Service
-     * @param $state
+     * @param $scope
+    * @param $state
      * @constructor
      */
-    function ScenarioNewctrl(ScenarioService,$scope,  $state) {
+    function ScenarioNewctrl(ScenarioService, $scope,  $state) {
         var snc = this;
         snc.create = create;
         snc.goToDetail = goToDetail;
@@ -23,39 +24,41 @@
         snc.repeater = [];
 
         function addActuator(){
-            ScenarioService.getActuators()
-                .then(function(data){
-                    snc.actuators = data.actuators;
-                    reloadSwiper();
-                    $('#actuatorscenario').openModal();
-            })
-                .catch(function(err){
-                    console.error(err);
-                    return err;
-                });
-
-
+                ScenarioService.getActuators()
+                    .then(function(data){
+                        snc.actuators = data.actuators;
+                        $('#actuatorscenario').openModal();
+                        reloadSwiper();
+                    })
+                    .catch(function(err){
+                        console.error(err);
+                        return err;
+                    });
         }
 
         function select(actuator){
                     console.log(actuator);
                     $('#actuatorscenario').closeModal();
                     snc.scenario.actuators.push(actuator.id);
-            console.log(snc.scenario);
         }
         /**
          * Create new scenario
          */
         function create () {
-            ScenarioService.create(snc.scenario.name, snc.scenario.description)
-                .then(function(data) {
-                    snc.goToDetail(data.scenario);
-                    return null;
-                })
-                .catch(function(err) {
-                    console.log("Error creating scenario", err);
-                    return err;
-                });
+            if(snc.scenario.name === "" || snc.scenario.description === ""){
+                Materialize.toast("Please fill all fields", 4000);
+            }
+            else {
+                ScenarioService.create(snc.scenario.name, snc.scenario.description)
+                    .then(function (data) {
+                        snc.goToDetail(data.scenario);
+                        return null;
+                    })
+                    .catch(function (err) {
+                        console.log("Error creating scenario", err);
+                        return err;
+                    });
+            }
         }
 
 
