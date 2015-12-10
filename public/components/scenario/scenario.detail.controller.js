@@ -7,13 +7,15 @@
 
     ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope"];
 
-    function ScenarioDetailctrl(ScenarioService, $sp, $scope) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope) {
         var sdc = this;
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
+        sdc.addActuator = addActuator;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
         sdc.devices = [];
+        var swiper = null;
 
         /**
          * Scenario model
@@ -32,6 +34,34 @@
         };
 
         getScenario(sdc.uid);
+
+        function addActuator(){
+            ScenarioService.getActuators()
+                .then(function(data){
+                    sdc.actuators = data.actuators;
+                    $('#actuatorscenario').openModal();
+                    reloadSwiper();
+                })
+                .catch(function(err){
+                    console.error(err);
+                    return err;
+                });
+        }
+
+        function reloadSwiper() {
+            var amount = Math.ceil( sdc.actuators.length / 6 );
+            sdc.repeater = [];
+            for(var i = 0; i < amount; i++) {
+                sdc.repeater.push(i);
+            }
+            $scope.$apply();
+            swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true
+            });
+        }
+
+
 
         function getScenario(id) {
             ScenarioService.get(id)

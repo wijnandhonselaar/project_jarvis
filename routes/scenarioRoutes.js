@@ -20,7 +20,7 @@ module.exports = (function() {
     });
 
     route.post('/', function(req, res) {
-        scenarioManager.new(req.body.name, req.body.description, JSON.parse(res.body.actuators), function(err, result) {
+        scenarioManager.new(req.body.name, req.body.description, JSON.parse(req.body.actuators), function(err, result) {
             if(err) throw err;
             res.redirect('/scenario/'+result.id);
         });
