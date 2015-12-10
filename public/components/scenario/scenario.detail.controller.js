@@ -70,7 +70,14 @@
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
                     sdc.scenario.actuators.forEach(function(actuator) {
-                        sdc.devices.push(ScenarioService.getActuatorByID(actuator.deviceid));
+                        ScenarioService.getActuatorByID(actuator.deviceid)
+                            .then(function(data) {
+                                sdc.devices.push(data);
+                                $scope.$apply();
+                            })
+                            .catch(function (err) {
+                                console.error(err);
+                            });
                     });
                     return data;
                 })

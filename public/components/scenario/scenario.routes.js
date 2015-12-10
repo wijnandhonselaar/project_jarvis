@@ -76,7 +76,7 @@
                 "mainView": {
                     templateUrl: "components/scenario/scenario.detail.html",
                     controller: 'ScenarioDetailctrl',
-                    controllerAs: 'scd'
+                    controllerAs: 'sdc'
                 },
                 "logView": {
                     templateUrl: "components/log/log.html",

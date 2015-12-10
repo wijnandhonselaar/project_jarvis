@@ -2,20 +2,20 @@
     <div class="row detaildescrip" style="margin-top:8px;">
         <div class="col m10">
             <label class="col m3" style="margin-top: 10px" for="name">Naam</label>
-            <input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="scd.scenarioName"
-                   ng-change="scd.updatename(scd.uid, scd.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
+            <input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="sdc.scenarioName"
+                   ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
         </div>
         <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 3px;" ng-click="scd.delete(scd.scenario)">Scenario verwijderen</div>
+            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.delete(sdc.scenario)">Scenario verwijderen</div>
         </div>
         <div class="col m10">
             <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
-            <input type="text" edit-dir="" placeholder="" id="description" ng-model="scd.scenarioDescription"
-                   ng-change="scd.updateDescription(scd.uid, scd.scenarioDescription)"
+            <input type="text" edit-dir="" placeholder="" id="description" ng-model="sdc.scenarioDescription"
+                   ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)"
                    style="margin-top:-10px; margin-bottom:0;">
         </div>
         <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 3px;" ng-click="scd.addActuator()">Actuator toevoegen</div>
+            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.addActuator()">Actuator toevoegen</div>
         </div>
     </div>
 </div>
@@ -30,9 +30,16 @@
         </div>
         <div class="col m5">
             <select id="{{actuator.id}}" style="display: block;">
-                <option value="">Actie</option>
-                <option ng-repeat="command in actuator.model.commands"
-                        data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}
+                <!--
+                sdc.scenario.actuators[sdc.scenario.actuators.indexOf(actuator.id)]
+                    .action.command === command.name set selected
+
+                    If scenario.actuator.command === command.name
+                    THEN option = selected
+
+                -->
+                <option ng-repeat="command in actuator.model.commands" ng-selected="sdc.scenario.actuators[sdc.devices.indexOf(actuator)].action.command === command.name" data-value="{{ {deviceid: actuator.id, command: command} }}">
+                    {{command.name}}
                 </option>
             </select>
         </div>
