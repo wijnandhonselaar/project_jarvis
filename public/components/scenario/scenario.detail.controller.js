@@ -12,9 +12,13 @@
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
         sdc.addActuator = addActuator;
+        sdc.select = select;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
+        sdc.test = test;
         sdc.devices = [];
+        sdc.repeater = [];
+        sdc.actuators = [];
         var swiper = null;
 
         /**
@@ -61,18 +65,23 @@
             });
         }
 
+        function select(actuator){
+            $('#actuatorscenario').closeModal();
+            sdc.devices.push(actuator);
+        }
 
 
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
                     sdc.scenario = data;
-                    console.log(data);
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
-                    sdc.scenario.actuators.forEach(function(actuator) {
-                        sdc.devices.push(ScenarioService.getActuatorByID(actuator.deviceid));
-                    });
+                    if(sdc.scenario.actuators !== undefined || sdc.scenario.actuators > 0){
+                        sdc.scenario.actuators.forEach(function(actuator) {
+                            sdc.devices.push(ScenarioService.getActuatorByID(actuator.deviceid));
+                        });
+                    }
                     return data;
                 })
                 .catch(function (err) {

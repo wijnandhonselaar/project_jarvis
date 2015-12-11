@@ -2,20 +2,21 @@
     <div class="row detaildescrip" style="margin-top:8px;">
         <div class="col m10">
             <label class="col m3" style="margin-top: 10px" for="name">Naam</label>
-            <input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="scd.scenarioName"
-                   ng-change="scd.updatename(scd.uid, scd.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
+            <input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="sdc.scenarioName"
+                   ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
         </div>
         <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 3px;" ng-click="scd.delete(scd.scenario)">Scenario verwijderen</div>
+            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.delete(sdc.scenario)">Scenario verwijderen
+            </div>
         </div>
         <div class="col m10">
             <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
-            <input type="text" edit-dir="" placeholder="" id="description" ng-model="scd.scenarioDescription"
-                   ng-change="scd.updateDescription(scd.uid, scd.scenarioDescription)"
+            <input type="text" edit-dir="" placeholder="" id="description" ng-model="sdc.scenarioDescription"
+                   ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)"
                    style="margin-top:-10px; margin-bottom:0;">
         </div>
         <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 3px;" ng-click="scd.addActuator()">Actuator toevoegen</div>
+            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.addActuator()">Actuator toevoegen</div>
         </div>
     </div>
 </div>
@@ -47,17 +48,22 @@
             <div class="actuator">
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide" ng-repeat="repeat in snc.repeater">
+                        <div class="swiper-slide" ng-repeat="repeat in sdc.repeater">
                             <div class="col m6 repeater"
                                  ng-if="$index >= ($parent.$index * 6) && $index < (($parent.$index+1) * 6)"
-                                 ng-repeat="actuator in snc.actuators">
+                                 ng-repeat="actuator in sdc.actuators">
                                 <div class="row" style="margin-bottom:10px">
-                                    <div class="col m8" ng-click="snc.select(actuator)"
+                                    <div class="col m4">
+                                        <div class="customCard onoff text-center">
+                                            <div style="background-image:url({{actuator.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col m8" ng-click="sdc.select(actuator)"
                                          style="margin-left:-8px; margin-top:0px;">
                                         <div class="customCard" style="padding:1px;">
                                             <div class="detailcontainer">
-                                                {{actuator.name}}<br>
-                                                <span class="description">{{actuator.description.substring(0, 25)}}...</span>
+                                                {{actuator.config.alias}}<br>
+                                                <span class="description">{{actuator.model.description.substring(0, 25)}}...</span>
                                             </div>
                                         </div>
                                     </div>
