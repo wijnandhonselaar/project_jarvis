@@ -29,7 +29,7 @@ module.exports = (function() {
             device = deviceManager.getSensor(parseInt(req.params.id));
         }
 
-        response = comm.get(req.params.command,device, function(){
+        var response = comm.get(req.params.command,device, function(){
             res.send(JSON.stringify(response))
         });
     });
@@ -39,6 +39,10 @@ module.exports = (function() {
             rules:req.body.rules
         };
         res.json(deviceManager.setRules(object))
+    });
+
+    route.get('/actuators/:id', function (req, res) {
+       res.json(deviceManager.getActuator(parseInt(req.params.id)));
     });
 
     /**

@@ -107,14 +107,15 @@
 
         function getActuatorByID(id) {
             return new Promise(
-                function(resolve, reject) {
+                function (resolve, reject) {
                     $http.get('/devices/actuators/'+id)
                         .success(function (data) {
+                            if(data.err) {console.error(data.err); throw new Error(data.err);}
                             resolve(data);
                         })
                         .error(function (err) {
                             console.error(err);
-                            reject(err);
+                            reject(error);
                         });
                 }
             );

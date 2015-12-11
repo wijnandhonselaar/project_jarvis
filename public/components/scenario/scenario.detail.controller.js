@@ -74,14 +74,19 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
-                    sdc.scenario = data;
+                    sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
-                    if(sdc.scenario.actuators !== undefined || sdc.scenario.actuators > 0){
-                        sdc.scenario.actuators.forEach(function(actuator) {
-                            sdc.devices.push(ScenarioService.getActuatorByID(actuator.deviceid));
-                        });
-                    }
+                    sdc.scenario.actuators.forEach(function(actuator) {
+                        ScenarioService.getActuatorByID(actuator.deviceid)
+                            .then(function(data) {
+                                sdc.devices.push(data);
+                                $scope.$apply();
+                            })
+                            .catch(function (err) {
+                                console.error(err);
+                            });
+                    });
                     return data;
                 })
                 .catch(function (err) {
