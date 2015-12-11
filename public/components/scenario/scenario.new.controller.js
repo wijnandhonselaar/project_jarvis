@@ -16,7 +16,7 @@
     function ScenarioNewctrl(ScenarioService, $scope,  $state) {
         var snc = this;
         snc.create = create;
-        snc.goToDetail = goToDetail;
+        snc.goToOverview = goToOverview;
         snc.addActuator = addActuator;
         snc.select = select;
         snc.removeActuator = removeActuator;
@@ -54,10 +54,8 @@
         }
 
         function select(actuator){
-            console.log(actuator);
             $('#actuatorscenario').closeModal();
             snc.devices.push(actuator);
-            console.log(snc.scenario);
         }
         /**
          * Create new scenario
@@ -67,15 +65,14 @@
                 var action = $('#'+device.id + ' option:selected').data("value");
                 snc.scenario.actuators.push({deviceid: action.deviceid, action: {command: action.command.name, parameters: []}});
             });
-            console.log('Actuatoren toegevoegd aan scenario.');
             ScenarioService.create(snc.scenario.name, snc.scenario.description, snc.scenario.actuators)
                 .then(function(data) {
-                    console.log('Scenario opgeslagen in database.');
-                    snc.goToDetail(data.scenario);
+
+                    snc.goToOverview(data.scenario);
                     return null;
                 })
                 .catch(function(err) {
-                    console.log("Error creating scenario", err);
+                    console.error("Error creating scenario", err);
                     return err;
                 });
         }
@@ -84,7 +81,6 @@
         function reloadSwiper() {
             var amount = Math.ceil( snc.actuators.length / 6 );
             snc.repeater = [];
-            console.log(snc.repeater);
             for(var i = 0; i < amount; i++) {
                 snc.repeater.push(i);
             }
@@ -99,8 +95,7 @@
          * Redirect to detail page
          * @param scenario
          */
-        function goToDetail(scenario) {
-            console.log(scenario.id);
+        function goToOverview() {
             $state.go("scenarioDetail");
             $state.transitionTo("scenarioDetail", {
                 uid: scenario.id,

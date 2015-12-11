@@ -23,7 +23,6 @@
             for(var i = 0; i < amount; i++) {
                 scena.repeater.push(i);
             }
-            console.log(scena.repeater);
             $scope.$apply();
             swiper = new Swiper('.swiper-container', {
                 pagination: '.swiper-pagination',
@@ -35,12 +34,11 @@
             ScenarioService.getall()
                 .then(function(data){
                     scena.scenarios = data.scenarios;
-                    console.log(scena.scenarios);
                     reloadSwiper();
                     return data;
                 })
                 .catch(function(err){
-                    console.log("Error get scenario's", err);
+                    console.error("Error get scenario's", err);
                     return err;
                 });
         }

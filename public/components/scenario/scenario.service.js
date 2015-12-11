@@ -11,7 +11,6 @@
 
         function createScenario(name, description, actuators) {
             var actuarorString = JSON.stringify(actuators);
-            console.log(actuarorString);
             return new Promise(
                 function (resolve, reject) {
                     $http.post("/scenario", {name: name, description: description, actuators: actuarorString})
@@ -76,8 +75,7 @@
         function deleteScenario(scenario){
             return new Promise(
                 function(resolve, reject){
-                    console.log(scenario.scenario.id);
-                  $http.delete("/scenario/"+scenario.scenario.id)
+                  $http.delete("/scenario/"+scenario.id)
                       .success(function(data){
                           resolve(data);
                           Materialize.toast("Deleted Scenario", 4000);
@@ -115,7 +113,7 @@
                         })
                         .error(function (err) {
                             console.error(err);
-                            reject(error);
+                            reject(err);
                         });
                 }
             );
