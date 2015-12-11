@@ -27,15 +27,13 @@ module.exports = (function() {
     });
 
     route.put('/:id', function(req, res) {
-        console.log(JSON.parse(req.body.scenario));
-        scenarioManager.updateById(parseInt(req.params.id), JSON.parse(req.body.scenario), function(err, result) {
+        scenarioManager.updateById(req.params.id, JSON.parse(req.body.scenario), function(err, result) {
             if(err) {console.log(err); throw err;}
             res.send({scenario: result});
         });
     });
 
     route.delete('/:id', function(req,res){
-        console.log(req.params.id);
         scenarioManager.deleteById(req.params.id, function(err, result){
             if(err) throw err;
             res.send("successful", result);

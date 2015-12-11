@@ -20,7 +20,6 @@
         };
 
         function getLogs(){
-        	console.log(logs);
         	return logs;
         }
         

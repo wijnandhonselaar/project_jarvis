@@ -40,12 +40,12 @@
         getScenario(sdc.uid);
 
         function addActuator(){
+            sdc.actuators = [];
             ScenarioService.getActuators()
                 .then(function(data){
                     for(var i = 0; i<data.actuators.length; i++){
                         var exists = false;
                         for(var j = 0; j<sdc.scenario.actuators.length; j++){
-
                             if(data.actuators[i].id === sdc.scenario.actuators[j].deviceid){
                                 exists = true;
                             }
@@ -77,7 +77,6 @@
         }
 
         function removeActuator(id) {
-            console.log('Verwijderen actuator');
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === id) {
                     sdc.devices.splice(i, 1);
@@ -86,7 +85,6 @@
             for(i = 0; i < sdc.scenario.actuators.length; i++) {
                 if(sdc.scenario.actuators[i].deviceid === id) {
                     sdc.scenario.actuators.splice(i, 1);
-                    console.log(sdc.scenario);
                     ScenarioService.update(sdc.scenario.id, sdc.scenario);
                 }
             }
@@ -95,8 +93,25 @@
         function select(actuator){
             $('#actuatorscenario').closeModal();
             sdc.devices.push(actuator);
+            sdc.scenario.actuators.push({
+                deviceid: actuator.id,
+                action: {
+                    command: "on",
+                    parameters: []
+                }
+            });
+            updateScenario();
         }
 
+        function updateScenario(){
+            ScenarioService.update(sdc.scenario.id, sdc.scenario)
+                .then(function(data){
+                   return data;
+                })
+                .catch(function(err){
+                    console.error(err);
+                });
+        }
 
         function getScenario(id) {
             ScenarioService.get(id)
@@ -117,7 +132,7 @@
                     return data;
                 })
                 .catch(function (err) {
-                    console.log("Error get scenario ", err);
+                    console.error("Error get scenario ", err);
                     return err;
                 });
         }
@@ -129,7 +144,7 @@
                     return data;
                 })
                 .catch(function (err) {
-                    console.log("Error with update ", err);
+                    console.error("Error with update ", err);
                     return err;
                 });
         }
@@ -141,10 +156,11 @@
                     return data;
                 })
                 .catch(function (err) {
-                    console.log("Error with update description", err);
+                    console.error("Error with update description", err);
                     return err;
                 });
         }
+
 
         function deleteScenario(scenario) {
             ScenarioService.delete(scenario)
