@@ -15,7 +15,6 @@
         sdc.select = select;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
-        sdc.test = test;
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
@@ -40,9 +39,21 @@
         getScenario(sdc.uid);
 
         function addActuator(){
+            console.log(sdc.scenario);
             ScenarioService.getActuators()
                 .then(function(data){
-                    sdc.actuators = data.actuators;
+                    for(var i = 0; i<data.actuators.length; i++){
+                        var exists = false;
+                        for(var j = 0; j<sdc.scenario.actuators.length; j++){
+
+                            if(data.actuators[i].id === sdc.scenario.actuators[j].deviceid){
+                                exists = true;
+                            }
+                        }
+                        if(!exists){
+                            sdc.actuators.push(data.actuators[i]);
+                        }
+                    }
                     $('#actuatorscenario').openModal();
                     reloadSwiper();
                 })
