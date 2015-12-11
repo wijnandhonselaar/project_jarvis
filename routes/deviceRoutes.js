@@ -92,7 +92,10 @@ module.exports = (function() {
         });
     });
 
-    route.put('/actuator/:id', function(req, res) {
+    /**
+     * Update an actuator
+     */
+    route.put('/actuators/:id', function(req, res) {
        deviceManager.updateActuator(req.params.id, req.body.actuator, function (response) {
            res.send(JSON.stringify(response));
        });

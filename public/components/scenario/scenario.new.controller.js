@@ -67,8 +67,10 @@
             });
             ScenarioService.create(snc.scenario.name, snc.scenario.description, snc.scenario.actuators)
                 .then(function(data) {
-
-                    snc.goToOverview(data.scenario);
+                    for(var i = 0; i < snc.scenario.actuators.length; i++) {
+                        updateActuatorConfig(snc.scenario.actuators[i]);
+                    }
+                    snc.goToOverview();
                     return null;
                 })
                 .catch(function(err) {
@@ -77,6 +79,22 @@
                 });
         }
 
+        /**
+         * Update the config of an actuator in the scenario
+         * @param scenarioActuator
+         */
+        function updateActuatorConfig(scenarioActuator) {
+            for(var i = 0; i < snc.devices.length; i++) {
+                if(snc.devices[i].id === scenarioActuator.deviceid) {
+                    var actuator = snc.devices[i];
+                    actuator.config.scenarios[snc.scenario.name] = {
+                        command: scenarioActuator.action.command,
+                        parameters: scenarioActuator.action.parameters
+                    };
+                    ScenarioService.updateActuator(actuator);
+                }
+            }
+        }
 
         function reloadSwiper() {
             var amount = Math.ceil( snc.actuators.length / 6 );
@@ -92,15 +110,10 @@
         }
 
         /**
-         * Redirect to detail page
-         * @param scenario
+         * Redirect to overview page
          */
         function goToOverview() {
-            $state.go("scenarioDetail");
-            $state.transitionTo("scenarioDetail", {
-                uid: scenario.id,
-                data: scenario
-            });
+            $state.go("scenarioOverzicht");
         }
     }
 })();

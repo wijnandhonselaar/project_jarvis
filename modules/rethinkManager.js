@@ -142,11 +142,16 @@ function updateActive(id, type, status, fn) {
     });
 }
 
+function updateActuator(id, actuator, fn) {
+
+}
+
 module.exports = {
     saveDevice: saveDevice,
     getDevice: getDevice,
     updateAlias: updateAlias,
     updateClientRequestInterval: updateClientRequestInterval,
     updateActive: updateActive,
-    getAllDevices: getAllDevices
+    getAllDevices: getAllDevices,
+    updateActuator: updateActuator
 };

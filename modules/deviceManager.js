@@ -56,7 +56,8 @@ function addDevice(device, remote, deviceType) {
                     rules: rules,
                     alias: device.name,
                     ip: remote.address,
-                    clientRequestInterval: device.commands.status.requestInterval
+                    clientRequestInterval: device.commands.status.requestInterval,
+                    scenarios: []
                 },
                 status: {state: false}
             };
@@ -74,7 +75,8 @@ function addDevice(device, remote, deviceType) {
                     rules: rules,
                     alias: device.name,
                     ip: remote.address,
-                    clientRequestInterval: device.commands.status.requestInterval
+                    clientRequestInterval: device.commands.status.requestInterval,
+                    scenarios: []
                 }
             }, device.type, function (err, res) {
                 if (err) {
@@ -303,9 +305,15 @@ function setRules(object) {
 }
 
 function updateActuator(id, actuator, cb) {
+    console.log('Update actuator');
+    console.log(id);
+    console.log(actuator);
     for(var i = 0; i < devices.actuators.length; i++) {
+        console.log(devices.actuators[i].id);
         if(devices.actuators[i].id === id) {
+            console.log(devices.actuators[i].config);
             devices.actuators[i] = actuator;
+            console.log(devices.actuators[i].config);
             Actuator.get(id)
                 .then(function (persisted) {
                     persisted = actuator;
