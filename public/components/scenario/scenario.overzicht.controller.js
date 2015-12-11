@@ -53,8 +53,23 @@
         function goToNew(){
             $state.go("scenarioNew");
         }
-        function toggleState(){
 
+        function toggleState(scenario){
+            ScenarioService.toggleState(scenario.scenario)
+                .then(function(data){
+                    for(var i = 0; i<scena.scenarios.length; i++){
+                        if(data.scenario.id === scena.scenarios[i].scenario.id){
+                            scena.scenarios[i].status = data.status;
+                            $scope.$apply();
+                            Materialize.toast("toggle state", 4000);
+                        }
+                    }
+                    return data;
+                })
+                .catch(function(err){
+                    console.error("error", err);
+                    return err;
+                });
         }
 
     }

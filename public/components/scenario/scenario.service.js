@@ -56,6 +56,22 @@
                 });
         }
 
+
+        function toggleState(scenario){
+            return new Promise(
+                function(resolve,reject){
+                    $http.put("/scenario/toggle", {scenario: JSON.stringify(scenario)})
+                        .success(function(data){
+                            resolve(data);
+                        })
+                        .error(function(err){
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
+        }
+
         function update(id, scenario) {
             return new Promise(
                 function (resolve, reject) {
@@ -103,6 +119,7 @@
             );
         }
 
+
         function getActuatorByID(id) {
             return new Promise(
                 function (resolve, reject) {
@@ -121,6 +138,7 @@
 
 
         return {
+            toggleState: toggleState,
             delete: deleteScenario,
             getall: getScenarios,
             get: getScenario,

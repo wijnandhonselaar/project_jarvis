@@ -14,16 +14,16 @@
                 <div class="row" style="margin-bottom:10px">
                     <div class="col m4">
                         <div ng-click="scena.toggleState(scenario)" class="customCard onoff text-center">
-                            <div class="statusscenario" ng-class="actuator.status.state ? 'green' : 'red'"></div>
+                            <div class="statusscenario" ng-class="scenario.status ? 'green' : 'red' "></div>
                             <div style=" margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
                         </div>
                     </div>
-                    <div class="col m8" ng-click="scena.goToDetail(scenario)"
+                    <div class="col m8" ng-click="scena.goToDetail(scenario.scenario)"
                          style="margin-left:-8px; margin-top:0px;">
                         <div class="customCard" style="padding:1px;">
                             <div class="detailcontainer">
-                                {{scenario.name}}<br>
-                                <span class="description">{{scenario.description.substring(0, 25)}}...</span>
+                                {{scenario.scenario.name}}<br>
+                                <span class="description">{{scenario.scenario.description.substring(0, 25)}}...</span>
                             </div>
                         </div>
                     </div>
