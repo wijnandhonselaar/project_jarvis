@@ -8,32 +8,15 @@ var rethinkManager = require('./rethinkManager');
 var rules = {
     on: {
         command: 'on',
-        onEvents: [
-            {
-                device: 1337,
-                event: 'onFinish'
-            }
-        ],
-        thresholds: [
-            {
-                device: 16,
-                priority: 1,
-                field: 'Celcius',
-                operator: '>',
-                value: 20,
-                gate: 'AND'
-            }
-        ]
 
+        timers : [],
+        events: [],
+        thresholds: []
     },
     off: {
         command: 'off',
-        onEvents: [
-            {
-                device: 1337,
-                event: 'onFinish'
-            }
-        ],
+        timers : [],
+        events: [],
         thresholds: []
     }
 };
@@ -65,7 +48,7 @@ function addDevice(device, remote, deviceType) {
             if (device.type === 'sensor') {
                 initiateStatusPolling(deviceObj);
             }
-            console.log(deviceObj);
+            //console.log(deviceObj);
             io.emit("deviceAdded", deviceObj);
             // Save to the database!
             rethinkManager.saveDevice({
@@ -81,10 +64,10 @@ function addDevice(device, remote, deviceType) {
             }, device.type, function (err, res) {
                 if (err) {
 
-                    //if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
-                    //if(GLOBAL.logToConsole) console.log(err);
+                    if(GLOBAL.logToConsole) console.log("Failed to save "+ device.name + " to the database");
+                    if(GLOBAL.logToConsole) console.log(err);
                 } else {
-                    //if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
+                    if(GLOBAL.logToConsole) console.log("Saved "+ device.name + " to the database");
                 }
             });
             if (GLOBAL.logToConsole) console.log("Discovered " + device.name + " on " + remote.address + ' length: ' + devices[deviceType].length);
@@ -105,7 +88,10 @@ function addDevice(device, remote, deviceType) {
  */
 function broadcastEvent(msg) {
     var device = getActuatorById(msg.id);
-    if (!device) deviceId = getSensorById(msg.id);
+    if (!device) device = getSensorById(msg.id);
+    for (var i = 0; i < getActuators().length; i++) {
+        ruleEngine.apply(getActuators()[i], msg);
+    }
     io.emit('deviceEvent', {device: device, event: msg})
 }
 
@@ -263,8 +249,6 @@ function initiateStatusPolling(sensor) {
 
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
-    console.log(sensor.status);
-    console.log(obj.status);
     if (sensor.status !== obj.status) {
         for (var i = 0; i < getActuators().length; i++) {
             ruleEngine.apply(getActuators()[i]);
