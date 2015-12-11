@@ -30,7 +30,9 @@
         <div class="col m5">
             <select id="{{actuator.id}}" style="display: block;">
                 <option value="">Actie</option>
-                <option ng-repeat="command in actuator.model.commands" data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}</option>
+                <option ng-repeat="command in actuator.model.commands"
+                        data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}
+                </option>
             </select>
         </div>
         <div class="customCard col m4 offset-m1" style="padding:1px; background-color:lightgrey">
@@ -72,7 +74,7 @@
                     </div>
                 </div>
 
-                <div style="left:285px; width: 12%; position: absolute; bottom:30px;" >
+                <div style="left:285px; width: 12%; position: absolute; bottom:30px;">
                     <div class="swiper-pagination">
                     </div>
                 </div>

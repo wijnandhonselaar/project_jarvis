@@ -12,10 +12,17 @@
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
         sdc.addActuator = addActuator;
+        sdc.select = select;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
+<<<<<<< HEAD
         sdc.removeActuator = removeActuator;
+=======
+        sdc.test = test;
+>>>>>>> bc7a67bab905937dbb26250a26d8d449c8ac473a
         sdc.devices = [];
+        sdc.repeater = [];
+        sdc.actuators = [];
         var swiper = null;
 
         /**
@@ -76,6 +83,11 @@
                     ScenarioService.update(sdc.scenario.id, sdc.scenario);
                 }
             }
+        }
+
+        function select(actuator){
+            $('#actuatorscenario').closeModal();
+            sdc.devices.push(actuator);
         }
 
         function getScenario(id) {
