@@ -123,7 +123,7 @@ function getAllEvents(severity, offset, limit, cb) {
  * @param cb
  */
 function getData(deviceid, cb) {
-    dataLog.filter({device: {id:deviceid}}).then(function(res) {
+    dataLog.filter({device: {id:deviceid}}).orderBy((r.desc('timestamp'))).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
