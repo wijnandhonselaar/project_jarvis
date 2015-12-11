@@ -270,9 +270,7 @@ function updateSensorStatusFunction(obj) {
             ruleEngine.apply(getActuators()[i]);
         }
     }
-    console.log("Niet hetzelfde");
     sensor.status = obj.status;
-    console.log(sensor.status);
     io.emit("deviceUpdated", sensor);
 }
 
