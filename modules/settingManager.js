@@ -31,19 +31,28 @@ function getLogLevel(cb) {
 }
 
 function setLogLevel(level, cb) {
-    Settings.get(1).run().then(function(res) {
-        res.merge({logLevel: level}).save().then(function(result) {
-            cb(null, result);
-        });
-    }).catch(Errors.DocumentNotFound, function(err) {
-        initSettings(function(err){
-            if(err) throw err;
+    if(level === undefined) {
+        cb({error: "loglevel is undefined"});
+    } else {
+        level = parseInt(level);
+        if(level > 0 && level < 6) {
+            Settings.get(1).run().then(function (res) {
+                res.merge({logLevel: level}).save().then(function (result) {
+                    cb(null, result);
+                });
+            }).catch(Errors.DocumentNotFound, function (err) {
+                initSettings(function (err) {
+                    if (err) throw err;
 
-            getLogLevel(cb);
-        });
-    }).error(function(error) {
-        cb(error);
-    });
+                    getLogLevel(cb);
+                });
+            }).error(function (error) {
+                cb(error);
+            });
+        } else {
+            cb({error: "loglevel is invalid."});
+        }
+    }
 }
 
 module.exports = {

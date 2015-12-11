@@ -12,6 +12,7 @@ var autoDiscover = require('./modules/autodiscover');
 var logManager = require('./modules/logManager');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
+var settingRoutes = require('./routes/settingRoutes');
 var alertRoutes = require('./routes/alertRoutes');
 var scenarioRoutes = require('./routes/scenarioRoutes');
 var ruleEngine = require('./modules/ruleEngine');
@@ -36,6 +37,7 @@ if(GLOBAL.dev) {
 app.use(express.static('public'));
 app.use("/devices", deviceRoutes);
 app.use("/scenario", scenarioRoutes);
+app.use("/settings", settingRoutes);
 //app.use("/alerts", alertRoutes);
 
 app.get('/', function (req, res) {

@@ -4,6 +4,7 @@ module.exports = (function() {
     var comm = require('../modules/interperter/comm.js');
     var route = express.Router();
     var logger = require('../modules/logManager');
+    var settingManager = require('../modules/settingManager');
 
     route.get('/', function(req, res) {
         console.log(deviceManager.getAll());
@@ -61,12 +62,10 @@ module.exports = (function() {
         logger.getData(parseInt(req.params.id), function(err, result) {
             res.send(JSON.stringify(result));
         });
-
     });
     /**
      * END LOG SHIZZLE ROUTES
      */
-
 
     route.post('/:devicetype/:id/commands/:command', function(req, res){
         var device = deviceManager.getActuator(parseInt(req.params.id));
