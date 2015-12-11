@@ -16,7 +16,6 @@
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
-        sdc.test = test;
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
