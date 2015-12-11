@@ -57,10 +57,10 @@
                 });
         }
 
-        function UpdateNameorDescription(id, scenario) {
+        function update(id, scenario) {
             return new Promise(
                 function (resolve, reject) {
-                    $http.put("/scenario/" + id, scenario)
+                    $http.put("/scenario/" + id, {scenario: JSON.stringify(scenario)})
                         .success(function (data) {
                             resolve(data);
                             Materialize.toast("Succesful changed", 4000);
@@ -127,7 +127,7 @@
             getall: getScenarios,
             get: getScenario,
             create: createScenario,
-            update: UpdateNameorDescription,
+            update: update,
             getActuators: getActuators,
             getActuatorByID: getActuatorByID
         };

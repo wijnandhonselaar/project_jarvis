@@ -33,10 +33,12 @@ function updateById(id, scenario, cb) {
         old.merge(scenario);
         old.save().then(function (res) {
             cb(null, res);
-        }).error(function (err) {
+        }).catch(function (err) {
+            console.log(err);
             cb({error: "Cannot update scenario.", message: err});
         });
-    }).error(function (err) {
+    }).catch(function (err) {
+        console.log(err);
         cb({error: "Cannot update scenario.", message: err});
     });
 }

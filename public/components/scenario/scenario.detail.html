@@ -31,18 +31,13 @@
         </div>
         <div class="col m5">
             <select id="{{actuator.id}}" style="display: block;">
-                <!--
-                sdc.scenario.actuators[sdc.scenario.actuators.indexOf(actuator.id)]
-                    .action.command === command.name set selected
-
-                    If scenario.actuator.command === command.name
-                    THEN option = selected
-
-                -->
                 <option ng-repeat="command in actuator.model.commands" ng-selected="sdc.scenario.actuators[sdc.devices.indexOf(actuator)].action.command === command.name" data-value="{{ {deviceid: actuator.id, command: command} }}">
                     {{command.name}}
                 </option>
             </select>
+        </div>
+        <div class="customCard offset-m1 col m3" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.removeActuator(actuator.id)">Verwijder</div>
         </div>
     </div>
 </div>
