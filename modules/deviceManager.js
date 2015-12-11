@@ -6,6 +6,7 @@ var io = null;
 var ruleEngine = null;
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
+var Actuator = require('../models/actuator');
 var rules = {};
 //     on: {
 //         command: 'on',
@@ -301,6 +302,27 @@ function setRules(object) {
     }
 }
 
+function updateActuator(id, actuator, cb) {
+    for(var i = 0; i < devices.actuators.length; i++) {
+        if(devices.actuators[i].id === id) {
+            devices.actuators[i] = actuator;
+            Actuator.get(id)
+                .then(function (persisted) {
+                    persisted = actuator;
+                    persisted.save()
+                        .then(function(res) {
+                            cb(null, res);
+                        })
+                        .catch(function (err) {
+                            cb({error: err, message: 'Could not update actuator.'});
+                        });
+                }).catch(function (err) {
+                    cb({error: err, message: 'Could not update actuator.'});
+                });
+        }
+    }
+}
+
 //noinspection JSClosureCompilerSyntax
 /**
  *
@@ -343,7 +365,8 @@ module.exports = {
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
-    setRules: setRules
+    setRules: setRules,
+    updateActuator: updateActuator
 };
 
 //circular dependency (export must be first)

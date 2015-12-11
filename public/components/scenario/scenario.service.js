@@ -121,6 +121,20 @@
             );
         }
 
+        function updateActuator(actuator) {
+            return new Promise(
+                function (resolve, reject) {
+                $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
+                    .success(function(data) {
+                        if(data.err) console.error(data.err);
+                        resolve();
+                    })
+                    .error(function (err) {
+                        console.error(err);
+                        reject(err);
+                    });
+            });
+        }
 
         return {
             delete: deleteScenario,
@@ -129,7 +143,8 @@
             create: createScenario,
             update: update,
             getActuators: getActuators,
-            getActuatorByID: getActuatorByID
+            getActuatorByID: getActuatorByID,
+            updateActuator: updateActuator
         };
 
     }

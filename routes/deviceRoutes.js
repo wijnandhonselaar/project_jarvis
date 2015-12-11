@@ -92,5 +92,11 @@ module.exports = (function() {
         });
     });
 
+    route.put('/actuator/:id', function(req, res) {
+       deviceManager.updateActuator(req.params.id, req.body.actuator, function (response) {
+           res.send(JSON.stringify(response));
+       });
+    });
+
     return route;
 })();
