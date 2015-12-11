@@ -60,7 +60,7 @@ function addDevice(device, remote, deviceType) {
                 status: {state: false}
             };
             devices[deviceType].push(deviceObj);
-            if (device.type === 'sensor') {
+            if (device.type === 'sensor' || deviceType === 'sensor') {
                 initiateStatusPolling(deviceObj);
             }
             io.emit("deviceAdded", deviceObj);
@@ -84,9 +84,9 @@ function addDevice(device, remote, deviceType) {
                 }
             });
         } else {
-            var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
+            var deviceObj = {id: res.id, model: res.model, config: res.config, status:res.status};
             devices[deviceType].push(deviceObj);
-            if (device.type === 'sensor') {
+            if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
             }
             logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Oude " + deviceObj.model.type + " opnieuw aangemeld.", 4);
@@ -105,16 +105,18 @@ function broadcastEvent(msg) {
     io.emit('deviceEvent', {device:device, event:msg})
 }
 
-function addToDeviceList(device, remote) {
-    var deviceType;
-    switch (device.type) {
-        case 'actuator':
-            deviceType = 'actuators';
-            break;
-        case 'sensor':
-            deviceType = 'sensors';
-            break;
+function addToDeviceList(device, remote, deviceType) {
+    if(typeof deviceType === 'undefined') {
+        switch (device.type) {
+            case 'actuator':
+                deviceType = 'actuators';
+                break;
+            case 'sensor':
+                deviceType = 'sensors';
+                break;
+        }
     }
+
     if (devices[deviceType].length !== 0) {
         var exists = false;
 
@@ -265,7 +267,6 @@ function initiateStatusPolling(sensor) {
 
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
-    console.log(sensor);
     if (sensor.status !== obj.status) {
         for (var i = 0; i < getActuators().length; i++) {
             ruleEngine.apply(getActuators()[i]);
@@ -273,6 +274,11 @@ function updateSensorStatusFunction(obj) {
        sensor.status = obj.status;
        logger.logData(sensor);
        io.emit("deviceUpdated", sensor);
+        rethinkManager.setStatus(obj.id, obj.status, function(err, res){
+            if(err) {
+                console.log('set status to database error:', err);
+            }
+        });
     }
 }
 
@@ -301,6 +307,31 @@ function setRules(object) {
     }
 }
 
+function loadDevicesFromDatabase() {
+    rethinkManager.getAllDevices('sensors', function(err, res){
+        if(err) {
+            console.log(err);
+        } else {
+            //console.log(res);
+            for(var i =0; i<res.length; i++) {
+                addToDeviceList(res[i], res[i].ip, 'sensors');
+            }
+        }
+    });
+
+    rethinkManager.getAllDevices('actuators', function(err, res){
+        if(err) {
+            console.log(err);
+        } else {
+
+            for(var i =0; i<res.length; i++) {
+
+                addToDeviceList(res[i], res[i].ip, 'actuators');
+            }
+        }
+    });
+}
+
 //noinspection JSClosureCompilerSyntax
 /**
  *
@@ -320,7 +351,8 @@ function setRules(object) {
 module.exports = {
     init: function (socketio, rec) {
         io = socketio;
-        ruleEngine = rec
+        ruleEngine = rec;
+        loadDevicesFromDatabase();
     },
     add: addToDeviceList,
     getByIP: getDeviceByIPAddress,

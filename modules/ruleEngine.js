@@ -16,6 +16,8 @@ function validateStatement(var1, var2, operator) {
 }
 
 function apply(device) {
+    //console.log("device:");
+    //console.log(device);
     for (var command in device.config.rules) {
         if (device.config.rules.hasOwnProperty(command)) {
 
