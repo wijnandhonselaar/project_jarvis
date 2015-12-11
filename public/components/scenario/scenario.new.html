@@ -33,6 +33,9 @@
                 <option ng-repeat="command in actuator.model.commands" data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}</option>
             </select>
         </div>
+        <div class="customCard col m4 offset-m1" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 3px;" ng-click="snc.removeActuator(actuator.id)">Verwijder</div>
+        </div>
     </div>
 </div>
 

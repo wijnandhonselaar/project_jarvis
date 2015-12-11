@@ -14,6 +14,7 @@
         sdc.addActuator = addActuator;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
+        sdc.removeActuator = removeActuator;
         sdc.devices = [];
         var swiper = null;
 
@@ -61,7 +62,21 @@
             });
         }
 
-
+        function removeActuator(id) {
+            console.log('Verwijderen actuator');
+            for(var i = 0; i < sdc.devices.length; i++) {
+                if(sdc.devices[i].id === id) {
+                    sdc.devices.splice(i, 1);
+                }
+            }
+            for(i = 0; i < sdc.scenario.actuators.length; i++) {
+                if(sdc.scenario.actuators[i].deviceid === id) {
+                    sdc.scenario.actuators.splice(i, 1);
+                    console.log(sdc.scenario);
+                    ScenarioService.update(sdc.scenario.id, sdc.scenario);
+                }
+            }
+        }
 
         function getScenario(id) {
             ScenarioService.get(id)
@@ -88,7 +103,7 @@
         }
 
         function updateName(id, scenarioName){
-            sdc.scenario.scenario.name = scenarioName;
+            sdc.scenario.name = scenarioName;
             ScenarioService.update(id, sdc.scenario)
                 .then(function(data){
                     return data;
@@ -100,7 +115,7 @@
         }
 
         function updateDescription(id, scenarioDescription){
-            sdc.scenario.scenario.description = scenarioDescription;
+            sdc.scenario.description = scenarioDescription;
             ScenarioService.update(id, sdc.scenario)
                 .then(function(data){
                     return data;

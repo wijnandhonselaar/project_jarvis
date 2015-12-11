@@ -19,12 +19,18 @@
         snc.goToDetail = goToDetail;
         snc.addActuator = addActuator;
         snc.select = select;
+        snc.removeActuator = removeActuator;
+
+        /**
+         * Scenario model
+         * @type {{name: string, description: string, actuators: *[]}}
+         */
         snc.scenario = {name: "", description: "", actuators: []};
+
         var swiper = null;
         snc.repeater = [];
         snc.devices = [];
         snc.actions = [];
-        snc.saveChanges = saveChanges;
 
         function addActuator(){
                 ScenarioService.getActuators()
@@ -39,8 +45,12 @@
                     });
         }
 
-        function saveChanges() {
-
+        function removeActuator(id) {
+            for(var i = 0; i < snc.devices.length; i++) {
+                if(snc.devices[i].id === id) {
+                    snc.devices.splice(i, 1);
+                }
+            }
         }
 
         function select(actuator){
