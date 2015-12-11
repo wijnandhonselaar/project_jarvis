@@ -1,6 +1,5 @@
 (function () {
     //'use strict';
-
     angular
         .module('jarvis.ruleEngine')
         .controller('ruleEngineCtrl', ruleEngineCtrl);
