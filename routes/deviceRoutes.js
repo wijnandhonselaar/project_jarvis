@@ -4,7 +4,6 @@ module.exports = (function() {
     var comm = require('../modules/interperter/comm.js');
     var route = express.Router();
     var logger = require('../modules/logManager');
-    var settingManager = require('../modules/settingManager');
 
     route.get('/', function(req, res) {
         console.log(deviceManager.getAll());
