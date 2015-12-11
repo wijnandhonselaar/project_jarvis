@@ -15,11 +15,8 @@
         sdc.select = select;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
-<<<<<<< HEAD
         sdc.removeActuator = removeActuator;
-=======
         sdc.test = test;
->>>>>>> bc7a67bab905937dbb26250a26d8d449c8ac473a
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
