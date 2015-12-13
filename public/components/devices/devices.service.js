@@ -50,37 +50,40 @@
 
         // Buildevent en de socketlistener moeten naar logservice
         function buildEvent(severity, imgsrc, msg) {
-            var eventEl = document.createElement("div");
-            eventEl.className = "event severity" + severity;
+            if(severity == 1) {
+                var eventEl = document.createElement("div");
+                eventEl.className = "event severity" + severity;
 
-            var eventImg = document.createElement("img");
-            eventImg.className = "invert";
-            eventImg.src = imgsrc;
-            eventImg.style.width = "160px";
-            eventImg.style.marginTop = "-25px";
-            eventImg.style.zIndex = 99999999999;
-            eventEl.appendChild(eventImg);
+                var eventImg = document.createElement("img");
+                eventImg.className = "invert";
+                eventImg.src = imgsrc;
+                eventImg.style.width = "160px";
+                eventImg.style.marginTop = "-25px";
+                eventImg.style.zIndex = 99999999999;
+                eventEl.appendChild(eventImg);
 
-            var eventBr = document.createElement("br");
-            eventEl.appendChild(eventBr);
+                var eventBr = document.createElement("br");
+                eventEl.appendChild(eventBr);
 
-            var eventMsg = document.createElement("span");
-            eventMsg.style.fontSize = "45px";
-            eventMsg.innerHTML = msg;
-            eventEl.appendChild(eventMsg);
+                var eventMsg = document.createElement("span");
+                eventMsg.style.fontSize = "45px";
+                eventMsg.innerHTML = msg;
+                eventEl.appendChild(eventMsg);
 
-            document.body.appendChild(eventEl);
+                document.body.appendChild(eventEl);
 
-            var $eventEl = $(eventEl);
-            $eventEl.fadeIn(800);
+                var $eventEl = $(eventEl);
+                $eventEl.fadeIn(800);
+
+                eventEl.addEventListener("click", remove);
+            }
 
             function remove() {
                 $eventEl.fadeOut(800);
-                $timeout(function(){
+                $timeout(function () {
                     eventEl.parentNode.removeChild(eventEl);
-                },800);
+                }, 800);
             }
-            eventEl.addEventListener("click", remove);
         }
         socket.socketListener('deviceEvent', function(data){
             buildEvent(data.event.severity, data.device.model.image, data.event.msg);

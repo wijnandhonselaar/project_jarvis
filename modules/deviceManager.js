@@ -9,31 +9,14 @@ var logger = require('./logManager');
 var rules = {
     on: {
         command: 'on',
-        onEvents: [
-            {
-                device: 1337,
-                event: 'onFinish'
-            }
-        ],
-        thresholds: [
-            {
-                device: 16,
-                priority: 1,
-                field: 'Celcius',
-                operator: '>',
-                value: 20,
-                gate: 'AND'
-            }
-        ]
+        timers : [],
+        events: [],
+        thresholds: []
     },
     off: {
         command: 'off',
-        onEvents: [
-            {
-                device: 1337,
-                event: 'onFinish'
-            }
-        ],
+        timers : [],
+        events: [],
         thresholds: []
     }
 };
@@ -99,10 +82,17 @@ function addDevice(device, remote, deviceType) {
  * @param msg
  */
 function broadcastEvent(msg) {
-    var device = getActuatorById(msg.id);
-    if(!device) deviceId = getSensorById(msg.id);
-    logger.logEvent(device, device.model.type, "Automatisch" ,device.name +" heeft een nieuwe alert.", 1);
-    io.emit('deviceEvent', {device:device, event:msg})
+    var device = getActuatorById(parseInt(msg.id));
+    if(!device) device = getSensorById(parseInt(msg.id));
+    if(device) {
+        for (var i = 0; i < getActuators().length; i++) {
+            ruleEngine.apply(getActuators()[i], msg);
+        }
+        logger.logEvent(device, device.model.type, "Automatisch", device.config.alias + " heeft een nieuwe alert.", 1);
+        io.emit('deviceEvent', {device: device, event: msg})
+    } else {
+        console.log('What the fuck, ik kan mijn apparaat niet vinden');
+    }
 }
 
 function addToDeviceList(device, remote, deviceType) {

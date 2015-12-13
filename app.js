@@ -1,3 +1,4 @@
+process.env.TZ = 'Europe/Amsterdam'
 GLOBAL.logToConsole = false;
 GLOBAL.dev = true;
 GLOBAL.port = 3221;
@@ -16,9 +17,11 @@ var settingRoutes = require('./routes/settingRoutes');
 var alertRoutes = require('./routes/alertRoutes');
 var scenarioRoutes = require('./routes/scenarioRoutes');
 var ruleEngine = require('./modules/ruleEngine');
+var conflictManager = require('./modules/conflictManager');
 
 server.listen(GLOBAL.port);
 
+conflictManager.init(io);
 autoDiscover.init(server, io);
 logManager.init(io);
 deviceManager.init(io, ruleEngine);
