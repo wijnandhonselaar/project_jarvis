@@ -1,10 +1,10 @@
 "use strict";
 
+var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
 var thinky = require('thinky')();
 var r = thinky.r;
-
 
 /**
  * log event data
@@ -30,10 +30,15 @@ function logEvent(device, type, category, message, severity, cb) {
     });
 
     eventLog.save(log).then(function(res) {
-        cb(null, res);
+        io.emit('logAdded', log);
+        if (typeof cb === "function") {
+            cb(null, res);
+        }
     }).error(function(err){
-        console.log(err);
-        cb({error: "Not found.", message: err});
+        if (typeof cb === "function") {
+            cb(err);
+        }
+        logEvent(device, type, category, err, 2);
     });
 }
 
@@ -42,20 +47,27 @@ function logEvent(device, type, category, message, severity, cb) {
  * @param device
  * @param value
  */
-function logData(device, status, cb) {
+
+function logData(device, cb) {
     var log = new dataLog({
         device: {
             id: device.id,
             name: device.model.name,
             alias: device.config.alias
         },
-        status: status,
+        status: device.status,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
-        cb(null, res);
+        //io.emit('logAdded', log);
+        if (typeof cb === "function") {
+            cb(null, res);
+        }
     }).error(function(err){
-        cb({error: "Not found.", message: err});
+        if (typeof cb === "function") {
+            cb(err);
+        }
+        logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }
 /**
@@ -111,7 +123,7 @@ function getAllEvents(severity, offset, limit, cb) {
  * @param cb
  */
 function getData(deviceid, cb) {
-    dataLog.filter({device: {id:deviceid}}).then(function(res) {
+    dataLog.filter({device: {id:deviceid}}).orderBy((r.desc('timestamp'))).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
@@ -132,10 +144,13 @@ function getStatus(deviceid, cb) {
 }
 
 module.exports = {
+    init: function (socket) {
+        io = socket;
+     },
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,
     getStatus: getStatus
-}
+};

@@ -3,11 +3,43 @@ var api                 = require('superagent');
 var Sensor              = require('../models/sensor');
 var Actuator            = require('../models/actuator');
 var rethinkManager      = require('../modules/rethinkManager');
+var thinky = require('thinky')();
+var r = thinky.r;
+var connection = null;
+
 
 describe('Device routing', function() {
 
-    before(function (done) {
+    before(function(done){
+        r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
+            if (err) throw err;
+            connection = conn;
+            done();
+        })
+    });
 
+    before(function(done){
+        r.db('jarvis').table('Actuator').
+        delete().
+        run(connection, function(err, result) {
+            if (err) throw err;
+            //console.log(JSON.stringify(result, null, 2));
+            done();
+        });
+    });
+
+    before(function(done){
+        r.db('jarvis').table('Sensor').
+        delete().
+        run(connection, function(err, result) {
+            if (err) throw err;
+            //console.log(JSON.stringify(result, null, 2));
+            done();
+        });
+    });
+
+
+    before(function (done) {
         var device = newDevice(1000015, 'a');
         device.type = 'sensor';
 
@@ -116,8 +148,10 @@ describe('Device routing', function() {
                 .put('http://localhost:3221/devices/sensors/1000015/interval')
                 .send({interval: 18})
                 .end(function(err,res) {
+                    //console.log(err);
+                    //console.log(res);
                     if (err) {
-                        throw err;
+                        done(err);
                     }
                     expect(JSON.parse(res.text).success).to.be.equal("Success, interval for 1000015 was successfully updated.");
                     done();
@@ -161,6 +195,7 @@ function newDevice(id, name ) {
             sokVersion: 1,
             description: 'Temperatuur op 0.1c nauwkeuring',
             image: "niks",
+            savedAt: 1651981981,
             commands: {
                 status:{
                     name: 'c',

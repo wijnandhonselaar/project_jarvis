@@ -59,12 +59,16 @@ function apply(device, event) {
                 hasRules = true;
                 for (var c = 0; c < device.config.rules[command].events.length; c++) {
                     var eobj = device.config.rules[command].events[c];
+                    if(eobj.device == event.id){
+                        console.log('TESSSTTT');
+                    }
                     switch (eobj.gate) {
                         case 'AND':
-                            andGate = (device.id == eobj.device && event.key == eobj.event);
+                            andGate = (device.id == eobj.device && event.key == eobj.event).toString();
                             break;
                         case 'OR':
-                            statementString += ' || ' + (device.id == eobj.device && event.key == eobj.event);
+                            statementString += ' || ' + (parseInt(eobj.device) == parseInt(event.id) && event.key == eobj.event).toString();
+                            console.log('resolve', parseInt(device.id) === parseInt(eobj.device));
                             break;
                     }
                 }
@@ -72,27 +76,26 @@ function apply(device, event) {
 
             if (hasRules) {
                 statementString = andGate + ' ' + statementString;
-                //if (eval(statementString) && checkState(command, device)) {
+                if(event) console.log(statementString);
+                if (eval(statementString) && checkState(command, device)) {
+                    //if (!conflictManager.detect(command, device)) {
+                    switch (device.model.commands[command].httpMethod) {
+                        case 'POST':
+                            comm.post(command, device, {}, function (state) {
+                                deviceManager.updateDeviceStatus(device.model.type, device.id, state);
+                                deviceManager.updateActuatorState(device.id, state);
+                            });
+                            break;
+                        case 'GET':
+                            comm.get(command, device, function (data) {
+                                deviceManager.updateDeviceStatus(device.model.type, device.id, data);
+                                deviceManager.updateActuatorState(device.id, state);
+                            });
+                            break;
 
-                    if (!conflictManager.detect(command, device)) {
-
-                        switch (device.model.commands[command].httpMethod) {
-                            case 'POST':
-                                comm.post(command, device, {}, function (state) {
-                                    deviceManager.updateDeviceStatus(device.model.type, device.id, state);
-                                    deviceManager.updateActuatorState(device.id, state);
-                                });
-                                break;
-                            case 'GET':
-                                comm.get(command, device, function (data) {
-                                    deviceManager.updateDeviceStatus(device.model.type, device.id, data);
-                                    deviceManager.updateActuatorState(device.id, state);
-                                });
-                                break;
-
-                        }
                     }
-                //}
+                    //}
+                }
             }
         }
     }

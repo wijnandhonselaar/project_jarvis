@@ -28,6 +28,7 @@ module.exports = (function() {
         if(devicetype === 'sensor'){
             device = deviceManager.getSensor(parseInt(req.params.id));
         }
+
         response = comm.get(req.params.command,device, function(){
             res.send(JSON.stringify(response))
         });
@@ -60,12 +61,10 @@ module.exports = (function() {
         logger.getData(parseInt(req.params.id), function(err, result) {
             res.send(JSON.stringify(result));
         });
-
     });
     /**
      * END LOG SHIZZLE ROUTES
      */
-
 
     route.post('/:devicetype/:id/commands/:command', function(req, res){
         var device = deviceManager.getActuator(parseInt(req.params.id));
@@ -77,7 +76,6 @@ module.exports = (function() {
 
     route.put('/:devicetype/:id/alias', function(req,res){
         deviceManager.updateDeviceAlias(req.params.devicetype, parseInt(req.params.id), req.body.alias, function(response){
-            console.log("inside callback", response);
             res.send(JSON.stringify(response));
         });
     });
