@@ -200,6 +200,7 @@
             }
             for(i = 0; i < sdc.scenario.actuators.length; i++) {
                 if(sdc.scenario.actuators[i].deviceid === actuatorID) {
+                    console.log('Found me');
                     sdc.scenario.actuators[i].command = action.command.name;
                     ScenarioService.update(sdc.scenario.id, sdc.scenario);
                 }
