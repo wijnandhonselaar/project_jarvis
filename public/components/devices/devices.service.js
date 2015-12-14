@@ -16,29 +16,56 @@
         var onDeviceAdd = null;
         var onDeviceUpdate = null;
 
-        socket.socketListener("deviceAdded", function(data){
+        socket.socketListener("deviceAdded", function (data) {
             devices[data.model.type].push(data);
             $rs.$apply();
-            if(onDeviceAdd){
+            if (onDeviceAdd) {
                 onDeviceAdd(data);
             }
         });
 
-        socket.socketListener("deviceUpdated", function(data){
-            devices[data.model.type].forEach(function(device){
-                if(device.id == data.id) {
+        socket.socketListener("deviceUpdated", function (data) {
+            devices[data.model.type].forEach(function (device) {
+                if (device.id == data.id) {
                     var index = devices[data.model.type].indexOf(device);
                     devices[data.model.type][index] = data;
                 }
             });
             $rs.$apply();
-            if(onDeviceUpdate) {
+            if (onDeviceUpdate) {
                 onDeviceUpdate(data);
             }
         });
 
-        function updateRules(id, obj){
-            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules:obj})
+
+
+        socket.socketListener('resolveConflict', function (data) {
+            var conflictPopUp = $('#conflictmodal');
+            conflictPopUp.openModal();
+        });
+
+        function resolveConflict() {
+
+            var object = {
+                winner: 'clickedScenario',
+                loser: '',
+                device: 1337
+            };
+
+            $http.post('http://localhost:3221/devices/' + object.device + '/resolveconflict', object).
+                success(function (data) {
+                    console.log('CONFLICT', 'resolved');
+                })
+                .error(function (err){
+                    console.log('CONFLICT', 'error while resolving');
+                });
+        }
+
+
+
+
+        function updateRules(id, obj) {
+            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules: obj})
                 .success(function (data) {
                     console.log("succesfully saved");
                 })
@@ -50,7 +77,7 @@
 
         // Buildevent en de socketlistener moeten naar logservice
         function buildEvent(severity, imgsrc, msg) {
-            if(severity == 1) {
+            if (severity == 1) {
                 var eventEl = document.createElement("div");
                 eventEl.className = "event severity" + severity;
 
@@ -75,6 +102,7 @@
                 var $eventEl = $(eventEl);
                 $eventEl.fadeIn(800);
 
+
                 eventEl.addEventListener("click", remove);
             }
 
@@ -85,7 +113,8 @@
                 }, 800);
             }
         }
-        socket.socketListener('deviceEvent', function(data){
+
+        socket.socketListener('deviceEvent', function (data) {
             buildEvent(data.event.severity, data.device.model.image, data.event.msg);
         });
         // Tot hierzo.
@@ -190,7 +219,7 @@
             return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey, { })
+                        $http.post('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey, {})
 
                             .success(function (data) {
                                 console.log("succesfull send");
@@ -202,7 +231,7 @@
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
-                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey)
+                        $http.get('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
@@ -218,15 +247,15 @@
 
         function updateDevice(type, uid, field, value) {
             return new Promise(
-                function(resolve, reject) {
+                function (resolve, reject) {
                     var data = {};
                     data[field] = value;
                     $http.put("/devices/" + type + "/" + uid + "/" + field, data)
-                        .success(function(data){
-                            if(data.err) return reject(new Error(data.err));
+                        .success(function (data) {
+                            if (data.err) return reject(new Error(data.err));
                             resolve();
                         })
-                        .error(function(err) {
+                        .error(function (err) {
                             console.error(err);
                             reject(err);
                         });

@@ -4,6 +4,7 @@ module.exports = (function() {
     var comm = require('../modules/interperter/comm.js');
     var route = express.Router();
     var logger = require('../modules/logManager');
+    var conflictManager = require('../modules/conflictManager');
 
     route.get('/', function(req, res) {
         console.log(deviceManager.getAll());
@@ -83,6 +84,13 @@ module.exports = (function() {
     route.put('/sensors/:id/interval', function(req,res){
         deviceManager.updateSensorInterval(parseInt(req.params.id), req.body.interval, function(response){
             res.send(JSON.stringify(response));
+        });
+    });
+
+    route.post('/:devicetype/:id/resolveconflict', function(req,res){
+        if(req.body)
+        conflictManager.resolve(req.body, function(r){
+            res.send(r);
         });
     });
 
