@@ -4,6 +4,7 @@
     angular.module('jarvis', [
         'templatecache',
         'rzModule',
+        'jarvis.reverseFilter',
         'jarvis.clock',
         'jarvis.editdir',
         'jarvis.header',
