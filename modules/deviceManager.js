@@ -175,35 +175,6 @@ function getActuatorById(id) {
  *
  * @param devicetype
  * @param id
- * @param status
- * @returns {*}
- */
-//function updateDeviceStatus(devicetype, id, status) {
-//    devicetype = parseDeviceType(devicetype);
-//    for (var i = 0; i < devices[devicetype].length; i++) {
-//        if (devices[devicetype][i].id === id) {
-//            devices[devicetype][i].config.status = status;
-//            return {Success: "Success, status for " + devices[devicetype][i].id + " was successfully updated."};
-//        }
-//    }
-//    return {err: "Error, could not find " + devicetype + " with id: " + id + " to update status."};
-//}
-
-function parseDeviceType(devicetype){
-    switch(devicetype){
-        case 'actuator':
-            return 'actuators';
-            break;
-        case 'sensor':
-            return 'sensors';
-            break;
-    }
-}
-
-/**
- *
- * @param devicetype
- * @param id
  * @param alias
  * @returns {*}
  */
@@ -367,7 +338,6 @@ module.exports = {
     },
     getActuators: getActuators,
     updateDeviceAlias: updateDeviceAliasFunction,
-    //updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
