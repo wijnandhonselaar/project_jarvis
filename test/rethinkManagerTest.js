@@ -517,4 +517,17 @@ describe('Actuator', function () {
             }
         });
     });
+
+    it('Should set the status', function(done) {
+        rethinkManager.setStatus(id, 'actuator', {test: true, celcius: 20}, function(err, res){
+            if(err) {
+                done(err);
+            } else {
+                expect(res).to.be.an('object');
+                console.log(res);
+                expect(res.status.test).to.equal(true);
+                done();
+            }
+        });
+    });
 });
