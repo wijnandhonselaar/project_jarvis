@@ -24,6 +24,9 @@ var Sensor = thinky.createModel("Sensor", {
         alias: type.string(),
         clientRequestInterval: type.number().default(5000),
         active: type.boolean().default(true)
+    },
+    status: {
+
     }
 });
 

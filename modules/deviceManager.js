@@ -178,16 +178,16 @@ function getActuatorById(id) {
  * @param status
  * @returns {*}
  */
-function updateDeviceStatus(devicetype, id, status) {
-    devicetype = parseDeviceType(devicetype);
-    for (var i = 0; i < devices[devicetype].length; i++) {
-        if (devices[devicetype][i].id === id) {
-            devices[devicetype][i].config.status = status;
-            return {Success: "Success, status for " + devices[devicetype][i].id + " was successfully updated."};
-        }
-    }
-    return {err: "Error, could not find " + devicetype + " with id: " + id + " to update status."};
-}
+//function updateDeviceStatus(devicetype, id, status) {
+//    devicetype = parseDeviceType(devicetype);
+//    for (var i = 0; i < devices[devicetype].length; i++) {
+//        if (devices[devicetype][i].id === id) {
+//            devices[devicetype][i].config.status = status;
+//            return {Success: "Success, status for " + devices[devicetype][i].id + " was successfully updated."};
+//        }
+//    }
+//    return {err: "Error, could not find " + devicetype + " with id: " + id + " to update status."};
+//}
 
 function parseDeviceType(devicetype){
     switch(devicetype){
@@ -265,7 +265,7 @@ function updateSensorStatusFunction(obj) {
        sensor.status = obj.status;
        logger.logData(sensor);
        io.emit("deviceUpdated", sensor);
-        rethinkManager.setStatus(obj.id, obj.status, function(err, res){
+        rethinkManager.setStatus(obj.id, 'sensor' ,obj.status, function(err, res){
             if(err) {
                 console.log('set status to database error:', err);
             }
@@ -278,6 +278,11 @@ function updateActuatorState(id, state) {
     actuator.status = state;
     //LOG DATA
     io.emit("deviceUpdated", actuator);
+    rethinkManager.setStatus(id, 'actuator', state, function(err, res){
+        if(err) {
+            console.log('set status to database error:', err);
+        }
+    });
 }
 
 
@@ -362,7 +367,7 @@ module.exports = {
     },
     getActuators: getActuators,
     updateDeviceAlias: updateDeviceAliasFunction,
-    updateDeviceStatus: updateDeviceStatus,
+    //updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
