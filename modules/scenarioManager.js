@@ -9,17 +9,17 @@ var scenarios = [];
 
 function create(name, description, actuators, cb) {
     var scenario = new Scenario({name: name, description: description, actuators: actuators});
-    Scenario.save(scenario).then(function(res) {
+    Scenario.save(scenario).then(function (res) {
         cb(null, res);
-    }).error(function(err){
+    }).error(function (err) {
         cb({error: "Cannot save scenario.", message: err});
     });
 }
 
 function get(id, cb) {
-    Scenario.get(id).then(function(res) {
+    Scenario.get(id).then(function (res) {
         cb(null, res);
-    }).error(function(err) {
+    }).error(function (err) {
         cb({error: "Not found.", message: err});
     });
 }
@@ -56,12 +56,21 @@ function updateById(id, scenario, cb) {
         cb({error: "Cannot update scenario.", message: err});
     });
 }
+
+//TODO error tijdens uitvoeren, crasht niet maar werkt wel, geen idee, promise error.
 function deleteById(id, cb) {
-    Scenario.get(id).delete().run(function (res) {
-        cb(null, res);
-    }).error(function (err) {
-        cb({error: "cannot delete scenario.", message: err});
-    })
+    get(id, function (err, result) {
+        for (var i = 0; i < scenarios.length; i++) {
+            if (scenarios[i].scenario.id === result.id) {
+                scenarios.splice(i, 1);
+                Scenario.get(id).delete().run(function (res) {
+                    cb(null, res);
+                }).error(function (err) {
+                    cb({error: "cannot delete scenario.", message: err});
+                })
+            }
+        }
+    });
 }
 
 function update(scenario, cb) {
@@ -76,11 +85,11 @@ function toggleState(scenarioString, cb) {
     var scenario = JSON.parse(scenarioString);
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id == scenarios[i].scenario.id) {
-            if(scenarios[i].status === false){
+            if (scenarios[i].status === false) {
                 scenarios[i].status = true;
                 cb(null, scenarios[i]);
             }
-            else{
+            else {
                 scenarios[i].status = false;
                 cb(null, scenarios[i]);
             }

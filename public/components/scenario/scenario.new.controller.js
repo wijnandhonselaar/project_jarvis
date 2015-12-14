@@ -125,11 +125,7 @@
          * Redirect to overview page
          */
         function goToOverview() {
-            $state.go("scenarioDetail");
-            $state.transitionTo("scenarioDetail", {
-                uid: scenario.id,
-                data: scenario
-            });
-        }
+            $state.go("scenarioOverzicht");
+            }
     }
 })();
