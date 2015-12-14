@@ -33,11 +33,10 @@ for (var i = 0; i < 20; i++) {
         devices.sensors.push(createDevice("sensor", i));
     }
 }
-;
 
 //broadcast ik ben hier elke 5 sec
-var broadcastInterval = setInterval(broadcastUDPPacket,100);
-function broadcastUDPPacket(){
+var broadcastInterval = setInterval(broadcastUDPPacket, 1000);
+function broadcastUDPPacket() {
     var broadcastObject = {
         type: 'SOK',
         version: '0.0.1'
@@ -64,9 +63,7 @@ app.get('/sok', function (req, res) {
     if (index == 20) {
 
     }
-
     if (index < 10) {
-        //console.log(devices.actuators[index]);
         res.send(JSON.stringify(devices.actuators[index]));
         index++;
     }
