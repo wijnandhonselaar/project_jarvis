@@ -35,7 +35,7 @@ for (var i = 0; i < 20; i++) {
 };
 
 //broadcast ik ben hier elke 5 sec
-var broadcastInterval = setInterval(broadcastUDPPacket,1000);
+var broadcastInterval = setInterval(broadcastUDPPacket,100);
 function broadcastUDPPacket(){
     var broadcastObject = {
         type:'SOK',

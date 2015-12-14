@@ -52,9 +52,11 @@ function logData(device) {
         status: device.status,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
+    console.log(log);
     dataLog.save(log).then(function(res) {
-        //io.emit('logAdded', log);
+        io.emit('dataLogAdded', log);
     }).error(function(err){
+        console.log("hier");
         logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }

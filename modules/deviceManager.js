@@ -78,9 +78,9 @@ function addDevice(device, remote, deviceType) {
             }, device.type, function (err, res) {
                 if (err) {
                     console.log(err);
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.model.type + " gevonden. Maar er was een error " + err, 2);
+                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, 2);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Nieuwe " + deviceObj.model.type + " gevonden.", 4);
+                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", 4);
                 }
             });
         } else {
@@ -89,7 +89,7 @@ function addDevice(device, remote, deviceType) {
             if (device.type === 'sensor') {
                 initiateStatusPolling(deviceObj);
             }
-            logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Oude " + deviceObj.model.type + " opnieuw aangemeld.", 4);
+            logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.config.alias + " heeft zich opnieuw aangemeld.", 4);
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -216,10 +216,11 @@ function parseDeviceType(devicetype){
  * @returns {*}
  */
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
+    var found = false;
     for (var i = 0; i < devices[devicetype].length; i++) {
         if (devices[devicetype][i].id === id) {
             devices[devicetype][i].config.alias = alias;
-
+            found = true;
             // save to the database!
             rethinkManager.updateAlias(id, devicetype, alias, function(err, res) {
                 if(err) {
@@ -233,6 +234,9 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
             });
         }
     }
+    if(found === false){
+        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."})
+    }
 }
 
 /**
@@ -242,8 +246,10 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
  * @returns {*}
  */
 function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
+    var found = false;
     for (var i = 0; i < devices.sensors.length; i++) {
         if (devices.sensors[i].id === id) {
+            found = true;
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
             rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
                 if(err) {
@@ -257,6 +263,9 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
             });
         }
     }
+    if(found === false){
+        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."})
+    }
 }
 
 function initiateStatusPolling(sensor) {
@@ -265,12 +274,12 @@ function initiateStatusPolling(sensor) {
 
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
-    console.log(sensor);
     if (sensor.status !== obj.status) {
         for (var i = 0; i < getActuators().length; i++) {
             ruleEngine.apply(getActuators()[i]);
         }
        sensor.status = obj.status;
+       console.log("hier");
        logger.logData(sensor);
        io.emit("deviceUpdated", sensor);
     }
@@ -279,7 +288,8 @@ function updateSensorStatusFunction(obj) {
 function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
     actuator.status = state;
-    //LOG DATA
+    //LOG DATA??
+    //Loggen dat een lamp is aangegaan is hetzelfde als loggen dat commando uitgevoerd wordt?
     io.emit("deviceUpdated", actuator);
 }
 
