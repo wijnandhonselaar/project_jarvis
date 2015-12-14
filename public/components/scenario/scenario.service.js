@@ -147,6 +147,14 @@
                 });
         }
 
+        function isAllowedCommand(commandname) {
+            return (commandname.toLowerCase() === 'on' ||
+            commandname.toLowerCase() === 'off' ||
+            commandname.toLowerCase() === 'open' ||
+            commandname.toLowerCase() === 'close');
+
+        }
+
         return {
             toggleState: toggleState,
             delete: deleteScenario,
@@ -156,7 +164,8 @@
             update: update,
             getActuators: getActuators,
             getActuatorByID: getActuatorByID,
-            updateActuator: updateActuator
+            updateActuator: updateActuator,
+            isAllowedCommand: isAllowedCommand
         };
 
     }

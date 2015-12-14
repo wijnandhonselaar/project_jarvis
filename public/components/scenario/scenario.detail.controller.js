@@ -17,6 +17,7 @@
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
         sdc.updateActuator = updateActuator;
+        sdc.isAllowedCommand = ScenarioService.isAllowedCommand;
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];

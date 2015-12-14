@@ -20,6 +20,7 @@
         snc.addActuator = addActuator;
         snc.select = select;
         snc.removeActuator = removeActuator;
+        snc.isAllowedCommand = ScenarioService.isAllowedCommand;
 
         /**
          * Scenario model
