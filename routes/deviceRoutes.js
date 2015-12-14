@@ -84,7 +84,7 @@ module.exports = (function() {
     });
 
     route.put('/sensors/:id/interval', function(req,res){
-        deviceManager.updateSensorInterval(parseInt(req.params.id), req.body.interval, function(response){
+        deviceManager.updateSensorInterval(parseInt(req.params.id), parseInt(req.body.interval), function(response){
             res.send(JSON.stringify(response));
         });
     });
