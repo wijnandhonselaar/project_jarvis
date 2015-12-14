@@ -12,7 +12,7 @@ describe('Scenario Manager', function() {
 
     describe('#New scenario', function() {
         it('should save new scenario.', function(done) {
-            ScenarioManager.new('Bedtijd','Zet alle lampen uit.', function(err,res) {
+            ScenarioManager.new('Bedtijd', 'Zet alle lampen uit.', [{deviceid: 1, action: {command: 'on'}}], function(err,res) {
                 if(err) throw err;
                 expect(res.id).to.not.equal(null);
                 expect(res.id).to.not.equal(undefined);

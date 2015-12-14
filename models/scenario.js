@@ -14,7 +14,8 @@ var Scenario = thinky.createModel("Scenario", {
                 ]
             }).required()
         }
-    ]
+    ],
+    priority: type.number()
 });
 
 module.exports = Scenario;

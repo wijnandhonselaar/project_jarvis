@@ -18,7 +18,6 @@ module.exports = (function() {
         res.send({sensors: deviceManager.getSensors()});
     });
 
-
     route.get('/:devicetype/:id/commands/:command', function(req, res){
         var devicetype = req.params.devicetype;
         var device = '';
