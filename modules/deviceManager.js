@@ -9,31 +9,14 @@ var logger = require('./logManager');
 var rules = {
     on: {
         command: 'on',
-        onEvents: [
-            {
-                device: 1337,
-                event: 'onFinish'
-            }
-        ],
-        thresholds: [
-            {
-                device: 16,
-                priority: 1,
-                field: 'Celcius',
-                operator: '>',
-                value: 20,
-                gate: 'AND'
-            }
-        ]
+        timers : [],
+        events: [],
+        thresholds: []
     },
     off: {
         command: 'off',
-        onEvents: [
-            {
-                device: 1337,
-                event: 'onFinish'
-            }
-        ],
+        timers : [],
+        events: [],
         thresholds: []
     }
 };
@@ -60,7 +43,7 @@ function addDevice(device, remote, deviceType) {
                 status: {state: false}
             };
             devices[deviceType].push(deviceObj);
-            if (device.type === 'sensor') {
+            if (device.type === 'sensor' || deviceType === 'sensor') {
                 initiateStatusPolling(deviceObj);
             }
             io.emit("deviceAdded", deviceObj);
@@ -84,9 +67,9 @@ function addDevice(device, remote, deviceType) {
                 }
             });
         } else {
-            var deviceObj = {id: res.id, model: res.model, config: res.config, status:null};
+            var deviceObj = {id: res.id, model: res.model, config: res.config, status:res.status};
             devices[deviceType].push(deviceObj);
-            if (device.type === 'sensor') {
+            if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
             }
             logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.config.alias + " heeft zich opnieuw aangemeld.", 4);
@@ -99,22 +82,31 @@ function addDevice(device, remote, deviceType) {
  * @param msg
  */
 function broadcastEvent(msg) {
-    var device = getActuatorById(msg.id);
-    if(!device) deviceId = getSensorById(msg.id);
-    logger.logEvent(device, device.model.type, "Automatisch" ,device.name +" heeft een nieuwe alert.", 1);
-    io.emit('deviceEvent', {device:device, event:msg})
+    var device = getActuatorById(parseInt(msg.id));
+    if(!device) device = getSensorById(parseInt(msg.id));
+    if(device) {
+        for (var i = 0; i < getActuators().length; i++) {
+            ruleEngine.apply(getActuators()[i], msg);
+        }
+        logger.logEvent(device, device.model.type, "Automatisch", device.config.alias + " heeft een nieuwe alert.", 1);
+        io.emit('deviceEvent', {device: device, event: msg})
+    } else {
+        console.log('What the fuck, ik kan mijn apparaat niet vinden');
+    }
 }
 
-function addToDeviceList(device, remote) {
-    var deviceType;
-    switch (device.type) {
-        case 'actuator':
-            deviceType = 'actuators';
-            break;
-        case 'sensor':
-            deviceType = 'sensors';
-            break;
+function addToDeviceList(device, remote, deviceType) {
+    if(typeof deviceType === 'undefined') {
+        switch (device.type) {
+            case 'actuator':
+                deviceType = 'actuators';
+                break;
+            case 'sensor':
+                deviceType = 'sensors';
+                break;
+        }
     }
+
     if (devices[deviceType].length !== 0) {
         var exists = false;
 
@@ -251,13 +243,14 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
         if (devices.sensors[i].id === id) {
             found = true;
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
+            var sensor = devices.sensors[i];
             rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
                 if(err) {
-                     logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " niet aangepast.", 3);
+                     //logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " niet aangepast.", 3);
                      callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
                 } else {
-                    logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " ingesteld.", 4);
-                    io.emit("deviceUpdated", devices.sensors[i]);
+                    //logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " ingesteld.", 4);
+                    io.emit("deviceUpdated", sensor);
                     callback({success: "Success, interval for "+ id + " was successfully updated."});
                 }
             });
@@ -282,6 +275,11 @@ function updateSensorStatusFunction(obj) {
        console.log("hier");
        logger.logData(sensor);
        io.emit("deviceUpdated", sensor);
+        rethinkManager.setStatus(obj.id, obj.status, function(err, res){
+            if(err) {
+                console.log('set status to database error:', err);
+            }
+        });
     }
 }
 
@@ -311,6 +309,31 @@ function setRules(object) {
     }
 }
 
+function loadDevicesFromDatabase() {
+    rethinkManager.getAllDevices('sensors', function(err, res){
+        if(err) {
+            console.log(err);
+        } else {
+            //console.log(res);
+            for(var i =0; i<res.length; i++) {
+                addToDeviceList(res[i], res[i].ip, 'sensors');
+            }
+        }
+    });
+
+    rethinkManager.getAllDevices('actuators', function(err, res){
+        if(err) {
+            console.log(err);
+        } else {
+
+            for(var i =0; i<res.length; i++) {
+
+                addToDeviceList(res[i], res[i].ip, 'actuators');
+            }
+        }
+    });
+}
+
 //noinspection JSClosureCompilerSyntax
 /**
  *
@@ -330,7 +353,8 @@ function setRules(object) {
 module.exports = {
     init: function (socketio, rec) {
         io = socketio;
-        ruleEngine = rec
+        ruleEngine = rec;
+        loadDevicesFromDatabase();
     },
     add: addToDeviceList,
     getByIP: getDeviceByIPAddress,

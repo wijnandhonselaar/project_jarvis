@@ -26,5 +26,6 @@
     "angularjs-slider": "~2.1.0",
     "swiper": "~3.2.6",
     "angular-chart.js": "~0.8.8"
+    "jquery-timepicker-jt": "~1.8.8"
   }
 }

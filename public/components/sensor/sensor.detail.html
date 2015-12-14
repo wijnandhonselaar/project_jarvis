@@ -12,6 +12,9 @@
             <div class="col m12" style="margin-top: -20px;">
                 <p class="description">{{sdc.sensor.model.description}}</p>
             </div>
+            <div class="col m12">
+                <input type="text" edit-dir="" placeholder="Interval" ng-model="sdc.sensor.config.clientRequestInterval" ng-change="sdc.updateInterval(sdc.sensor.config.clientRequestInterval)"/>
+            </div>
         </div>
     </div>
 </div>
