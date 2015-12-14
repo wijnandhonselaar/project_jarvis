@@ -3,15 +3,19 @@
 var Scenario = require('../models/scenario');
 var ruleEngine = require('./ruleEngine');
 var deviceManager = require('./deviceManager');
+var comm = require('./interperter/comm');
+var io = null;
 var scenarios = [];
 //scenario: {},
 //status: false
+//priority: 100
+//rules: {}
 
 
 function create(name, description, actuators, cb) {
     var scenario = new Scenario({name: name, description: description, actuators: actuators});
     Scenario.save(scenario).then(function (res) {
-        scenarios.push(                    {
+        scenarios.push({
             scenario: scenario,
             status: false
         });
@@ -30,18 +34,23 @@ function get(id, cb) {
 }
 
 function getAll(cb) {
+    var count;
     Scenario.run().then(function (res) {
-        scenarios = [];
-        if (scenarios.length === 0) {
             for (var i = 0; i < res.length; i++) {
-                scenarios.push(
-                    {
-                        scenario: res[i],
-                        status: false
+                count = 0;
+                for (var j = 0; j < scenarios.length; j++) {
+                    if (scenarios[j].scenario.id === res[i]) {
+
                     }
-                );
+                    else {
+                        count++;
+                    }
+                    if (count === scenarios.length - 1) {
+                        scenarios.push({scenario: res[i], status: false})
+                    }
+                }
             }
-        }
+
         cb(null, scenarios);
     }).error(function (err) {
         cb({error: "Not found.", message: err});
@@ -65,15 +74,19 @@ function updateById(id, scenario, cb) {
 
 //TODO error tijdens uitvoeren, crasht niet maar werkt wel, geen idee, promise error.
 function deleteById(id, cb) {
-    get(id, function (err, result) {
+    Scenario.get(id).delete().run(function (res) {
+        cb(null, res);
+    }).error(function (err) {
+        cb({error: "cannot delete scenario.", message: err});
+    });
+}
+
+function deleteFromScenarios(id, cb) {
+    Scenario.get(id).then(function (res) {
         for (var i = 0; i < scenarios.length; i++) {
-            if (scenarios[i].scenario.id === result.id) {
+            if (res.id === scenarios[i].scenario.id) {
                 scenarios.splice(i, 1);
-                Scenario.get(id).delete().run(function (res) {
-                    cb(null, res);
-                }).error(function (err) {
-                    cb({error: "cannot delete scenario.", message: err});
-                })
+                cb(null, res);
             }
         }
     });
@@ -93,11 +106,12 @@ function toggleState(scenarioString, cb) {
         if (scenario.id == scenarios[i].scenario.id) {
             if (scenarios[i].status === false) {
                 scenarios[i].status = true;
-                triggerCommands(scenarios[i]);
+                triggerOnCommands(scenarios[i]);
                 cb(null, scenarios[i]);
             }
             else {
                 scenarios[i].status = false;
+                triggerOffCommands(scenarios[i]);
                 cb(null, scenarios[i]);
             }
 
@@ -105,22 +119,48 @@ function toggleState(scenarioString, cb) {
     }
 }
 
-function validateRules(event){
-    for(var i = 0; i<scenarios.length; i++){
-        ruleEngine.apply(scenarios[i],event);
+function validateRules(event) {
+    for (var i = 0; i < scenarios.length; i++) {
+        ruleEngine.apply(scenarios[i], event);
     }
 }
 
-function triggerCommands(scenario){
+function triggerOnCommands(scenario) {
     var currentDevice;
-    console.log(scenario);
-    for(var i = 0; i<scenario.scenario.actuators.length; i++){
+    for (var i = 0; i < scenario.scenario.actuators.length; i++) {
         currentDevice = deviceManager.getActuator(scenario.scenario.actuators[i].deviceid);
-            console.log(i + " is uitgevoerd");
+        comm.post(scenario.scenario.actuators[i].action.command, currentDevice, [], function (data) {
+            currentDevice.status = data;
+            io.emit("deviceUpdated", currentDevice);
+        });
+    }
+}
+
+function triggerOffCommands(scenario) {
+    var currentDevice;
+    var command;
+    console.log(scenario);
+    for (var i = 0; i < scenario.scenario.actuators.length; i++) {
+        currentDevice = deviceManager.getActuator(scenario.scenario.actuators[i].deviceid);
+        if (scenario.scenario.actuators[i].action.command === 'on') {
+            console.log(scenario.scenario.actuators[i].action.command);
+            command = 'off';
+        }
+        else {
+            command = 'on';
+        }
+        comm.post(command, currentDevice, [], function (data) {
+            currentDevice.status = data;
+            io.emit("deviceUpdated", currentDevice);
+        });
     }
 }
 
 module.exports = {
+    init: function (socketio) {
+        if (socketio) io = socketio;
+    },
+    deleteFromScenarios: deleteFromScenarios,
     validate: validateRules,
     toggleState: toggleState,
     deleteById: deleteById,
