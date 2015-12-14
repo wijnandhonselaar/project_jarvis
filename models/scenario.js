@@ -12,7 +12,8 @@ var Scenario = thinky.createModel("Scenario", {
                 parameters: [
                     type.object()
                 ]
-            }).required()
+            }).required(),
+            priority: type.number()
         }
     ]
 });

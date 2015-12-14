@@ -1,5 +1,5 @@
 html{
-    box-sizing:;
+    /*box-sizing:;*/
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -140,6 +140,8 @@ body{
 .status.on{
     background-color: RGBA(189, 244, 106, 1);
 }
+
+
 
 .statusscenario {
     width: 25px;

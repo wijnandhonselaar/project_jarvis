@@ -9,16 +9,16 @@ module.exports = (function() {
      */
     route.get('/loglevel', function(req, res) {
         settingManager.getLogLevel(function(err, result) {
-            res.send(JSON.stringify(result));
+            res.send({loglevel: result});
         });
     });
 
     route.put('/loglevel', function(req, res) {
         settingManager.setLogLevel(req.body.logLevel ,function(err, result) {
             if(err) {
-                res.send(JSON.stringify(err));
+                res.send(err);
             } else {
-                res.send(JSON.stringify(result));
+                res.send(result);
             }
         });
     });

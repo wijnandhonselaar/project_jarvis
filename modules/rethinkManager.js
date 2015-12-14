@@ -2,6 +2,8 @@
 
 var Actuator = require('../models/actuator.js'),
     Sensor = require('../models/sensor.js');
+var thinky = require('../models/thinky.js');
+var r = thinky.r;
 
 /**
  * checkType - returns the model based on the type (string) paramater
@@ -53,7 +55,7 @@ function getAllDevices(type, fn) {
         return false;
     }
 
-    type.run().then(function(res) {
+    type.orderBy((r.desc('savedAt'))).run().then(function(res) {
         fn(null, res);
     }).error(function(err) {
         fn({Error: "The "+ type +" wasn't found", Message: err});
@@ -150,9 +152,8 @@ function setStatus(id, status, cb) {
             cb(null, result);
         });
     }).error(function (error) {
-        cb(error);c
+        cb(error);
     });
-
 }
 
 module.exports = {

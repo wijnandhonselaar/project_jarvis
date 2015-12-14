@@ -20,20 +20,34 @@ module.exports = (function() {
     });
 
     route.post('/', function(req, res) {
-        scenarioManager.new(req.body.name, req.body.description, function(err, result) {
+        scenarioManager.new(req.body.name, req.body.description, JSON.parse(req.body.actuators), function(err, result) {
             if(err) throw err;
             res.redirect('/scenario/'+result.id);
         });
     });
 
-    route.put('/:id', function(req, res) {
-        console.log(req.params.id);
-        console.log(req.body);
-        scenarioManager.updateById(req.params.id, req.body, function(err, result) {
+    route.put('/toggle', function(req,res){
+        scenarioManager.toggleState(req.body.scenario, function(err, result){
             if(err) throw err;
+            res.send(result);
+        });
+    });
+
+    route.put('/:id', function(req, res) {
+        scenarioManager.updateById(req.params.id, JSON.parse(req.body.scenario), function(err, result) {
+            if(err) {console.error(err); throw err;}
             res.send({scenario: result});
         });
     });
+
+    route.delete('/:id', function(req,res){
+        scenarioManager.deleteById(req.params.id, function(err, result){
+            if(err) throw err;
+            res.send(result);
+        });
+    });
+
+
 
     return route;
 })();

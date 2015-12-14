@@ -7,6 +7,8 @@ var ruleEngine = null;
 var scenarioManager = require('./scenarioManager');
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
+var Actuator = require('../models/actuator');
+
 var rules = {
     on: {
         command: 'on',
@@ -37,8 +39,9 @@ function updateManagers(event) {
 function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function (err, res) {
+        var deviceObj = null;
         if (res === undefined) {
-            var deviceObj = {
+            deviceObj = {
                 id: device.id,
                 savedAt: Math.round((new Date()).getTime() / 1000),
                 model: device,
@@ -46,7 +49,8 @@ function addDevice(device, remote, deviceType) {
                     rules: rules,
                     alias: device.name,
                     ip: remote.address,
-                    clientRequestInterval: device.commands.status.requestInterval
+                    clientRequestInterval: device.commands.status.requestInterval,
+                    scenarios: {}
                 },
                 status: {state: false}
             };
@@ -64,23 +68,23 @@ function addDevice(device, remote, deviceType) {
                     rules: rules,
                     alias: device.name,
                     ip: remote.address,
-                    clientRequestInterval: device.commands.status.requestInterval
+                    clientRequestInterval: device.commands.status.requestInterval,
+                    scenarios: {}
                 }
             }, device.type, function (err, res) {
                 if (err) {
                     console.log(err);
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch", deviceObj.model.type + " gevonden. Maar er was een error " + err, 2);
+                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, 2, null);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch", "Nieuwe " + deviceObj.model.type + " gevonden.", 4);
+                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", 4, null);
                 }
             });
         } else {
-            var deviceObj = {id: res.id, model: res.model, config: res.config, status: res.status};
+            deviceObj = {id: res.id, model: res.model, config: res.config, status:res.status};
             devices[deviceType].push(deviceObj);
             if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
-            }
-            logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch", "Oude " + deviceObj.model.type + " opnieuw aangemeld.", 4);
+            };
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -115,7 +119,6 @@ function addToDeviceList(device, remote, deviceType) {
 
     if (devices[deviceType].length !== 0) {
         var exists = false;
-
         // check the local object
         for (var i = 0; i < devices[deviceType].length; i++) {
             if (devices[deviceType][i].id === device.id) {
@@ -214,10 +217,11 @@ function parseDeviceType(devicetype) {
  * @returns {*}
  */
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
+    var found = false;
     for (var i = 0; i < devices[devicetype].length; i++) {
         if (devices[devicetype][i].id === id) {
             devices[devicetype][i].config.alias = alias;
-
+            found = true;
             // save to the database!
             rethinkManager.updateAlias(id, devicetype, alias, function (err, res) {
                 if (err) {
@@ -231,6 +235,9 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
             });
         }
     }
+    if(found === false){
+        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."})
+    }
 }
 
 /**
@@ -240,20 +247,27 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
  * @returns {*}
  */
 function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
+    var found = false;
     for (var i = 0; i < devices.sensors.length; i++) {
         if (devices.sensors[i].id === id) {
+            found = true;
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
-            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function (err, res) {
-                if (err) {
-                    //logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " niet aangepast.", 3);
-                    callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
+            var sensor = devices.sensors[i];
+            initiateStatusPolling(sensor);
+            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
+                if(err) {
+                     logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
+                     callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
                 } else {
-                    //logger.logEvent(res, devicetype, "Handmatig" ,"Sensorinterval voor " + res.model.name + " ingesteld.", 4);
-                    io.emit("deviceUpdated", devices.sensors[i]);
-                    callback({success: "Success, interval for " + id + " was successfully updated."});
+                    io.emit("deviceUpdated", sensor);
+                    logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
+                    callback({success: "Success, interval for "+ id + " was successfully updated."});
                 }
             });
         }
+    };
+    if(found === false){
+        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."})
     }
 }
 
@@ -293,10 +307,34 @@ function setRules(object) {
         console.error(a.err);
         return {err: 'Couldn\'t find actuator by id'}
     } else {
-        console.log('set new rules');
+        //console.log('set new rules');
         a.config.rules = object.rules;
-        console.log(a.config);
+        //console.log(a.config);
         return {success: 'set'}
+    }
+}
+
+function updateActuator(id, actuator, cb) {
+    console.log('Update actuator');
+    for (var i = 0; i < devices.actuators.length; i++) {
+        if (devices.actuators[i].id == id) {
+            console.log(actuator.config);
+            devices.actuators[i] = actuator;
+            console.log(devices.actuators[i].config);
+            Actuator.get(id)
+                .then(function (persisted) {
+                    persisted = actuator;
+                    persisted.save()
+                        .then(function (res) {
+                            cb(null, res);
+                        })
+                        .catch(function (err) {
+                            cb({error: err, message: 'Could not update actuator.'});
+                        });
+                }).catch(function (err) {
+                cb({error: err, message: 'Could not update actuator.'});
+            });
+        }
     }
 }
 
@@ -326,9 +364,9 @@ function loadDevicesFromDatabase() {
 }
 
 //noinspection JSClosureCompilerSyntax
-/**
- *
- * @type {{ init: Function,
+    /**
+     *
+     * @type {{ init: Function,
  *          add: addToDeviceList,
  *          getByIP: getDeviceByIPAddress,
  *          getSensor: getSensorById,
@@ -340,7 +378,7 @@ function loadDevicesFromDatabase() {
  *          updateDeviceStatus: updateDeviceStatus,
  *          updateSensorInterval: updateSensorIntervalFunction
 *         }}
- */
+     */
 module.exports = {
     init: function (socketio, rec) {
         io = socketio;
@@ -368,7 +406,8 @@ module.exports = {
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
-    setRules: setRules
+    setRules: setRules,
+    updateActuator: updateActuator
 };
 
 //circular dependency (export must be first)
