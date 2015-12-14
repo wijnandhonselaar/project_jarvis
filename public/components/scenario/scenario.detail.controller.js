@@ -111,7 +111,8 @@
                 action: {
                     command: "on",
                     parameters: []
-                }
+                },
+                priority: 100
             });
             updateScenario();
         }

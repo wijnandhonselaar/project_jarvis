@@ -120,6 +120,15 @@ function triggerCommands(scenario){
     }
 }
 
+function getByName(name) {
+    Scenario.filter({name: name}).run().then(function (res) {
+            return res[0];
+        }).
+        catch(function (err) {
+            throw err;
+        });
+}
+
 module.exports = {
     validate: validateRules,
     toggleState: toggleState,
@@ -128,5 +137,6 @@ module.exports = {
     get: get,
     getAll: getAll,
     update: update,
-    updateById: updateById
+    updateById: updateById,
+    getByName: getByName
 };
