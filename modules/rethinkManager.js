@@ -2,7 +2,7 @@
 
 var Actuator = require('../models/actuator.js'),
     Sensor = require('../models/sensor.js');
-var thinky = require('thinky')();
+var thinky = require('../models/thinky.js');
 var r = thinky.r;
 
 /**
