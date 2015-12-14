@@ -66,7 +66,8 @@ describe('eventLog', function () {
             type: 'sensor',
             message: 'message',
             severity: 1,
-            category: 'manual'
+            category: 'manual',
+            timestamp: 55498498
         });
         // save the new log
         eventLog.save(log).then(function(res) {
@@ -130,7 +131,10 @@ describe('dataLog', function () {
                 name: "blaat",
                 alias: "schaap"
             },
-            value: 22
+            status: {
+                celcius: 50
+            },
+            timestamp: 51984981
         });
         // save the new log
         dataLog.save(log).then(function(res) {

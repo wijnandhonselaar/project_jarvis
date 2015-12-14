@@ -1,3 +1,4 @@
+process.env.TZ = 'Europe/Amsterdam'
 GLOBAL.logToConsole = false;
 GLOBAL.dev = true;
 GLOBAL.port = 3221;
@@ -9,15 +10,18 @@ var io = require('socket.io')(server);
 var deviceManager = require('./modules/deviceManager');
 var bodyParser = require('body-parser');
 var autoDiscover = require('./modules/autodiscover');
-var logManager = require('./modules/logManager')
+var logManager = require('./modules/logManager');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
+var settingRoutes = require('./routes/settingRoutes');
 var alertRoutes = require('./routes/alertRoutes');
 var scenarioRoutes = require('./routes/scenarioRoutes');
 var ruleEngine = require('./modules/ruleEngine');
+var conflictManager = require('./modules/conflictManager');
 
 server.listen(GLOBAL.port);
 
+conflictManager.init(io);
 autoDiscover.init(server, io);
 logManager.init(io);
 deviceManager.init(io, ruleEngine);
@@ -36,6 +40,7 @@ if(GLOBAL.dev) {
 app.use(express.static('public'));
 app.use("/devices", deviceRoutes);
 app.use("/scenario", scenarioRoutes);
+app.use("/settings", settingRoutes);
 //app.use("/alerts", alertRoutes);
 
 app.get('/', function (req, res) {

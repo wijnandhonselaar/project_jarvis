@@ -15,7 +15,7 @@ var r = thinky.r;
  * @param severity
  * @param cb
  */
-function logEvent(device, type, category, message, severity) {
+function logEvent(device, type, category, message, severity, cb) {
     var log = new eventLog({
         device: {
             id: device.id,
@@ -31,7 +31,13 @@ function logEvent(device, type, category, message, severity) {
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
+        if (typeof cb === "function") {
+            cb(null, res);
+        }
     }).error(function(err){
+        if (typeof cb === "function") {
+            cb(err);
+        }
         logEvent(device, type, category, err, 2);
     });
 }
@@ -42,7 +48,7 @@ function logEvent(device, type, category, message, severity) {
  * @param value
  */
 
-function logData(device) {
+function logData(device, cb) {
     var log = new dataLog({
         device: {
             id: device.id,
@@ -54,7 +60,13 @@ function logData(device) {
     });
     dataLog.save(log).then(function(res) {
         //io.emit('logAdded', log);
+        if (typeof cb === "function") {
+            cb(null, res);
+        }
     }).error(function(err){
+        if (typeof cb === "function") {
+            cb(err);
+        }
         logEvent(device, device.model.type, "Automatisch", err, 2);
     });
 }
@@ -111,7 +123,7 @@ function getAllEvents(severity, offset, limit, cb) {
  * @param cb
  */
 function getData(deviceid, cb) {
-    dataLog.filter({device: {id:deviceid}}).then(function(res) {
+    dataLog.filter({device: {id:deviceid}}).orderBy((r.desc('timestamp'))).then(function(res) {
         cb(null, res);
     }).error(function(err) {
         cb({error: "Not found.", message: err});
@@ -133,8 +145,8 @@ function getStatus(deviceid, cb) {
 
 module.exports = {
     init: function (socket) {
-            io = socket;
-         },
+        io = socket;
+     },
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
