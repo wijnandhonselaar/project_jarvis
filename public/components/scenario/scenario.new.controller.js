@@ -126,6 +126,6 @@
          */
         function goToOverview() {
             $state.go("scenarioOverzicht");
-            }
+        }
     }
 })();

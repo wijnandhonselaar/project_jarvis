@@ -7,7 +7,6 @@ var ruleEngine = null;
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
 var Actuator = require('../models/actuator');
-var rules = {};
 //     on: {
 //         command: 'on',
 //         onEvents: [
@@ -61,8 +60,9 @@ var rules = {
 function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function (err, res) {
+        var deviceObj = null;
         if (res === undefined) {
-            var deviceObj = {
+            deviceObj = {
                 id: device.id,
                 savedAt: Math.round((new Date()).getTime() / 1000),
                 model: device,
@@ -71,7 +71,7 @@ function addDevice(device, remote, deviceType) {
                     alias: device.name,
                     ip: remote.address,
                     clientRequestInterval: device.commands.status.requestInterval,
-                    scenarios: []
+                    scenarios: {}
                 },
                 status: {state: false}
             };
@@ -90,7 +90,7 @@ function addDevice(device, remote, deviceType) {
                     alias: device.name,
                     ip: remote.address,
                     clientRequestInterval: device.commands.status.requestInterval,
-                    scenarios: []
+                    scenarios: {}
                 }
             }, device.type, function (err, res) {
                 if (err) {
@@ -101,7 +101,7 @@ function addDevice(device, remote, deviceType) {
                 }
             });
         } else {
-            var deviceObj = {id: res.id, model: res.model, config: res.config, status:res.status};
+            deviceObj = {id: res.id, model: res.model, config: res.config, status:res.status};
             devices[deviceType].push(deviceObj);
             if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
@@ -334,12 +334,9 @@ function setRules(object) {
 
 function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
-    console.log(id);
-    console.log(actuator);
     for (var i = 0; i < devices.actuators.length; i++) {
-        console.log(devices.actuators[i].id);
-        if (devices.actuators[i].id === id) {
-            console.log(devices.actuators[i].config);
+        if (devices.actuators[i].id == id) {
+            console.log(actuator.config);
             devices.actuators[i] = actuator;
             console.log(devices.actuators[i].config);
             Actuator.get(id)

@@ -79,7 +79,10 @@
 
         function removeActuator(id) {
             for(var i = 0; i < sdc.devices.length; i++) {
-                if(sdc.devices[i].id === id) {
+                var device = sdc.devices[i];
+                if(device.id === id) {
+                    delete device.config.scenarios[sdc.scenario.name];
+                    ScenarioService.updateActuator(device);
                     sdc.devices.splice(i, 1);
                 }
             }
@@ -94,6 +97,15 @@
         function select(actuator){
             $('#actuatorscenario').closeModal();
             sdc.devices.push(actuator);
+            for(var i = 0; i < sdc.devices.length; i++) {
+                if(sdc.devices[i].id === actuator.id) {
+                    sdc.devices[i].config.scenarios[sdc.scenario.name] = {
+                        command: '',
+                        parameters: []
+                    };
+                    ScenarioService.updateActuator(sdc.devices[i]);
+                }
+            }
             sdc.scenario.actuators.push({
                 deviceid: actuator.id,
                 action: {
@@ -124,9 +136,6 @@
                         ScenarioService.getActuatorByID(actuator.deviceid)
                             .then(function(data) {
                                 sdc.devices.push(data);
-                                for(var i = 0; i < sdc.devices.length; i++) {
-                                    console.log(sdc.devices[i].config);
-                                }
                                 $scope.$apply();
                             })
                             .catch(function (err) {
@@ -183,7 +192,6 @@
             var action = $('#'+actuatorID + ' option:selected').data("value");
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === actuatorID) {
-                    console.log(sdc.devices[i].config);
                     sdc.devices[i].config.scenarios[sdc.scenario.name].command = action.command.name;
                     ScenarioService.updateActuator(sdc.devices[i]);
                 }
