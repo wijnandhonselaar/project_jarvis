@@ -1,7 +1,8 @@
 "use strict";
 
 var Scenario = require('../models/scenario');
-
+var ruleEngine = require('./ruleEngine');
+var deviceManager = require('./deviceManager');
 var scenarios = [];
 //scenario: {},
 //status: false
@@ -10,6 +11,10 @@ var scenarios = [];
 function create(name, description, actuators, cb) {
     var scenario = new Scenario({name: name, description: description, actuators: actuators});
     Scenario.save(scenario).then(function (res) {
+        scenarios.push(                    {
+            scenario: scenario,
+            status: false
+        });
         cb(null, res);
     }).error(function (err) {
         cb({error: "Cannot save scenario.", message: err});
@@ -26,6 +31,7 @@ function get(id, cb) {
 
 function getAll(cb) {
     Scenario.run().then(function (res) {
+        scenarios = [];
         if (scenarios.length === 0) {
             for (var i = 0; i < res.length; i++) {
                 scenarios.push(
@@ -87,6 +93,7 @@ function toggleState(scenarioString, cb) {
         if (scenario.id == scenarios[i].scenario.id) {
             if (scenarios[i].status === false) {
                 scenarios[i].status = true;
+                triggerCommands(scenarios[i]);
                 cb(null, scenarios[i]);
             }
             else {
@@ -96,10 +103,25 @@ function toggleState(scenarioString, cb) {
 
         }
     }
+}
 
+function validateRules(event){
+    for(var i = 0; i<scenarios.length; i++){
+        ruleEngine.apply(scenarios[i],event);
+    }
+}
+
+function triggerCommands(scenario){
+    var currentDevice;
+    console.log(scenario);
+    for(var i = 0; i<scenario.scenario.actuators.length; i++){
+        currentDevice = deviceManager.getActuator(scenario.scenario.actuators[i].deviceid);
+            console.log(i + " is uitgevoerd");
+    }
 }
 
 module.exports = {
+    validate: validateRules,
     toggleState: toggleState,
     deleteById: deleteById,
     new: create,

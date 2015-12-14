@@ -2,7 +2,7 @@ var deviceManager = null;
 var comm = require('./interperter/comm');
 var conflictManager = require('./conflictManager');
 
-function apply(device, event) {
+function apply(device, event, scenario, override) {
 
     for (var command in device.config.rules) {
         if (device.config.rules.hasOwnProperty(command)) {
