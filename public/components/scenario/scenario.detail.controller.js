@@ -184,7 +184,7 @@
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === actuatorID) {
                     console.log(sdc.devices[i].config);
-                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = sdc.scenario.command;
+                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = action.command.name;
                     ScenarioService.updateActuator(sdc.devices[i]);
                 }
             }
