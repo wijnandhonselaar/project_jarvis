@@ -4,6 +4,7 @@
     angular.module('jarvis', [
         'templatecache',
         'rzModule',
+        'jarvis.reverseFilter',
         'jarvis.clock',
         'jarvis.editdir',
         'jarvis.header',
@@ -16,6 +17,7 @@
         'jarvis.actuator',
         'jarvis.dashboard',
         'jarvis.scenario',
+        'jarvis.settings',
         'jarvis.ruleEngine'
     ]);
 }());
