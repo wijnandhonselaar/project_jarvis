@@ -30,8 +30,8 @@
             <span class="col m3">{{actuator.config.alias}}</span>
         </div>
         <div class="col m5">
-            <select id="{{actuator.id}}" ng-model="actuatorValue" ng-change="sdc.updateActuator(actuator.id)" style="display: block;">
-                <option ng-repeat="command in actuator.model.commands" ng-selected="sdc.scenario.actuators[sdc.devices.indexOf(actuator)].action.command === command.name" data-value="{{ {deviceid: actuator.id, command: command} }}">
+            <select id="{{actuator.id}}" style="display: block;">
+                <option ng-repeat="command in actuator.model.commands" ng-click="sdc.updateActuator(actuator.id)" ng-selected="sdc.scenario.actuators[sdc.devices.indexOf(actuator)].action.command === command.name" data-value="{{ {deviceid: actuator.id, command: command} }}">
                     {{command.name}}
                 </option>
             </select>
