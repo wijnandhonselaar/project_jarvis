@@ -62,11 +62,8 @@ module.exports = function(grunt) {
                     'public/bower_components/keyboard/dist/css/keyboard-dark.min.css',
                     'public/bower_components/swiper/dist/css/swiper.min.css',
                     'public/bower_components/angularjs-slider/dist/rzslider.min.css',
-<<<<<<< HEAD
                     'public//angular-chart.js/dist/angular-chart.css',
-=======
                     'public/bower_components/jquery-timepicker-jt/jquery.timepicker.css',
->>>>>>> development
                     'public/css/app.css'
                 ],
                 dest: 'public/css/dist.css'

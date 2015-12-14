@@ -120,11 +120,5 @@
                     Materialize.toast("Error updating sensor data",4000);
                 });
         }
-
-        function GetValueByKey(key) {
-            // todo implemented
-            return "Not implemented";
-        }
     }
-
 })();

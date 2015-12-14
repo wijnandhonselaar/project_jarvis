@@ -1,6 +1,6 @@
 <div class ="log-container">
     <div class="Logs">
-        <div class="row logentry" ng-repeat="log in lc.logs">
+        <div class="row logentry" ng-repeat="log in lc.logs | reverse">
             <div class="col m1 loglevel n{{log.severity}}">
 
             </div>
