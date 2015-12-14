@@ -31,7 +31,7 @@ function updateManagers(event) {
     for (var i = 0; i < getActuators().length; i++) {
         ruleEngine.apply(getActuators()[i], event);
     }
-    scenarioManager.validate(event);
+    //scenarioManager.validate(event);
 }
 
 function addDevice(device, remote, deviceType) {
@@ -94,7 +94,7 @@ function broadcastEvent(msg) {
     if (!device) device = getSensorById(parseInt(msg.id));
     if (device) {
         updateManagers(msg);
-        logger.logEvent(device, device.model.type, "Automatisch", device.config.alias + " heeft een nieuwe alert.", 1);
+        logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
         io.emit('deviceEvent', {device: device, event: msg})
     } else {
         console.log('What the fuck, ik kan mijn apparaat niet vinden');

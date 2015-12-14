@@ -2,7 +2,7 @@ var deviceManager = null;
 var comm = require('./interperter/comm');
 var conflictManager = require('./conflictManager');
 
-function apply(device, event, scenario) {
+function apply(device, event, callback) {
 
     for (var command in device.config.rules) {
         if (device.config.rules.hasOwnProperty(command)) {
@@ -59,7 +59,7 @@ function apply(device, event, scenario) {
                 hasRules = true;
                 for (var c = 0; c < device.config.rules[command].events.length; c++) {
                     var eobj = device.config.rules[command].events[c];
-                    if(eobj.device == event.id){
+                    if (eobj.device == event.id) {
                         console.log('TESSSTTT');
                     }
                     switch (eobj.gate) {
@@ -76,7 +76,7 @@ function apply(device, event, scenario) {
 
             if (hasRules) {
                 statementString = andGate + ' ' + statementString;
-                if(event) console.log(statementString);
+                if (event) console.log(statementString);
                 if (eval(statementString) && checkState(command, device)) {
                     //if (!conflictManager.detect(command, device, scenario)) {
                     switch (device.model.commands[command].httpMethod) {
@@ -84,18 +84,22 @@ function apply(device, event, scenario) {
                             comm.post(command, device, {}, function (state) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, state);
                                 deviceManager.updateActuatorState(device.id, state);
+                                if (callback) callback(state);
                             });
                             break;
                         case 'GET':
                             comm.get(command, device, function (data) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, data);
                                 deviceManager.updateActuatorState(device.id, state);
+                                if (callback) callback(state);
                             });
                             break;
 
                     }
                     //}
+                    return true;
                 }
+                return false;
             }
         }
     }
