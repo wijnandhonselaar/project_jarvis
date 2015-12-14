@@ -79,7 +79,10 @@
 
         function removeActuator(id) {
             for(var i = 0; i < sdc.devices.length; i++) {
-                if(sdc.devices[i].id === id) {
+                var device = sdc.devices[i];
+                if(device.id === id) {
+                    delete device.config.scenarios[sdc.scenario.name];
+                    ScenarioService.updateActuator(device);
                     sdc.devices.splice(i, 1);
                 }
             }
@@ -94,6 +97,15 @@
         function select(actuator){
             $('#actuatorscenario').closeModal();
             sdc.devices.push(actuator);
+            for(var i = 0; i < sdc.devices.length; i++) {
+                if(sdc.devices[i].id === actuator.id) {
+                    sdc.devices[i].config.scenarios[sdc.scenario.name] = {
+                        command: '',
+                        parameters: []
+                    };
+                    ScenarioService.updateActuator(sdc.devices[i]);
+                }
+            }
             sdc.scenario.actuators.push({
                 deviceid: actuator.id,
                 action: {

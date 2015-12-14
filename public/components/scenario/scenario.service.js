@@ -137,19 +137,15 @@
         }
 
         function updateActuator(actuator) {
-            return new Promise(
-                function (resolve, reject) {
-                $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
-                    .success(function(data) {
-                        if(data.err) console.error(data.err);
-                        console.log('Update succesvol uitgevoerd.');
-                        resolve();
-                    })
-                    .error(function (err) {
-                        console.error(err);
-                        reject(err);
-                    });
-            });
+            $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
+                .success(function(data) {
+                    if(data.err) console.error(data.err);
+                    console.log('Update succesvol uitgevoerd.');
+                })
+                .error(function (err) {
+                    console.error(err);
+                    throw err;
+                });
         }
 
         return {

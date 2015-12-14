@@ -99,10 +99,12 @@
             for(var i = 0; i < snc.devices.length; i++) {
                 if(snc.devices[i].id === scenarioActuator.deviceid) {
                     var actuator = snc.devices[i];
+                    console.log(scenarioActuator);
                     actuator.config.scenarios[snc.scenario.name] = {
                         command: scenarioActuator.action.command,
                         parameters: scenarioActuator.action.parameters
                     };
+                    console.log(actuator.config);
                     ScenarioService.updateActuator(actuator);
                 }
             }
@@ -125,11 +127,7 @@
          * Redirect to overview page
          */
         function goToOverview() {
-            $state.go("scenarioDetail");
-            $state.transitionTo("scenarioDetail", {
-                uid: scenario.id,
-                data: scenario
-            });
+            $state.go("scenarioOverzicht");
         }
     }
 })();
