@@ -136,9 +136,6 @@
                         ScenarioService.getActuatorByID(actuator.deviceid)
                             .then(function(data) {
                                 sdc.devices.push(data);
-                                for(var i = 0; i < sdc.devices.length; i++) {
-                                    console.log(sdc.devices[i].config);
-                                }
                                 $scope.$apply();
                             })
                             .catch(function (err) {
@@ -195,7 +192,6 @@
             var action = $('#'+actuatorID + ' option:selected').data("value");
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === actuatorID) {
-                    console.log(sdc.devices[i].config);
                     sdc.devices[i].config.scenarios[sdc.scenario.name].command = action.command.name;
                     ScenarioService.updateActuator(sdc.devices[i]);
                 }
