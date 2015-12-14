@@ -83,6 +83,7 @@ describe('Scenario', function () {
         var scenario = new Scenario({
             name: 'name',
             description: 'description',
+            actuators: [{deviceid: 1, action: {command: 'on'}}]
         });
         // save the new Scenario
         Scenario.save(scenario).then(function(res) {

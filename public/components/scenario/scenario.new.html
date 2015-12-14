@@ -29,8 +29,7 @@
         </div>
         <div class="col m5">
             <select id="{{actuator.id}}" style="display: block;">
-                <option value="">Actie</option>
-                <option ng-repeat="command in actuator.model.commands"
+                <option ng-repeat="command in actuator.model.commands" ng-if="snc.isAllowedCommand(command.name)"
                         data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}
                 </option>
             </select>

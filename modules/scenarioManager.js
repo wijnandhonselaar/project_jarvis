@@ -156,6 +156,15 @@ function triggerOffCommands(scenario) {
     }
 }
 
+function getByName(name) {
+    Scenario.filter({name: name}).run().then(function (res) {
+            return res[0];
+        }).
+        catch(function (err) {
+            throw err;
+        });
+}
+
 module.exports = {
     init: function (socketio) {
         if (socketio) io = socketio;
@@ -168,5 +177,6 @@ module.exports = {
     get: get,
     getAll: getAll,
     update: update,
-    updateById: updateById
+    updateById: updateById,
+    getByName: getByName
 };

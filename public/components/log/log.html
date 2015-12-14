@@ -1,6 +1,6 @@
 <div class ="log-container">
     <div class="Logs">
-        <div class="row logentry" ng-repeat="log in lc.logs">
+        <div class="row logentry" ng-repeat="log in lc.logs | reverse">
             <div class="col m1 loglevel n{{log.severity}}">
 
             </div>
@@ -8,7 +8,7 @@
                 {{log.message}}
             </div>
             <div>
-                <span class="lognotice date">{{log.timestamp}}</span>
+                <span class="lognotice date">{{lc.convertUnix(log.timestamp)}}</span>
             </div>
         </div>
     </div>

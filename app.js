@@ -17,7 +17,7 @@ var deviceRoutes = require('./routes/deviceRoutes');
 var settingRoutes = require('./routes/settingRoutes');
 var alertRoutes = require('./routes/alertRoutes');
 var scenarioRoutes = require('./routes/scenarioRoutes');
-var ruleEngine = require('./modules/ruleEngine');
+var ruleEngine = require('./modules/ruleEngineForDeviceCommands');
 var conflictManager = require('./modules/conflictManager');
 
 server.listen(GLOBAL.port);

@@ -1,7 +1,6 @@
 (function(){
     'use strict';
 
-    angular.module('jarvis.sensor', [
-    ]);
+    angular.module('jarvis.sensor', ['chart.js']);
 
 })();

@@ -1,6 +1,6 @@
 var dgram = require('dgram');
 var broadcastAddress = "255.255.255.255";
-var message = new Buffer('{"id":0,"msg":"Lamp is klaar","key":"finish","severity":5}');
+var message = new Buffer('{"id":0,"msg":"Lamp is klaar","key":"finish","severity":1}');
 var client = dgram.createSocket("udp4");
 client.bind();
 client.on("listening", function () {

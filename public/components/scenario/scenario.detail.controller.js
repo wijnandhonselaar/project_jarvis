@@ -17,6 +17,7 @@
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
         sdc.updateActuator = updateActuator;
+        sdc.isAllowedCommand = ScenarioService.isAllowedCommand;
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
@@ -111,7 +112,8 @@
                 action: {
                     command: "on",
                     parameters: []
-                }
+                },
+                priority: 100
             });
             updateScenario();
         }
@@ -198,6 +200,7 @@
             }
             for(i = 0; i < sdc.scenario.actuators.length; i++) {
                 if(sdc.scenario.actuators[i].deviceid === actuatorID) {
+                    console.log('Found me');
                     sdc.scenario.actuators[i].command = action.command.name;
                     ScenarioService.update(sdc.scenario.id, sdc.scenario);
                 }
