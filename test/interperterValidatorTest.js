@@ -1,4 +1,4 @@
-var superAgent = require('superagent')
+var superAgent = require('superagent');
 
 /** ------------------------------------------------------------------------
  * String VALIDATOR
