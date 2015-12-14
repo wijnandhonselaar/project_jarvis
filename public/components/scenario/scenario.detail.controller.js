@@ -16,6 +16,7 @@
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
+        sdc.updateActuator = updateActuator;
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
@@ -123,6 +124,9 @@
                         ScenarioService.getActuatorByID(actuator.deviceid)
                             .then(function(data) {
                                 sdc.devices.push(data);
+                                for(var i = 0; i < sdc.devices.length; i++) {
+                                    console.log(sdc.devices[i].config);
+                                }
                                 $scope.$apply();
                             })
                             .catch(function (err) {
@@ -173,6 +177,24 @@
                     console.error(err);
                     return err;
                 });
+        }
+
+        function updateActuator(actuatorID) {
+            var action = $('#'+actuatorID + ' option:selected').data("value");
+            for(var i = 0; i < sdc.devices.length; i++) {
+                if(sdc.devices[i].id === actuatorID) {
+                    console.log(sdc.devices[i].config);
+                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = sdc.scenario.command;
+                    ScenarioService.updateActuator(sdc.devices[i]);
+                }
+            }
+            for(i = 0; i < sdc.scenario.actuators.length; i++) {
+                if(sdc.scenario.actuators[i].deviceid === actuatorID) {
+                    sdc.scenario.actuators[i].command = action.command.name;
+                    ScenarioService.update(sdc.scenario.id, sdc.scenario);
+                }
+            }
+
         }
 
         function goToOverview() {

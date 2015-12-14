@@ -56,7 +56,8 @@ var Actuator = thinky.createModel("Actuator", {
 					}
 				]
 			}
-		}
+		},
+		scenarios: []
 	}
 });
 

@@ -9,17 +9,17 @@ var scenarios = [];
 
 function create(name, description, actuators, cb) {
     var scenario = new Scenario({name: name, description: description, actuators: actuators});
-    Scenario.save(scenario).then(function (res) {
+    Scenario.save(scenario).then(function(res) {
         cb(null, res);
-    }).error(function (err) {
+    }).error(function(err){
         cb({error: "Cannot save scenario.", message: err});
     });
 }
 
 function get(id, cb) {
-    Scenario.get(id).then(function (res) {
+    Scenario.get(id).then(function(res) {
         cb(null, res);
-    }).error(function (err) {
+    }).error(function(err) {
         cb({error: "Not found.", message: err});
     });
 }
