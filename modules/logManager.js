@@ -3,7 +3,7 @@
 var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
-var thinky = require('thinky')();
+var thinky = require('../models/thinky.js');
 var r = thinky.r;
 
 /**

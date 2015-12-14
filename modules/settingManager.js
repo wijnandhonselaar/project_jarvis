@@ -1,7 +1,7 @@
 "use strict";
 
 var Settings = require('../models/settings');
-var thinky = require('thinky')();
+var thinky = require('../models/thinky.js');
 var Errors = thinky.Errors;
 
 
