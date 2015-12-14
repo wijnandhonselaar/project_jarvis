@@ -20,10 +20,12 @@ body{
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    background-color:#FAFAFA;
 }
 
 .mainwindow{
     height: 325px !important;
+    background-color:#FAFAFA;
 }
 
 .ptop_50{
@@ -52,9 +54,10 @@ body{
 }
 
 .menucontainer{
-    border-top:1px solid RGBA(149, 149, 149, 1);
+    /*border-top:1px solid RGBA(149, 149, 149, 1);*/
     height: 100vh;
     z-index: 9999;
+    background-color: white;
 }
 
 .backpanel_dark{
@@ -62,7 +65,16 @@ body{
 }
 
 .backpanel_light{
-    background-color: #F4F4F4;
+    background-color: white;
+    -webkit-box-shadow: 2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    -moz-box-shadow:    2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    box-shadow:         2px 2px 5px 0px RGBA(234, 234, 234, 1);
+}
+
+.backpanel_light.wshadow{
+    -webkit-box-shadow: -1px 0px 5px 0px #959595;
+    -moz-box-shadow:    -1px 0px 5px 0px #959595;
+    box-shadow:         -1px 0px 5px 0px #959595;
 }
 
 .menu_item{
@@ -73,8 +85,11 @@ body{
 
 .menu_item.active{
     background-color: white;
-    border-left:1px solid RGBA(149, 149, 149, 1);
-    border-right: 1px solid RGBA(149, 149, 149, 1);
+    border-left:1px solid #EDEDED;
+    /*border-right: 1px solid RGBA(149, 149, 149, 1);*/
+    -webkit-box-shadow: 2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    -moz-box-shadow:    2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    box-shadow:         2px 2px 5px 0px RGBA(234, 234, 234, 1);
 }
 
 .menu_item.active span{
