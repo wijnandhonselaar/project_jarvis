@@ -31,29 +31,41 @@
         snc.repeater = [];
         snc.devices = [];
         snc.actions = [];
+        snc.actuators = [];
 
-        function addActuator(){
-                ScenarioService.getActuators()
-                    .then(function(data){
-                        snc.actuators = data.actuators;
-                        $('#actuatorscenario').openModal();
-                        reloadSwiper();
-                    })
-                    .catch(function(err){
-                        console.error(err);
-                        return err;
-                    });
+        function addActuator() {
+            snc.actuators = [];
+            ScenarioService.getActuators()
+                .then(function (data) {
+                    for(var i = 0; i<data.actuators.length; i++){
+                        var exists = false;
+                        for(var j = 0; j<snc.devices.length; j++){
+                            if(data.actuators[i].id === snc.devices[j].id){
+                                exists = true;
+                            }
+                        }
+                        if(!exists){
+                            snc.actuators.push(data.actuators[i]);
+                        }
+                    }
+                    $('#actuatorscenario').openModal();
+                    reloadSwiper();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    return err;
+                });
         }
 
         function removeActuator(id) {
-            for(var i = 0; i < snc.devices.length; i++) {
-                if(snc.devices[i].id === id) {
+            for (var i = 0; i < snc.devices.length; i++) {
+                if (snc.devices[i].id === id) {
                     snc.devices.splice(i, 1);
                 }
             }
         }
 
-        function select(actuator){
+        function select(actuator) {
             $('#actuatorscenario').closeModal();
             snc.devices.push(actuator);
         }
@@ -113,7 +125,11 @@
          * Redirect to overview page
          */
         function goToOverview() {
-            $state.go("scenarioOverzicht");
+            $state.go("scenarioDetail");
+            $state.transitionTo("scenarioDetail", {
+                uid: scenario.id,
+                data: scenario
+            });
         }
     }
 })();
