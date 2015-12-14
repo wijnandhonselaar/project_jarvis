@@ -142,6 +142,7 @@
                 $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
                     .success(function(data) {
                         if(data.err) console.error(data.err);
+                        console.log('Update succesvol uitgevoerd.');
                         resolve();
                     })
                     .error(function (err) {

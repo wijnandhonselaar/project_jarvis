@@ -18,7 +18,8 @@ describe('Sensor', function () {
 				ip: '192.168.0.201',
 				alias: 'Temperatuur woonkamer',
 				clientRequestInterval: 3000
-			}
+			},
+			savedAt: 5449848949
 		});
 
 		// save the new sensor
@@ -57,7 +58,8 @@ describe('Sensor', function () {
 				ip: '192.168.0.201',
 				alias: 'Temperatuur woonkamer',
 				clientRequestInterval: 3000
-			}
+			},
+			savedAt: 5449848949
 		});
 
 		// save the new sensors
@@ -71,7 +73,7 @@ describe('Sensor', function () {
 		// get the sensors
 		Sensor.get(id).then(function(sensor) {
 			// check if the savedAt exists (which is done by the model)
-			expect(sensor.model.savedAt).to.exist;
+			expect(sensor.savedAt).to.exist;
 			done();
 		// something went wrong
 	}).error(console.log);

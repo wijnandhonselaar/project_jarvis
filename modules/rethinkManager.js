@@ -142,8 +142,16 @@ function updateActive(id, type, status, fn) {
     });
 }
 
-function updateActuator(id, actuator, fn) {
-
+function setStatus(id, status, cb) {
+    //console.log('status', status);
+    Sensor.get(id).run().then(function (res) {
+        //console.log('res', res);
+        res.merge({status: status}).save().then(function (result) {
+            cb(null, result);
+        });
+    }).error(function (error) {
+        cb(error);c
+    });
 }
 
 module.exports = {
@@ -153,5 +161,5 @@ module.exports = {
     updateClientRequestInterval: updateClientRequestInterval,
     updateActive: updateActive,
     getAllDevices: getAllDevices,
-    updateActuator: updateActuator
+    setStatus: setStatus
 };
