@@ -37,7 +37,8 @@
                     command: "",
                     parameters: []
                 }
-            }]
+            }],
+            status:""
         };
 
         getScenario(sdc.uid);

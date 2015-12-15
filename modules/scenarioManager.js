@@ -2,7 +2,7 @@
 
 var Scenario = require('../models/scenario');
 var ruleEngine = require('./ruleEngine');
-var deviceManager = require('./deviceManager');
+var devicemanager = require('./deviceManager');
 var comm = require('./interperter/comm');
 var io = null;
 var scenarios = [];
@@ -36,7 +36,6 @@ function get(id, cb) {
 function getAll(cb) {
     scenarios = [];
     Scenario.run().then(function (res) {
-        console.log(scenarios);
           scenarios = res;
         cb(null, scenarios);
     }).error(function (err) {
@@ -79,18 +78,19 @@ function update(scenario, cb) {
 function toggleState(scenarioString, cb) {
     var scenario = JSON.parse(scenarioString);
     for (var i = 0; i < scenarios.length; i++) {
-        if (scenario.id == scenarios[i].id) {
+        if (scenario.id === scenarios[i].id) {
             if (scenarios[i].status === false) {
                 scenarios[i].status = true;
-                triggerOnCommands(scenarios[i]);
                 cb(null, scenarios[i]);
             }
             else {
                 scenarios[i].status = false;
-                triggerOffCommands(scenarios[i]);
                 cb(null, scenarios[i]);
             }
-
+            updateById(scenarios[i].id, scenarios[i],function(err, data){
+                if(err) {console.error(err); throw err;}
+                console.log(data);
+            });
         }
     }
 }
@@ -100,37 +100,38 @@ function validateRules(event) {
         ruleEngine.apply(scenarios[i], event);
     }
 }
-
-function triggerOnCommands(scenario) {
-    var currentDevice;
-    for (var i = 0; i < scenario.scenario.actuators.length; i++) {
-        currentDevice = deviceManager.getActuator(scenario.scenario.actuators[i].deviceid);
-        comm.post(scenario.scenario.actuators[i].action.command, currentDevice, [], function (data) {
-            currentDevice.status = data;
-            io.emit("deviceUpdated", currentDevice);
-        });
-    }
-}
-
-function triggerOffCommands(scenario) {
-    var currentDevice;
-    var command;
-    console.log(scenario);
-    for (var i = 0; i < scenario.scenario.actuators.length; i++) {
-        currentDevice = deviceManager.getActuator(scenario.scenario.actuators[i].deviceid);
-        if (scenario.scenario.actuators[i].action.command === 'on') {
-            console.log(scenario.scenario.actuators[i].action.command);
-            command = 'off';
-        }
-        else {
-            command = 'on';
-        }
-        comm.post(command, currentDevice, [], function (data) {
-            currentDevice.status = data;
-            io.emit("deviceUpdated", currentDevice);
-        });
-    }
-}
+//
+//function triggerOnCommands(scenario) {
+//    console.log(scenario);
+//    var currentDevice;
+//
+//    for (var i = 0; i < scenario.actuators.length; i++) {
+//        currentDevice = devicemanager.getActuator(scenario.actuators[i].id);
+//        comm.post(scenario.actuators[i].action.command, currentDevice, [], function (data) {
+//            currentDevice.status = data;
+//            io.emit("deviceUpdated", currentDevice);
+//        });
+//    }
+//}
+//
+//function triggerOffCommands(scenario) {
+//    var currentDevice;
+//    var command;
+//    for (var i = 0; i < scenario.actuators.length; i++) {
+//        currentDevice = devicemanager.getActuator(scenario.actuators[i].deviceid);
+//        if (scenario.actuators[i].action.command === 'on') {
+//            console.log(scenario.actuators[i].action.command);
+//            command = 'off';
+//        }
+//        else {
+//            command = 'on';
+//        }
+//        comm.post(command, currentDevice, [], function (data) {
+//            currentDevice.status = data;
+//            io.emit("deviceUpdated", currentDevice);
+//        });
+//    }
+//}
 
 function getByName(name) {
     Scenario.filter({name: name}).run().then(function (res) {
