@@ -17,6 +17,7 @@
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
         sdc.updateActuator = updateActuator;
+        sdc.selectedAction = selectedAction;
         sdc.isAllowedCommand = ScenarioService.isAllowedCommand;
         sdc.devices = [];
         sdc.repeater = [];
@@ -191,23 +192,32 @@
                 });
         }
 
-        function updateActuator(actuatorID) {
-
-            var action = $('#'+actuatorID + ' option:selected').data("value");
+        function updateActuator(command, id) {
+            //var action = $('#'+actuatorID + ' option:selected').data("value");
+            //console.log(action);
             for(var i = 0; i < sdc.devices.length; i++) {
-                if(sdc.devices[i].id === actuatorID) {
-                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = action.command.name;
+                if(sdc.devices[i].id == id) {
+                    console.log("Found device in devicemanager");
+                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = command.name;
                     ScenarioService.updateActuator(sdc.devices[i]);
                 }
             }
             for(i = 0; i < sdc.scenario.actuators.length; i++) {
-                if(sdc.scenario.actuators[i].deviceid === actuatorID) {
-                    console.log('Found me');
-                    sdc.scenario.actuators[i].command = action.command.name;
+                if(sdc.scenario.actuators[i].deviceid == id) {
+                    console.log("Found device in Scenario");
+                    sdc.scenario.actuators[i].command = command.name;
                     ScenarioService.update(sdc.scenario.id, sdc.scenario);
                 }
             }
 
+        }
+
+        function selectedAction(command, actuator) {
+            for(var i = 0; i < actuator.model.commands.length; i++) {
+                if(actuator.model.commands[i].name == command.name) {
+                    return command;
+                }
+            }
         }
 
         function goToOverview() {

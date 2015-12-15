@@ -288,20 +288,24 @@ function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
-            console.log(actuator.config);
             devices.actuators[i] = actuator;
-            console.log(devices.actuators[i].config);
+            console.log('Before get');
             Actuator.get(id)
                 .then(function (persisted) {
-                    persisted = actuator;
+                    persisted.merge(actuator);
+                    console.log("merged");
+                    console.log(persisted);
+                    console.log('Before save');
                     persisted.save()
                         .then(function (res) {
                             cb(null, res);
                         })
                         .catch(function (err) {
+                            console.log('Error bij opslaan');
                             cb({error: err, message: 'Could not update actuator.'});
                         });
                 }).catch(function (err) {
+                console.log('Error bij ophalen met id: ' + id);
                 cb({error: err, message: 'Could not update actuator.'});
             });
         }
