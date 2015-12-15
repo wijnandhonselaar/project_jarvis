@@ -290,7 +290,7 @@ function updateActuator(id, actuator, cb) {
         if (devices.actuators[i].id == id) {
             devices.actuators[i] = actuator;
             console.log('Before get');
-            Actuator.get(id)
+            Actuator.get(parseInt(id))
                 .then(function (persisted) {
                     persisted.merge(actuator);
                     console.log("merged");

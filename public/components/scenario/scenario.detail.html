@@ -25,7 +25,7 @@
 <div style="overflow-y: scroll; height: 200px; width:100%;">
     <div class="row"
          style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
-         ng-repeat="actuator in sdc.devices">
+         ng-repeat="actuator in sdc.devices track by $index">
         <div class="col m3">
             <span class="col m3">{{actuator.config.alias}}</span>
         </div>
@@ -36,6 +36,7 @@
                     ng-init="selected = sdc.selectedAction(selected, actuator)"
                     ng-change="sdc.updateActuator(selected, actuator.id)"
                     id="{{actuator.id}}"
+                    value="sdc.scenario.actuators[$index].command"
                     style="display: block;">
                 <!--<option value="{{command.name}}">-->
                     <!--{{command.name}}-->
