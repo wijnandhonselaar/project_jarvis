@@ -9,36 +9,47 @@
 
 <body class="white">
 
-    <div id="event" class="severity1">
-        <img class="invert" id="eventImage" style="width:160px; margin-top:-25px;" src=""><br>
-        <span id="eventMessage" style="font-size:45px;"></span><br>
-    </div>
-
     <header>
         <div ui-view="headerView"></div>
     </header>
 
-    <!--<div class="container">-->
-        <div class="row ptop_50">
-            <div class="col m9 nopad">
-                <div class="row">
-                    <div class="col m12 mainwindow">
-                        <div ui-view="mainView"></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m12 backpanel_light menucontainer">
-                        <div ui-view="menuView"></div>
-                    </div>
+    <div class="row ptop_50">
+        <div class="col m9 nopad" id="paneleft" style="background-color:#FAFAFA;">
+            <div class="row">
+                <div class="col m12 mainwindow">
+                    <div ui-view="mainView"></div>
                 </div>
             </div>
-            <div class="col m3 backpanel_dark logwindow nopad">
-                <div ui-view="logView"></div>
+            <div class="row">
+                <div class="col m12 backpanel_light menucontainer">
+                    <div ui-view="menuView"></div>
+                </div>
             </div>
         </div>
-    <!--</div>-->
+        <div class=" col m3 backpanel_light wshadow logwindow nopad">
+            <div ui-view="logView"></div>
+        </div>
+    </div>
+
+    <div id="conflictmodal" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <p>Oeps! er is een conflict gevonden. Welk scenario wil je dat ik uitvoer?</p>
+            <div class="row">
+                <div class="col m6">
+                    <div class="card touch" style="padding:10px; text-align:center;">
+                        Ik wil deze uitvoeren #1
+                    </div>
+                </div>
+                <div class="col m6">
+                    <div class="card touch" style="padding:10px; text-align:center;">
+                        Maar ik conflicteer met deze
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="//localhost:5050/livereload.js"></script>
 </body>
-
 </html>

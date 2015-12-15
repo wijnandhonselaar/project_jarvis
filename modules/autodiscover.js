@@ -30,7 +30,6 @@ module.exports = {
     init: function (svr, socket) {
         io = socket;
         server = svr;
-        deviceManager.init(io);
         listenForUDPPackets(function (msg, remote) {
             if("id" in msg && "msg" in msg && "key" in msg && "severity" in msg){
                 deviceManager.broadcastEvent(msg);
@@ -40,6 +39,7 @@ module.exports = {
                         .get('http://' + remote.address + '/sok')
                         .end(function (err, res) {
                             var msg = JSON.parse(res.text);
+                            if(GLOBAL.logToConsole) console.log(msg.name + 'found');
                             deviceManager.add(msg, remote);
                             httpPending[remote.address] = false;
                         });

@@ -3,8 +3,8 @@ var type = thinky.type;
 
 var Sensor = thinky.createModel("Sensor", {
     id: type.number().required(),
+    savedAt: type.number().required(), // unix timestamp
     model: {
-        savedAt: type.number().default(Math.round((new Date()).getTime() / 1000)), // unix timestamp
         name: type.string(),
         sokVersion: type.number().required(),
         description: type.string(),
@@ -24,6 +24,9 @@ var Sensor = thinky.createModel("Sensor", {
         alias: type.string(),
         clientRequestInterval: type.number().default(5000),
         active: type.boolean().default(true)
+    },
+    status: {
+
     }
 });
 

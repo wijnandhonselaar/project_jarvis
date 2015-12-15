@@ -78,9 +78,13 @@ function validateCommand(command, device, paramList, callback) {
 
     for (var param in device.model.commands[command].parameters) {
         if (device.model.commands[command].parameters.hasOwnProperty(param)) {
+
             validatedParams[param] = {};
+
             validatedParams[param].validated = true;
+
             var paramObj = device.model.commands[command].parameters[param];
+
             var accepts = paramObj.accepts;
 
             if (param in paramList) {
@@ -92,7 +96,7 @@ function validateCommand(command, device, paramList, callback) {
 
                 for (var i = 0; i < accepts.length; i++) {
                     var acceptObj = accepts[i];
-                    if (paramObj.list.length > 0) {
+                    if (paramObj.list && paramObj.list.length > 0) {
                         validatedParams[param] = validators.inList(value, paramObj.list);
                     } else {
                         for (var b = 0; b < acceptObj.limit.length; b++) {

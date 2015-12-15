@@ -1,0 +1,84 @@
+<div class="col m12">
+    <div class="row detaildescrip" style="margin-top:8px;">
+        <div class="col m10">
+            <label class="col m3" style="margin-top: 10px" for="name">Naam</label>
+            <input class="col m9" type="text" edit-dir="" id="name" placeholder="Druk hier om de naam aan te passen"
+                   ng-model="snc.scenario.name"/>
+        </div>
+        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 13px;" ng-click="snc.create()">Opslaan</div>
+        </div>
+        <div class="col m10">
+            <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
+            <input class="col m9" type="text" edit-dir="" id="description"
+                   placeholder="Druk hier om de omschrijving aan te passen"
+                   ng-model="snc.scenario.description"/>
+        </div>
+        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+            <div style="text-align: center; margin-top: 3px;" ng-click="snc.addActuator()">Actuator toevoegen</div>
+        </div>
+    </div>
+</div>
+
+<div style="overflow-y: scroll; height: 200px; width:100%;">
+    <div class="row"
+         style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
+         ng-repeat="actuator in snc.devices">
+        <div class="col m3">
+            <span class="col m3">{{actuator.config.alias}}</span>
+        </div>
+        <div class="col m5">
+            <select id="{{actuator.id}}" style="display: block;">
+                <option ng-repeat="command in actuator.model.commands" ng-if="snc.isAllowedCommand(command.name)"
+                        data-value="{{ {deviceid: actuator.id, command: command} }}">{{command.name}}
+                </option>
+            </select>
+        </div>
+        <div class="customCard col m4 offset-m1" style="padding:1px; background-color:#A13A2D" ng-click="snc.removeActuator(actuator.id)">
+            <div style="text-align: center; margin-top: 3px;" >Verwijder</div>
+        </div>
+    </div>
+</div>
+
+<div id="actuatorscenario" class="modal" style="margin-top:-25px;">
+    <div class="modal-content">
+        <h4 id="commandTitle">Apparaat toevoegen</h4>
+
+        <div class="modalWrapper">
+            <div class="actuator">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" ng-repeat="repeat in snc.repeater">
+                            <div class="col m6 repeater"
+                                 ng-if="$index >= ($parent.$index * 6) && $index < (($parent.$index+1) * 6)"
+                                 ng-repeat="actuator in snc.actuators">
+                                <div class="row" style="margin-bottom:10px">
+                                    <div class="col m4">
+                                        <div class="customCard onoff text-center">
+                                            <div style="background-image:url({{actuator.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col m8" ng-click="snc.select(actuator)"
+                                         style="margin-left:-8px; margin-top:0px;">
+                                        <div class="customCard" style="padding:1px;">
+                                            <div class="detailcontainer">
+                                                {{actuator.config.alias}}<br>
+                                                <span class="description">{{actuator.model.description.substring(0, 25)}}...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="left:285px; width: 12%; position: absolute; bottom:30px;">
+                    <div class="swiper-pagination">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

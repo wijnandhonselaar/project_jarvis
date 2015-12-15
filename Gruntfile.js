@@ -39,7 +39,10 @@ module.exports = function(grunt) {
                     'public/bower_components/socket.io-client/socket.io.js',
                     'public/bower_components/keyboard/dist/js/jquery.keyboard.min.js',
                     'public/bower_components/swiper/dist/js/swiper.jquery.min.js',
-
+                    'public/bower_components/Chart.js/Chart.js',
+                    'public/bower_components/angular-chart.js/dist/angular-chart.js',
+                    'public/bower_components/jquery-timepicker-jt/jquery.timepicker.js',
+                    
                     'tmp/templates.js',
 
                     'public/components/**/*module.js',
@@ -59,6 +62,8 @@ module.exports = function(grunt) {
                     'public/bower_components/keyboard/dist/css/keyboard-dark.min.css',
                     'public/bower_components/swiper/dist/css/swiper.min.css',
                     'public/bower_components/angularjs-slider/dist/rzslider.min.css',
+                    'public//angular-chart.js/dist/angular-chart.css',
+                    'public/bower_components/jquery-timepicker-jt/jquery.timepicker.css',
                     'public/css/app.css'
                 ],
                 dest: 'public/css/dist.css'
