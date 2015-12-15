@@ -33,7 +33,7 @@ function updateManagers(event) {
     for (var i = 0; i < getActuators().length; i++) {
         ruleEngine.apply(getActuators()[i], event);
     }
-    //scenarioManager.validate(event);
+    scenarioManager.validate(event);
 }
 
 function addDevice(device, remote, deviceType) {
@@ -285,6 +285,7 @@ function setRules(object) {
 }
 
 function updateActuator(id, actuator, cb) {
+    id = parseInt(id);
     console.log('Update actuator');
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {

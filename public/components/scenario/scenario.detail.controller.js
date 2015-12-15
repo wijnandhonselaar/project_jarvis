@@ -21,6 +21,7 @@
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
+        sdc.GoToDetail = GoToDetail;
         var swiper = null;
 
         /**
@@ -41,6 +42,14 @@
         };
 
         getScenario(sdc.uid);
+
+        function GoToDetail(scenario){
+            $state.go("ruleEngineScenarios");
+            $state.transitionTo("ruleEngineScenarios", {
+                uid: scenario.id,
+                data: scenario
+            });
+        }
 
         function addActuator(){
             sdc.actuators = [];

@@ -76,7 +76,8 @@
         function create () {
             snc.devices.forEach(function(device) {
                 var action = $('#'+device.id + ' option:selected').data("value");
-                snc.scenario.actuators.push({deviceid: action.deviceid, action: {command: action.command.name, parameters: []}, priority: 100});
+                console.log(action);
+                snc.scenario.actuators.push({deviceid: action.deviceid, action: {command: action.command, parameters: []}, priority: 100});
             });
             ScenarioService.create(snc.scenario.name, snc.scenario.description, snc.scenario.actuators)
                 .then(function(data) {

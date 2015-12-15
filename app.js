@@ -15,9 +15,8 @@ var logManager = require('./modules/logManager');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
 var settingRoutes = require('./routes/settingRoutes');
-var alertRoutes = require('./routes/alertRoutes');
 var scenarioRoutes = require('./routes/scenarioRoutes');
-var ruleEngine = require('./modules/ruleEngineForDeviceCommands');
+var ruleEngine = require('./modules/ruleEngine');
 var conflictManager = require('./modules/conflictManager');
 
 server.listen(GLOBAL.port);
@@ -27,7 +26,7 @@ conflictManager.init(io);
 autoDiscover.init(server, io);
 logManager.init(io);
 deviceManager.init(io, ruleEngine);
-ruleEngine.init(deviceManager);
+ruleEngine.init(deviceManager, scenarioManager);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

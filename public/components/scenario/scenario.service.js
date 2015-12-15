@@ -139,7 +139,7 @@
         function updateActuator(actuator) {
             $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
                 .success(function(data) {
-                    if(data.err) console.error(data.err);
+                    if(data.error) console.error(data.error);
                 })
                 .error(function (err) {
                     console.error(err);
@@ -148,10 +148,7 @@
         }
 
         function isAllowedCommand(commandname) {
-            return (commandname.toLowerCase() === 'on' ||
-            commandname.toLowerCase() === 'off' ||
-            commandname.toLowerCase() === 'open' ||
-            commandname.toLowerCase() === 'close');
+            return (commandname.toLowerCase() === 'on' || commandname.toLowerCase() === 'off');
 
         }
 
