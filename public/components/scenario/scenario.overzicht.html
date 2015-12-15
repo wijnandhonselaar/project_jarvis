@@ -10,7 +10,7 @@
     <div class="swiper-wrapper">
         <div class="swiper-slide" ng-repeat="repeat in scena.repeater">
             <div class="col m6 repeater" ng-if="$index >= ($parent.$index * 8) && $index < (($parent.$index+1) * 8)"
-                 ng-repeat="scenario in scena.scenarios">
+                 ng-repeat="scenario in scena.scenarios track by $index">
                 <div class="row" style="margin-bottom:10px">
                     <div class="col m4">
                         <div ng-click="scena.toggleState(scenario)" class="customCard onoff text-center">
