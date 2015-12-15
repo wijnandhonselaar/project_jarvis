@@ -6,21 +6,21 @@ var deviceManager = require('./deviceManager');
 var comm = require('./interperter/comm');
 var io = null;
 var scenarios = [];
-//scenario: {},
-//status: false
-//priority: 100
-//rules: {}
+
 
 
 function create(name, description, actuators, cb) {
-    var scenario = new Scenario({name: name, description: description, actuators: actuators});
+    var scenario = new Scenario(
+        {
+        name: name,
+        description: description,
+        actuators: actuators,
+        status: false
+    });
     Scenario.save(scenario).then(function (res) {
-        scenarios.push({
-            scenario: scenario,
-            status: false
-        });
         cb(null, res);
     }).error(function (err) {
+        console.log(err);
         cb({error: "Cannot save scenario.", message: err});
     });
 }
@@ -34,23 +34,10 @@ function get(id, cb) {
 }
 
 function getAll(cb) {
-    var count;
+    scenarios = [];
     Scenario.run().then(function (res) {
-            for (var i = 0; i < res.length; i++) {
-                count = 0;
-                for (var j = 0; j < scenarios.length; j++) {
-                    if (scenarios[j].scenario.id === res[i]) {
-
-                    }
-                    else {
-                        count++;
-                    }
-                    if (count === scenarios.length - 1) {
-                        scenarios.push({scenario: res[i], status: false})
-                    }
-                }
-            }
-
+        console.log(scenarios);
+          scenarios = res;
         cb(null, scenarios);
     }).error(function (err) {
         cb({error: "Not found.", message: err});
@@ -72,7 +59,6 @@ function updateById(id, scenario, cb) {
     });
 }
 
-//TODO error tijdens uitvoeren, crasht niet maar werkt wel, geen idee, promise error.
 function deleteById(id, cb) {
     Scenario.get(id).delete().run(function (res) {
         cb(null, res);
@@ -81,16 +67,6 @@ function deleteById(id, cb) {
     });
 }
 
-function deleteFromScenarios(id, cb) {
-    Scenario.get(id).then(function (res) {
-        for (var i = 0; i < scenarios.length; i++) {
-            if (res.id === scenarios[i].scenario.id) {
-                scenarios.splice(i, 1);
-                cb(null, res);
-            }
-        }
-    });
-}
 
 function update(scenario, cb) {
     scenario.save().then(function (res) {
@@ -103,7 +79,7 @@ function update(scenario, cb) {
 function toggleState(scenarioString, cb) {
     var scenario = JSON.parse(scenarioString);
     for (var i = 0; i < scenarios.length; i++) {
-        if (scenario.id == scenarios[i].scenario.id) {
+        if (scenario.id == scenarios[i].id) {
             if (scenarios[i].status === false) {
                 scenarios[i].status = true;
                 triggerOnCommands(scenarios[i]);
@@ -169,7 +145,6 @@ module.exports = {
     init: function (socketio) {
         if (socketio) io = socketio;
     },
-    deleteFromScenarios: deleteFromScenarios,
     validate: validateRules,
     toggleState: toggleState,
     deleteById: deleteById,

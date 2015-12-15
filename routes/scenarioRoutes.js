@@ -41,13 +41,9 @@ module.exports = (function() {
     });
 
     route.delete('/:id', function(req,res){
-        scenarioManager.deleteFromScenarios(req.params.id, function(err, result){
-            if(err) throw err;
             scenarioManager.deleteById(req.params.id, function(err, result){
-
                 if(err) throw err;
                 res.send(result);
-            });
         });
     });
 

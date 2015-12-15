@@ -31,7 +31,7 @@ function logEvent(device, type, category, message, severity, cb) {
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
-        console.log("hier");
+
         if (typeof cb === "function") {
             cb(null, res);
         }
@@ -39,7 +39,7 @@ function logEvent(device, type, category, message, severity, cb) {
         if (typeof cb === "function") {
             cb(err);
         }
-        console.log(err);
+        console.error(err);
         logEvent(device, type, category, err, 2);
     });
 }
@@ -61,7 +61,6 @@ function logData(device, cb) {
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
-        console.log(log);
         io.emit('dataLogAdded', log);
         if (typeof cb === "function") {
             cb(null, res);
