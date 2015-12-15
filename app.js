@@ -10,6 +10,7 @@ var io = require('socket.io')(server);
 var deviceManager = require('./modules/deviceManager');
 var bodyParser = require('body-parser');
 var autoDiscover = require('./modules/autodiscover');
+var scenarioManager = require('./modules/scenarioManager');
 var logManager = require('./modules/logManager');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
@@ -20,6 +21,8 @@ var ruleEngine = require('./modules/ruleEngineForDeviceCommands');
 var conflictManager = require('./modules/conflictManager');
 
 server.listen(GLOBAL.port);
+
+scenarioManager.init(io);
 conflictManager.init(io);
 autoDiscover.init(server, io);
 logManager.init(io);

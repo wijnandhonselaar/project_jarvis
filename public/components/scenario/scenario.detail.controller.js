@@ -36,7 +36,8 @@
                     command: "",
                     parameters: []
                 }
-            }]
+            }],
+            status:""
         };
 
         getScenario(sdc.uid);
@@ -191,6 +192,7 @@
         }
 
         function updateActuator(actuatorID) {
+
             var action = $('#'+actuatorID + ' option:selected').data("value");
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === actuatorID) {
@@ -200,6 +202,7 @@
             }
             for(i = 0; i < sdc.scenario.actuators.length; i++) {
                 if(sdc.scenario.actuators[i].deviceid === actuatorID) {
+                    console.log('Found me');
                     sdc.scenario.actuators[i].command = action.command.name;
                     ScenarioService.update(sdc.scenario.id, sdc.scenario);
                 }
