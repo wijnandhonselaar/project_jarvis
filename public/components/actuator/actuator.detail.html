@@ -1,5 +1,6 @@
 <div class="row" style="margin-top:15px;">
     <div class="col m2">
+
         <div ng-click="adc.toggleState(adc.actuator)" class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
             <div class="status" ng-class="adc.actuator.status.state ? 'green' : 'red'"></div>
             <div style="background-image:url({{adc.actuator.model.image}}); margin:0 auto; width: 50px; height:55px; background-size:cover;"></div>
@@ -9,7 +10,6 @@
         <div ng-click="adc.GoToDetail(adc.actuator)" class="card text-center touch waves-light" style="padding:5px; margin-top:-12px;">
             <img src="images/icon_condition.png" width="25px;">
         </div>
-
     </div>
     <div class="col m10">
         <div class="row detaildescrip" style="margin-top:8px;">

@@ -180,42 +180,6 @@ function getActuatorById(id) {
     return {err: "Error, could not find actuator with id: " + id + "."};
 }
 
-/**
- *
- * @param devicetype
- * @param id
- * @param status
- * @returns {*}
- */
-function updateDeviceStatus(devicetype, id, status) {
-    devicetype = parseDeviceType(devicetype);
-    for (var i = 0; i < devices[devicetype].length; i++) {
-        if (devices[devicetype][i].id === id) {
-            devices[devicetype][i].config.status = status;
-            return {Success: "Success, status for " + devices[devicetype][i].id + " was successfully updated."};
-        }
-    }
-    return {err: "Error, could not find " + devicetype + " with id: " + id + " to update status."};
-}
-
-function parseDeviceType(devicetype) {
-    switch (devicetype) {
-        case 'actuator':
-            return 'actuators';
-            break;
-        case 'sensor':
-            return 'sensors';
-            break;
-    }
-}
-
-/**
- *
- * @param devicetype
- * @param id
- * @param alias
- * @returns {*}
- */
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
     for (var i = 0; i < devices[devicetype].length; i++) {
@@ -278,11 +242,12 @@ function initiateStatusPolling(sensor) {
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
     if (sensor.status !== obj.status) {
+
         updateManagers();
         sensor.status = obj.status;
         logger.logData(sensor);
         io.emit("deviceUpdated", sensor);
-        rethinkManager.setStatus(obj.id, obj.status, function (err, res) {
+        rethinkManager.setStatus(obj.id, 'sensor', obj.status, function (err, res) {
             if (err) {
                 console.log('set status to database error:', err);
             }
@@ -294,6 +259,11 @@ function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
     actuator.status = state;
     io.emit("deviceUpdated", actuator);
+    rethinkManager.setStatus(id, 'actuator', state, function(err, res){
+        if(err) {
+            console.log('set status to database error:', err);
+        }
+    });
 }
 
 
@@ -402,7 +372,6 @@ module.exports = {
     },
     getActuators: getActuators,
     updateDeviceAlias: updateDeviceAliasFunction,
-    updateDeviceStatus: updateDeviceStatus,
     updateSensorInterval: updateSensorIntervalFunction,
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,

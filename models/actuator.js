@@ -56,9 +56,12 @@ var Actuator = thinky.createModel("Actuator", {
 					}
 				]
 			}
-		},
-		scenarios: type.object()
-	}
+		}
+	},
+	status: {
+
+	},
+	scenarios: type.object()
 });
 
 module.exports = Actuator;
