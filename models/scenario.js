@@ -12,9 +12,11 @@ var Scenario = thinky.createModel("Scenario", {
                 parameters: [
                     type.object()
                 ]
-            }).required()
+            }).required(),
+            priority: type.number()
         }
-    ]
+    ],
+    status: type.boolean().required()
 });
 
 module.exports = Scenario;

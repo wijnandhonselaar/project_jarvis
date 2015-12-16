@@ -18,6 +18,7 @@
         'jarvis.dashboard',
         'jarvis.scenario',
         'jarvis.settings',
-        'jarvis.ruleEngine'
+        'jarvis.ruleEngine',
+        'jarvis.ruleEngineScenarios'
     ]);
 }());

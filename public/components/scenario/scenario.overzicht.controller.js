@@ -5,30 +5,48 @@
         .module('jarvis.scenario')
         .controller('ScenarioOverzichtctrl', ScenarioOverzichtctrl);
 
-    ScenarioOverzichtctrl.$inject = ["$http", "$state","$stateParams", "$scope"];
+    ScenarioOverzichtctrl.$inject = ["DevicesService","ScenarioService", "$state","$timeout","$stateParams", "$scope"];
 
-    function ScenarioOverzichtctrl($http, $state, $sp, $scope) {
+    function ScenarioOverzichtctrl(DS, ScenarioService, $state, $timeout, $sp, $scope) {
         var scena = this;
+        var swiper = null;
+        scena.repeater = [];
         getScenarios();
         scena.getScenarios = getScenarios;
         scena.goToDetail = goToDetail;
         scena.toggleState = toggleState;
         scena.goToNew = goToNew;
 
-        function getScenarios(){
-            $http.get("/scenario")
-                .success(function (data) {
+        function reloadSwiper() {
+            var amount = Math.ceil( scena.scenarios.length / 8 );
+            scena.repeater = [];
+            for(var i = 0; i < amount; i++) {
+                scena.repeater.push(i);
+            }
+            $scope.$apply();
+            swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true
+            });
+        }
+
+        function getScenarios() {
+            ScenarioService.getall()
+                .then(function(data){
+                    console.log(data);
                     scena.scenarios = data.scenarios;
+                    reloadSwiper();
                     return data;
                 })
-                .error(function (err) {
-                    console.log("Error get scenario's", err);
+                .catch(function(err){
+                    console.error("Error get scenario's", err);
                     return err;
                 });
         }
+
         function goToDetail(scenario) {
             $state.go("scenarioDetail");
-            $state.transitionTo("actuatorDetail", {
+            $state.transitionTo("scenarioDetail", {
                 uid: scenario.id,
                 data: scenario
             });
@@ -36,8 +54,23 @@
         function goToNew(){
             $state.go("scenarioNew");
         }
-        function toggleState(){
 
+        function toggleState(scenario){
+            ScenarioService.toggleState(scenario)
+                .then(function(data){
+                    for(var i = 0; i<scena.scenarios.length; i++){
+                        if(data.id === scena.scenarios[i].id){
+                            scena.scenarios[i].status = data.status;
+                            $scope.$apply();
+                            Materialize.toast("toggle state", 4000);
+                        }
+                    }
+                    return data;
+                })
+                .catch(function(err){
+                    console.error("error", err);
+                    return err;
+                });
         }
 
     }

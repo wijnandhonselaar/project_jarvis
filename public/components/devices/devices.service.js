@@ -16,30 +16,102 @@
         var onDeviceAdd = null;
         var onDeviceUpdate = null;
 
-        socket.socketListener("deviceAdded", function(data){
+        socket.socketListener("deviceAdded", function (data) {
             devices[data.model.type].push(data);
             $rs.$apply();
-            if(onDeviceAdd){
+            if (onDeviceAdd) {
                 onDeviceAdd(data);
             }
         });
 
+<<<<<<< HEAD
         socket.socketListener("deviceUpdated", function(data){
             console.log(data);
             devices[data.model.type].forEach(function(device){
                 if(device.id == data.id) {
+=======
+        socket.socketListener("deviceUpdated", function (data) {
+            devices[data.model.type].forEach(function (device) {
+                if (device.id == data.id) {
+>>>>>>> development
                     var index = devices[data.model.type].indexOf(device);
                     devices[data.model.type][index] = data;
                 }
             });
             $rs.$apply();
-            if(onDeviceUpdate) {
+            if (onDeviceUpdate) {
                 onDeviceUpdate(data);
             }
         });
 
-        function updateRules(id, obj){
-            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules:obj})
+
+        var currentlyResolving = {status: false, device: null, data: null};
+        var resolveQueue = [];
+        var resolve2 = $('#resolve2');
+        var resolve1 = $('#resolve1');
+        socket.socketListener("resolveConflict", function (data) {
+            if(resolveQueue.indexOf(data) === -1){
+                resolveQueue.push(data);
+            }
+            checkQueue();
+        });
+
+        function checkQueue() {
+            if (resolveQueue.length !== 0) {
+                currentlyResolving.data = resolveQueue[0];
+                triggerResolve();
+            }
+        }
+
+        function triggerResolve() {
+            if (!currentlyResolving.status) {
+                var conflictPopUp = $('#conflictmodal');
+                conflictPopUp.openModal();
+                resolve1.html('Scenario: ' + currentlyResolving.data.executed.scenario + '<br>' + currentlyResolving.data.executed.device.config.alias + ': ' + currentlyResolving.data.executed.command);
+                resolve1.data('scenario', currentlyResolving.data.executed.scenario);
+                resolve2.html('Scenario: ' + currentlyResolving.data.conflicting.scenario + '<br>' + currentlyResolving.data.conflicting.device.config.alias + ': ' + currentlyResolving.data.conflicting.command);
+                resolve2.data('scenario', currentlyResolving.data.conflicting.scenario);
+                currentlyResolving.status = true;
+                currentlyResolving.device = currentlyResolving.data.executed.device;
+            }
+        }
+
+        resolve1.click(function () {
+            resolveConflict($(this).data('scenario'), resolve2.data('scenario'));
+        });
+
+        resolve2.click(function () {
+            resolveConflict($(this).data('scenario'), resolve1.data('scenario'));
+        });
+
+        function resolveConflict(winningScenario, losingScenario) {
+
+            var object = {
+                winner: winningScenario,
+                loser: losingScenario,
+                device: currentlyResolving.device
+            };
+
+            $http.post('http://localhost:3221/devices/' + object.device.model.type + '/' + object.device.id + '/resolveconflict', object).
+                success(function (data) {
+                    console.log('CONFLICT', 'resolved');
+                    currentlyResolving.status = false;
+                    resolveQueue.splice(0, 1);
+                    $('#conflictmodal').closeModal();
+                    checkQueue();
+                })
+                .error(function (err) {
+                    console.log('CONFLICT', 'error while resolving');
+                    currentlyResolving.status = false;
+                    resolveQueue.splice(0, 1);
+                    $('#conflictmodal').closeModal();
+                    checkQueue();
+                });
+        }
+
+
+        function updateRules(id, obj) {
+            $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules: obj})
                 .success(function (data) {
                     console.log("succesfully saved");
                 })
@@ -51,7 +123,7 @@
 
         // Buildevent en de socketlistener moeten naar logservice
         function buildEvent(severity, imgsrc, msg) {
-            if(severity == 1) {
+            if (severity == 1) {
                 var eventEl = document.createElement("div");
                 eventEl.className = "event severity" + severity;
 
@@ -76,6 +148,7 @@
                 var $eventEl = $(eventEl);
                 $eventEl.fadeIn(800);
 
+
                 eventEl.addEventListener("click", remove);
             }
 
@@ -86,7 +159,8 @@
                 }, 800);
             }
         }
-        socket.socketListener('deviceEvent', function(data){
+
+        socket.socketListener('deviceEvent', function (data) {
             buildEvent(data.event.severity, data.device.model.image, data.event.msg);
         });
         // Tot hierzo.
@@ -191,7 +265,7 @@
             return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey, { })
+                        $http.post('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey, {})
 
                             .success(function (data) {
                                 console.log("succesfull send");
@@ -203,7 +277,7 @@
                                 reject(new Error("Command failed "));
                             });
                     } else if (command.httpMethod === "GET") {
-                        $http.get('http://localhost:3221/devices/'+type+'/' + id + '/commands/' + commandkey)
+                        $http.get('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey)
                             .success(function (data) {
                                 console.log("succesfull send");
                                 resolve(data);
@@ -219,15 +293,15 @@
 
         function updateDevice(type, uid, field, value) {
             return new Promise(
-                function(resolve, reject) {
+                function (resolve, reject) {
                     var data = {};
                     data[field] = value;
                     $http.put("/devices/" + type + "/" + uid + "/" + field, data)
-                        .success(function(data){
-                            if(data.err) return reject(new Error(data.err));
+                        .success(function (data) {
+                            if (data.err) return reject(new Error(data.err));
                             resolve();
                         })
-                        .error(function(err) {
+                        .error(function (err) {
                             console.error(err);
                             reject(err);
                         });

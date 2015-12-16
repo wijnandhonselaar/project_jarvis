@@ -4,7 +4,6 @@ var superAgent = require('superagent');
 var logger = require('../logManager');
 
 var postMethod = function(command, deviceObject, paramList, callback){
-    console.log("PARAMLISTERT: \n", paramList);
     validator.validate(command, deviceObject, paramList, function(data){
         var everythingIsValidated = true;
         for (var property in data) {
@@ -14,13 +13,13 @@ var postMethod = function(command, deviceObject, paramList, callback){
         }
         if(everythingIsValidated) {
             paramList.id = deviceObject.id;
-            console.log('Posting to: http://' + deviceObject.config.ip + '/' + command);
+            //console.log('Posting to: http://' + deviceObject.config.ip + '/' + command);
             superAgent.post('http://' + deviceObject.config.ip + '/' + command).send(paramList).end(function (err, res) {
                 if(err) {
                     console.log(err);
                 } else {
                     logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd.", 4);
-                    callback(res.body);
+                    callback(res.body, deviceObject);
                 }
             });
         } else {

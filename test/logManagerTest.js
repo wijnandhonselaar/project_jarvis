@@ -58,19 +58,9 @@ describe('Logging', function() {
 
     describe('#Get all event logs', function() {
         it('should get all event logs', function (done) {
-            logger.getAllEvents(4, 0, 20, function(err,res) {
+            logger.getAllEvents(0, 20, function(err,res) {
                 if(err) throw err;
                 expect(res).to.have.length.above(1);
-                done();
-            });
-        });
-    });
-
-    describe('#Get no event logs', function() {
-        it('shouldnt get a event log because there is none with severity 0 or lower', function (done) {
-            logger.getAllEvents(0, 0, 1, function(err,res) {
-                if(err) throw err;
-                expect(res).to.be.empty;
                 done();
             });
         });

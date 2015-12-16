@@ -3,7 +3,6 @@ var api                 = require('superagent');
 var Scenario            = require('../models/scenario');
 
 describe('Scenario routing', function() {
-
     before(function (done) {
         done();
     });
@@ -18,7 +17,10 @@ describe('Scenario routing', function() {
         it('should create a new scenario', function(done) {
            api
                .post('http://localhost:3221/scenario')
-               .send({name: 'Thuiskomst', description: 'Verwarming aan, koffiezet apparaat aan.'})
+               .send({
+                   name: 'Thuiskomst',
+                   description: 'Verwarming aan, koffiezet apparaat aan.',
+                   actuators: JSON.stringify([{deviceid: 1, action: {command: 'on'}}])})
                .end(function(err,res) {
                     if (err) throw err;
                     done();
