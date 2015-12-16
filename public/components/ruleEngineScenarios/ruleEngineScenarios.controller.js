@@ -341,7 +341,7 @@
                     if(rule.id === changedRule.id) {
                         rec.scenario.rules[rec.selectedCommand][type][index] = changedRule;
                     }
-                })
+                });
             }
 
             if (rec.threshold.name !== null && rec.threshold.device !== null) {
