@@ -5,7 +5,7 @@
             <input class="col m9" type="text" edit-dir="" id="name" placeholder="Druk hier om de naam aan te passen"
                    ng-model="snc.scenario.name"/>
         </div>
-        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+        <div id="createNew" class="customCard col m2" style="padding:1px; background-color:lightgrey">
             <div style="text-align: center; margin-top: 13px;" ng-click="snc.create()">Opslaan</div>
         </div>
         <div class="col m10">
@@ -14,7 +14,7 @@
                    placeholder="Druk hier om de omschrijving aan te passen"
                    ng-model="snc.scenario.description"/>
         </div>
-        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
+        <div id="addactuator" class="customCard col m2" style="padding:1px; background-color:lightgrey">
             <div style="text-align: center; margin-top: 3px;" ng-click="snc.addActuator()">Actuator toevoegen</div>
         </div>
     </div>
