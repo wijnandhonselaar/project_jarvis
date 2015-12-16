@@ -38,26 +38,46 @@
         });
 
 
-
-        socket.socketListener('resolveConflict', function (data) {
+        var currentlyResolving = {status:false, device:null};
+        var resolve2 = $('#resolve2');
+        var resolve1 = $('#resolve1');
+        socket.socketListener("resolveConflict", function (data) {
             var conflictPopUp = $('#conflictmodal');
-            conflictPopUp.openModal();
+            if(!currentlyResolving.status) {
+                conflictPopUp.openModal();
+                resolve1.html('Scenario: ' + data.executed.scenario + '<br>'+data.executed.device.config.alias + ': '+data.executed.command);
+                resolve1.data('scenario', data.executed.scenario);
+                resolve2.html('Scenario: ' + data.conflicting.scenario + '<br>'+data.conflicting.device.config.alias + ': '+data.conflicting.command);
+                resolve2.data('scenario', data.conflicting.scenario);
+                currentlyResolving.status = true;
+                currentlyResolving.device = data.executed.device;
+            }
         });
 
-        function resolveConflict() {
+        resolve1.click(function(){
+            resolveConflict($(this).data('scenario'), resolve2.data('scenario'));
+        });
+
+        resolve2.click(function(){
+            resolveConflict($(this).data('scenario'), resolve1.data('scenario'));
+        });
+
+        function resolveConflict(winningScenario, losingScenario) {
 
             var object = {
-                winner: 'clickedScenario',
-                loser: '',
-                device: 1337
+                winner: winningScenario,
+                loser: losingScenario,
+                device: currentlyResolving.device
             };
 
-            $http.post('http://localhost:3221/devices/' + object.device + '/resolveconflict', object).
+            $http.post('http://localhost:3221/devices/'+object.device.model.type+'/' + object.device.id + '/resolveconflict', object).
                 success(function (data) {
                     console.log('CONFLICT', 'resolved');
+                    $('#conflictmodal').closeModal();
                 })
                 .error(function (err){
                     console.log('CONFLICT', 'error while resolving');
+                    $('#conflictmodal').closeModal();
                 });
         }
 

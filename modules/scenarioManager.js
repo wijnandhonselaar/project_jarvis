@@ -7,8 +7,6 @@ var comm = require('./interperter/comm');
 var io = null;
 var scenarios = [];
 
-
-
 function create(name, description, actuators, cb) {
     var scenario = new Scenario(
         {
@@ -75,8 +73,8 @@ function update(scenario, cb) {
     });
 }
 
-function toggleState(scenarioString, cb) {
-    var scenario = JSON.parse(scenarioString);
+function toggleState(scenario, cb) {
+    if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id === scenarios[i].id) {
             if (scenarios[i].status === false) {
@@ -89,7 +87,37 @@ function toggleState(scenarioString, cb) {
             }
             updateById(scenarios[i].id, scenarios[i],function(err, data){
                 if(err) {console.error(err); throw err;}
-                console.log(data);
+                //console.log(data);
+            });
+        }
+    }
+}
+
+function start(scenario, cb){
+    for (var i = 0; i < scenarios.length; i++) {
+        if (scenario.id === scenarios[i].id) {
+            if (scenarios[i].status === false) {
+                scenarios[i].status = true;
+                if(cb) cb(null, scenarios[i]);
+            }
+            updateById(scenarios[i].id, scenarios[i],function(err, data){
+                if(err) {console.error(err); throw err;}
+                //console.log(data);
+            });
+        }
+    }
+}
+
+function stop(scenario, cb){
+    for (var i = 0; i < scenarios.length; i++) {
+        if (scenario.id === scenarios[i].id) {
+            if (scenarios[i].status === true) {
+                scenarios[i].status = false;
+                if(cb) cb(null, scenarios[i]);
+            }
+            updateById(scenarios[i].id, scenarios[i],function(err, data){
+                if(err) {console.error(err); throw err;}
+                //console.log(data);
             });
         }
     }
@@ -133,9 +161,9 @@ function validateRules(event) {
 //    }
 //}
 
-function getByName(name) {
-    Scenario.filter({name: name}).run().then(function (res) {
-            return res[0];
+function getByName(name, cb) {
+        Scenario.filter({name: name}).run().then(function (res) {
+            cb(res[0]);
         }).
         catch(function (err) {
             throw err;
@@ -154,5 +182,7 @@ module.exports = {
     getAll: getAll,
     update: update,
     updateById: updateById,
-    getByName: getByName
+    getByName: getByName,
+    start:start,
+    stop:stop
 };

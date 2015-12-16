@@ -4,10 +4,12 @@ var devices = {
 };
 var io = null;
 var ruleEngine = null;
+var validator = null;
 var scenarioManager = require('./scenarioManager');
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
 var Actuator = require('../models/actuator');
+var comm = require('./interperter/comm');
 
 var rules = {
     on: {
@@ -33,7 +35,7 @@ function updateManagers(event) {
     for (var i = 0; i < getActuators().length; i++) {
         ruleEngine.apply(getActuators()[i], event);
     }
-    //scenarioManager.validate(event);
+    scenarioManager.validate(event);
 }
 
 function addDevice(device, remote, deviceType) {
@@ -284,6 +286,24 @@ function setRules(object) {
     }
 }
 
+function executeCommand(command, device, params, cb){
+
+    switch (device.model.commands[command].httpMethod) {
+        case 'POST':
+            comm.post(command, device, params, function (state, device) {
+                updateActuatorState(device.id, state);
+                if(cb) cb(state);
+            });
+            break;
+        case 'GET':
+            comm.get(command, device, function (state, device) {
+                updateActuatorState(device.id, state);
+                if(cb) cb(state);
+            });
+            break;
+    }
+}
+
 function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
     for (var i = 0; i < devices.actuators.length; i++) {
@@ -354,8 +374,9 @@ function loadDevicesFromDatabase() {
 *         }}
      */
 module.exports = {
-    init: function (socketio, rec) {
+    init: function (socketio, rec, validatorInject) {
         io = socketio;
+        validator = validatorInject;
         ruleEngine = rec;
         loadDevicesFromDatabase();
     },
@@ -380,7 +401,8 @@ module.exports = {
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
     setRules: setRules,
-    updateActuator: updateActuator
+    updateActuator: updateActuator,
+    executeCommand:executeCommand
 };
 
 //circular dependency (export must be first)
