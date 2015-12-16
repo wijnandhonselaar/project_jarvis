@@ -32,9 +32,9 @@ var rules = {
  */
 
 function updateManagers(event) {
-    for (var i = 0; i < getActuators().length; i++) {
-        ruleEngine.apply(getActuators()[i], event);
-    }
+    //for (var i = 0; i < getActuators().length; i++) {
+    //    ruleEngine.apply(getActuators()[i], event);
+    //}
     scenarioManager.validate(event);
 }
 
