@@ -1,3 +1,4 @@
+"use strict";
 var validator = require('./validator');
 var superAgent = require('superagent');
 var logger = require('../logManager');

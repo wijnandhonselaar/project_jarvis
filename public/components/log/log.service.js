@@ -72,7 +72,7 @@
         function loadLogs(){
             return new Promise(
                 function (resolve, reject) {
-                    $http.get("/devices/logs?severity=5&offset=50")
+                    $http.get("/devices/logs?severity=5&limit=50")
                         .success(function (data) {
                             data.forEach(function (log) {
                                 logs.push(log);
@@ -113,9 +113,9 @@
 
             for (var i = 0; i < data.length; i++) {
                 if((unix - data[i].timestamp) < 3600){
-                    graphData.labels.push(convertUnixTime(data[i].timestamp));
+                    graphData.labels.unshift(convertUnixTime(data[i].timestamp));
                     for(var key in data[i].status){
-                        graphData.data.push(data[i].status[key]);
+                        graphData.data.unshift(data[i].status[key]);
                     }
                 }
             }
@@ -123,17 +123,17 @@
             while(graphData.labels.length > 50){
                 for (var x = 0; x < graphData.labels.length; x++) {
                     if(x%2 === 0){
-                        graphData.labels.splice(x,1);
-                        graphData.data.splice(x,1);
+                        graphData.labels.splice(graphData.labels.length-1,1);
+                        graphData.data.splice(graphData.labels.length-1,1);
                     }
                 }
             }
 
             var points = [0,Math.floor(graphData.labels.length/5),Math.floor(graphData.labels.length/5 *2), Math.floor(graphData.labels.length/5 *3), Math.floor(graphData.labels.length/5 *4), graphData.labels.length-1];
             for (var y = 0; y < graphData.labels.length; y++) {
-                // if(points.indexOf(y) == -1){
+                 if(points.indexOf(y) == -1){
                     graphData.labels[y] = "";
-                // }
+                 }
             }
 
             return graphData;

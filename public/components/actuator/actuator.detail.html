@@ -14,7 +14,7 @@
     <div class="col m10">
         <div class="row detaildescrip" style="margin-top:8px;">
             <div class="col m12">
-                <input type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="adc.actuatoralias" ng-change="adc.updateAlias('alias',adc.actuatoralias)" style="margin-top:-10px;"/>
+                <input id="aliasAct" type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="adc.actuatoralias" ng-change="adc.updateAlias('alias',adc.actuatoralias)" style="margin-top:-10px;"/>
             </div>
             <div class="col m12" style="margin-top:-25px;">
                 <p class="description">{{adc.actuator.model.description}}</p>
@@ -28,7 +28,7 @@
         <div class="row">
             <div class="col m12">
                 <div class="command nopad valign-wrapper card" ng-repeat="(key, command) in adc.actuator.model.commands" ng-if="command.name != 'status'">
-                    <div ng-click="adc.showCommand(adc.actuator.model.id, command, key, 'actuator');" class="touch valign" style="display: inline-block; width: 85%;">{{command.name}}</div>
+                    <div class="actuatorCommand" id='{{key}}' ng-click="adc.showCommand(adc.actuator.model.id, command, key, 'actuator');" class="touch valign" style="display: inline-block; width: 85%;">{{command.name}}</div>
                     <div data-position="top" data-delay="50" data-tooltip="{{command.description}}" class="tooltipped text-center" style="display: inline-block; width:15%; background-color:#F84E19; color:white; font-size:24px;">i</div>
                 </div>
             </div>

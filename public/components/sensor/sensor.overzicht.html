@@ -23,7 +23,7 @@
                     </div>
                     <div class="col m8" ng-click="soc.GoToDetail(sensor)" style="margin-left:-8px; margin-top:0px;">
                         <div class="customCard" style="padding:1px;">
-                            <div class="detailcontainer">
+                            <div id="sensor" class="detailcontainer">
                                 {{sensor.config.alias}}<br>
                         <span class="description" ng-repeat="(key, value) in sensor.status"
                               ng-if="$index == 0">{{key}}: {{value}}</span>

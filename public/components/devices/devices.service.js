@@ -25,6 +25,7 @@
         });
 
         socket.socketListener("deviceUpdated", function(data){
+            console.log(data);
             devices[data.model.type].forEach(function(device){
                 if(device.id == data.id) {
                     var index = devices[data.model.type].indexOf(device);
