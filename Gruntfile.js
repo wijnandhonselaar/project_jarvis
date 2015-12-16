@@ -42,6 +42,7 @@ module.exports = function(grunt) {
                     'public/bower_components/Chart.js/Chart.js',
                     'public/bower_components/angular-chart.js/dist/angular-chart.js',
                     'public/bower_components/jquery-timepicker-jt/jquery.timepicker.js',
+                    'public/bower_components/jquery-ui/jquery-ui.min.js',
                     
                     'tmp/templates.js',
 
