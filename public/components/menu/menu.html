@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col m2 menu_item" ng-class="(mc.active == 'dashboard') ? 'active' : ''" ui-sref="dashboard">
+    <div class="col m2 menu_item" id="menuitem1" ng-class="(mc.active == 'dashboard') ? 'active' : ''" ui-sref="dashboard">
         <div class="row">
             <div class="col m12 text-center">
                 <img src="/images/icon_home{{mc.active == 'dashboard' ? '_active' : ''}}.png" width="70%"><br>
@@ -7,7 +7,7 @@
             </div>
         </div>
     </div>
-    <div class="col m2 menu_item" ng-class="(mc.active == 'actuators') ? 'active' : ''" ui-sref="actuatorsOverzicht">
+    <div class="col m2 menu_item"  id="menuitem2"  ng-class="(mc.active == 'actuators') ? 'active' : ''" ui-sref="actuatorsOverzicht">
         <div class="row">
             <div class="col m12 text-center">
                 <img src="/images/icon_apparaten{{mc.active=='actuators' ? '_active' : ''}}.png" class="grayscale" width="70%"><br>
@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    <div class="col m2 menu_item" ng-class="(mc.active == 'sensors') ? 'active' : ''" ui-sref="sensorenOverzicht">
+    <div class="col m2 menu_item" id="menuitem3"  ng-class="(mc.active == 'sensors') ? 'active' : ''" ui-sref="sensorenOverzicht">
         <div class="row">
             <div class="col m12 text-center">
                 <img src="/images/icon_sensoren{{mc.active=='sensors' ? '_active' : ''}}.png" width="70%"><br>
@@ -23,15 +23,15 @@
             </div>
         </div>
     </div>
-    <div class="col m2 menu_item" ng-class="(mc.active == 'scenario') ? 'active' : ''" ui-sref="scenarioOverzicht">
+    <div class="col m2 menu_item"  id="menuitem4"  ng-class="(mc.active == 'scenario') ? 'active' : ''" ui-sref="scenarioOverzicht">
         <div class="row">
             <div class="col m12 text-center" >
                 <img src="/images/icon_scenario{{mc.active=='scenario' ? '_active' : ''}}.png" width="70%"><br>
-                <span>Scenario's</span>
+                <span id="scenario">Scenario's</span>
             </div>
         </div>
     </div>
-    <div class="col m2 menu_item" ng-class="(mc.active == 'settings') ? 'active' : ''" ui-sref="settings">
+    <div class="col m2 menu_item" id="menuitem5"  ng-class="(mc.active == 'settings') ? 'active' : ''" ui-sref="settings">
         <div class="row">
             <div class="col m12 text-center" >
                 <img src="/images/icon_instellingen{{mc.active=='settings' ? '_active' : ''}}.png" width="70%"><br>
