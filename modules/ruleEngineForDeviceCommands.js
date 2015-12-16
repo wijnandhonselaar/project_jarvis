@@ -76,7 +76,7 @@ function apply(device, event, callback) {
 
             if (hasRules) {
                 statementString = andGate + ' ' + statementString;
-                if (event) console.log(statementString);
+                //if (event) console.log(statementString);
                 if (eval(statementString) && checkState(command, device)) {
                     //if (!conflictManager.detect(command, device, scenario)) {
                     switch (device.model.commands[command].httpMethod) {

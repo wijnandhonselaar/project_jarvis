@@ -43,14 +43,14 @@
             <span class="col m3">{{actuator.config.alias}}</span>
         </div>
         <div class="col m5">
-            <select ng-model="selected"
-                    ng-options="command as command.name for in actuator.model.commands"
+            <select ng-model="sdc.selected"
+                    ng-options="command as command.name for command in actuator.model.commands"
                     ng-init="selected = sdc.selectedAction(selected, actuator)"
                     ng-change="sdc.updateActuator(selected, actuator.id)"
                     id="{{actuator.id}}"
                     value="sdc.scenario.actuators[$index].command"
                     style="display: block;">
-            </select>
+      sdc.selected      </select>
         </div>
         <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="sdc.removeActuator(actuator.id)">
             <div style="text-align: center; margin-top: 3px; padding-top:8px; color:white;" >X</div>

@@ -76,7 +76,7 @@ function apply(scenario, event) {
 
                 if (hasRules) {
                     statementString = andGate + ' ' + statementString;
-                    if (event) console.log(statementString);
+                    //if (event) console.log(statementString);
 
                     if (eval(statementString)) {
 
