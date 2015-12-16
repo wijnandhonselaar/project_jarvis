@@ -34,9 +34,8 @@
 
 
 <div style="overflow-y: scroll; height: 180px; width:575px; top:210px; position: absolute;">
-    <div class="row"
-         style="padding-top:5px; height: 57px; border-bottom:1px solid #EEEEEE"
-         ng-repeat="actuator in sdc.devices">
+    <div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
+         ng-repeat="actuator in sdc.devices track by $index">
         <div class="col m1">
             <img src="{{actuator.model.image}}" width="100%">
         </div>
@@ -44,13 +43,13 @@
             <span class="col m3">{{actuator.config.alias}}</span>
         </div>
         <div class="col m5">
-            <select id="{{actuator.id}}" style="display: block;">
-                <option ng-repeat="(key, command) in actuator.model.commands"
-                        ng-if="sdc.isAllowedCommand(key)"
-                        ng-selected="sdc.scenario.actuators[sdc.devices.indexOf(actuator)].action.command == key"
-                        data-value="{{ {deviceid: actuator.id, command: key} }}">
-                    {{command.name}}
-                </option>
+            <select ng-model="selected"
+                    ng-options="command as command.name for in actuator.model.commands"
+                    ng-init="selected = sdc.selectedAction(selected, actuator)"
+                    ng-change="sdc.updateActuator(selected, actuator.id)"
+                    id="{{actuator.id}}"
+                    value="sdc.scenario.actuators[$index].command"
+                    style="display: block;">
             </select>
         </div>
         <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="sdc.removeActuator(actuator.id)">

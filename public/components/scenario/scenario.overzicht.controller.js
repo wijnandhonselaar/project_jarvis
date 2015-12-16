@@ -5,9 +5,9 @@
         .module('jarvis.scenario')
         .controller('ScenarioOverzichtctrl', ScenarioOverzichtctrl);
 
-    ScenarioOverzichtctrl.$inject = ["ScenarioService", "$state","$timeout","$stateParams", "$scope"];
+    ScenarioOverzichtctrl.$inject = ["DevicesService","ScenarioService", "$state","$timeout","$stateParams", "$scope"];
 
-    function ScenarioOverzichtctrl(ScenarioService, $state, $timeout, $sp, $scope) {
+    function ScenarioOverzichtctrl(DS, ScenarioService, $state, $timeout, $sp, $scope) {
         var scena = this;
         var swiper = null;
         scena.repeater = [];

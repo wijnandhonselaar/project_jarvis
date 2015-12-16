@@ -4,10 +4,12 @@ var devices = {
 };
 var io = null;
 var ruleEngine = null;
+var validator = null;
 var scenarioManager = require('./scenarioManager');
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
 var Actuator = require('../models/actuator');
+var comm = require('./interperter/comm');
 
 var rules = {
     on: {
@@ -284,25 +286,46 @@ function setRules(object) {
     }
 }
 
+function executeCommand(command, device, params, cb){
+
+    switch (device.model.commands[command].httpMethod) {
+        case 'POST':
+            comm.post(command, device, params, function (state, device) {
+                updateActuatorState(device.id, state);
+                if(cb) cb(state);
+            });
+            break;
+        case 'GET':
+            comm.get(command, device, function (state, device) {
+                updateActuatorState(device.id, state);
+                if(cb) cb(state);
+            });
+            break;
+    }
+}
+
 function updateActuator(id, actuator, cb) {
-    id = parseInt(id);
     console.log('Update actuator');
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
-            console.log(actuator.config);
             devices.actuators[i] = actuator;
-            console.log(devices.actuators[i].config);
-            Actuator.get(id)
+            console.log('Before get');
+            Actuator.get(parseInt(id))
                 .then(function (persisted) {
-                    persisted = actuator;
+                    persisted.merge(actuator);
+                    console.log("merged");
+                    console.log(persisted);
+                    console.log('Before save');
                     persisted.save()
                         .then(function (res) {
                             cb(null, res);
                         })
                         .catch(function (err) {
+                            console.log('Error bij opslaan');
                             cb({error: err, message: 'Could not update actuator.'});
                         });
                 }).catch(function (err) {
+                console.log('Error bij ophalen met id: ' + id);
                 cb({error: err, message: 'Could not update actuator.'});
             });
         }
@@ -351,8 +374,9 @@ function loadDevicesFromDatabase() {
 *         }}
      */
 module.exports = {
-    init: function (socketio, rec) {
+    init: function (socketio, rec, validatorInject) {
         io = socketio;
+        validator = validatorInject;
         ruleEngine = rec;
         loadDevicesFromDatabase();
     },
@@ -377,7 +401,8 @@ module.exports = {
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
     setRules: setRules,
-    updateActuator: updateActuator
+    updateActuator: updateActuator,
+    executeCommand:executeCommand
 };
 
 //circular dependency (export must be first)

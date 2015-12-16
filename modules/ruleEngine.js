@@ -80,35 +80,24 @@ function apply(scenario, event) {
 
                     if (eval(statementString)) {
 
-                        //if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
+                        if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
 
-                        if (ruleKey === start) {
-                            scenarioManager.start(scenario);
-                        } else {
-                            scenarioManager.stop(scenario);
-                        }
+                            if (ruleKey === start) {
+                                scenarioManager.start(scenario);
+                            } else {
+                                scenarioManager.stop(scenario);
+                            }
 
-                        for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
+                            for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
 
-                            var command = scenario.actuators[deviceLoop].action.command;
-                            var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
+                                var command = scenario.actuators[deviceLoop].action.command;
+                                var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
 
-                            if (checkState(command, device)) {
-                                if (!conflictManager.detect(command, device, scenario)) {
-                                    switch (device.model.commands[command].httpMethod) {
-                                        case 'POST':
-                                            comm.post(command, device, {}, function (state, device) {
-                                                deviceManager.updateActuatorState(device.id, state);
-                                            });
-                                            break;
-                                        case 'GET':
-                                            comm.get(command, device, function (data, device) {
-                                                deviceManager.updateActuatorState(device.id, state);
-                                            });
-                                            break;
+                                if (checkState(command, device)) {
+                                    if (!conflictManager.detect(command, device, scenario)) {
+                                        deviceManager.executeCommand(command, device, {});
                                     }
                                 }
-                                //}
                             }
                         }
                     }
@@ -159,7 +148,7 @@ function checkState(command, device) {
 module.exports = {
     init: function (dm, sm) {
         deviceManager = dm;
-        conflictManager.init(this);
+        conflictManager.init(null, sm);
         scenarioManager = sm;
     },
     apply: apply

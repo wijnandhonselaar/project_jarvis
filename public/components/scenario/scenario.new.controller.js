@@ -105,6 +105,7 @@
                         command: scenarioActuator.action.command,
                         parameters: scenarioActuator.action.parameters
                     };
+                    console.log(actuator);
                     ScenarioService.updateActuator(actuator);
                 }
             }

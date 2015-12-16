@@ -161,9 +161,9 @@ function validateRules(event) {
 //    }
 //}
 
-function getByName(name) {
-    Scenario.filter({name: name}).run().then(function (res) {
-            return res[0];
+function getByName(name, cb) {
+        Scenario.filter({name: name}).run().then(function (res) {
+            cb(res[0]);
         }).
         catch(function (err) {
             throw err;
