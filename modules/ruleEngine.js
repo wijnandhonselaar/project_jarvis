@@ -7,7 +7,7 @@ var stop = 'finish';
 var start = 'start';
 
 function apply(scenario, event) {
-    console.log(scenario);
+    //console.log(scenario);
     var hasRules = false;
     var statementString = '';
 
@@ -16,7 +16,6 @@ function apply(scenario, event) {
         var rule = null;
         types.forEach(function(type){
             if(scenario.rules[ruleKey][type]) {
-                console.log("DIT DING \n", scenario.rules[ruleKey][type]);
                 var found = null;
                 scenario.rules[ruleKey][type].forEach(function(element){
                     if(element.id == searchId) {
@@ -24,7 +23,7 @@ function apply(scenario, event) {
                     }
                 });
                 if (found) {
-                    console.log("Found\n",found);
+                    //console.log("Found\n",found);
                     rule = found;
                 }
             }
@@ -79,11 +78,11 @@ function apply(scenario, event) {
                 });
                 statementString = mappedAndGroups.join(" || ");
 
-                console.log("STATEMENT\n",statementString);
+                //console.log("STATEMENT\n",statementString);
 
                 if (hasRules) {
                     if (eval(statementString)) {
-                        console.log("EVALUATED");
+                        //console.log("EVALUATED");
                         if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
                             if (ruleKey === start) {
                                 scenarioManager.start(scenario);
