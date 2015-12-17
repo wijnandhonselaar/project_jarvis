@@ -339,7 +339,7 @@ function removeScenarioFromActuator(id, scenario) {
             delete devices.actuators[i].config.scenarios[scenario];
             Actuator.get(parseInt(id))
                 .then(thenCB)
-                .catch(catchCB;
+                .catch(catchCB);
         }
     }
 }
