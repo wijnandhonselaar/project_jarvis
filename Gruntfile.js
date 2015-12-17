@@ -95,7 +95,7 @@ module.exports = function(grunt) {
                     'public/components/modules.js',
                     'public/css/app.css'
                 ],
-                tasks: [ 'jshint', 'html2js:dist', 'concat:dist', 'concat:css'],
+                tasks: [ 'jshint:all', 'html2js:dist', 'concat:dist', 'concat:css'],
                 options: {
                     atBegin: true,
                     livereload: 5050

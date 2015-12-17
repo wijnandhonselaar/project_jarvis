@@ -43,17 +43,24 @@
             <span class="col m3">{{actuator.config.alias}}</span>
         </div>
         <div class="col m5">
-            <select id="{{actuator.id}}"
-                    ng-model="selected"
-                    ng-change="sdc.updateActuator(actuator.id)"
-                    style="display: block;">
+            <select style="display:block;" id="selectChange{{actuator.id}}">
                 <option ng-repeat="(key, command) in actuator.model.commands"
-                        ng-if="sdc.isAllowedCommand(key)"
-                        ng-selected="sdc.selectedAction(key, actuator)"
+                        ng-if="key == 'on' || key == 'off'"
+                        ng-selected="actuator.action.command == key"
                         value="{{key}}">
                     {{command.name}}
                 </option>
             </select>
+            <!--<select id="{{actuator.id}}"-->
+                    <!--ng-model="sdc.devices[$index].action.command"-->
+                    <!--ng-change="sdc.updateActuator(actuator.id)"-->
+                    <!--style="display: block;">-->
+                <!--<option ng-repeat="(key, command) in actuator.model.commands"-->
+                        <!--ng-if="key == 'on' || key == 'off'"-->
+                        <!--ng-value="{{key}}">-->
+                    <!--{{command.name}}-->
+                <!--</option>-->
+            <!--</select>-->
         </div>
         <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="sdc.removeActuator(actuator.id)">
             <div style="text-align: center; margin-top: 3px; padding-top:8px; color:white;" >X</div>
