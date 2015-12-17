@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 var PORT = 80;
 var UDPPORT = 3221;
 
@@ -48,3 +49,4 @@ module.exports = {
 };
 
 
+/* jshint ignore:end */

@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 var devices = {
@@ -318,7 +319,7 @@ function executeCommand(command, device, params, cb){
  */
 function removeScenarioFromActuator(id, scenario) {
     function thenCBsmall(res) {
-        if(res.err) throw err;
+        if(res.err) throw res.err;
     }
     function catchCBsmall(err) {
         console.log('Error bij verwijderen scenario uit config van een actuator.');
@@ -328,7 +329,7 @@ function removeScenarioFromActuator(id, scenario) {
         delete actuator.config.scenarios[scenario];
         actuator.save()
             .then(thenCBsmall)
-            .catch(catchCBsmall)
+            .catch(catchCBsmall);
     }
     function catchCB(err) {
         console.log('Error bij ophalen actuator.');

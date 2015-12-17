@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 //send all devices at once
 module.exports = (function() {
 	var express = require('express');
@@ -64,3 +65,4 @@ module.exports = (function() {
  return route;
 
 })();
+/* jshint ignore:end */

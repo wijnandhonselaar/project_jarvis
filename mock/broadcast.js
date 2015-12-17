@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 var config = require('./config');
 var dgram = require('dgram');
 
@@ -24,3 +25,4 @@ function broadcastUDPPacket() {
         }
     });
 }
+/* jshint ignore:end */

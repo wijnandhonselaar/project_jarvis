@@ -19,5 +19,7 @@ app.use(bodyParser.urlencoded({
 
 app.use("/", deviceRoutes);
 
+
 device.init();
 
+/* jshint ignore:end */

@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 var config = require("./config");
 
 var devices = {
@@ -394,3 +395,4 @@ module.exports = {
     getSensorById : getSensorById,
     getDevice : getDevice
 };
+/* jshint ignore:end */
