@@ -1,3 +1,4 @@
+"use strict";
 var supportedSOKVersions = ['0.0.1'];
 var httpPending = [];
 var dgram = require('dgram');

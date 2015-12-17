@@ -24,9 +24,16 @@
             }
         });
 
+<<<<<<< HEAD
+        socket.socketListener("deviceUpdated", function(data){
+            console.log(data);
+            devices[data.model.type].forEach(function(device){
+                if(device.id == data.id) {
+=======
         socket.socketListener("deviceUpdated", function (data) {
             devices[data.model.type].forEach(function (device) {
                 if (device.id == data.id) {
+>>>>>>> development
                     var index = devices[data.model.type].indexOf(device);
                     devices[data.model.type][index] = data;
                 }

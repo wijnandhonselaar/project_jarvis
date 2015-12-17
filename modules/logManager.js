@@ -6,6 +6,15 @@ var dataLog = require('../models/dataLog');
 var settings = require('../modules/settingManager');
 var thinky = require('../models/thinky.js');
 var r = thinky.r;
+var automatic = "Automatisch";
+var manual = "Handmatig";
+var severity = {
+           alert : 1,
+           error : 2,
+           warning : 3,
+           notice : 4,
+           all : 5
+    };
 
 /**
  * log event data
@@ -146,6 +155,9 @@ module.exports = {
     init: function (socket) {
         io = socket;
      },
+    severity : severity,
+    manual: manual,
+    automatic: automatic,
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
