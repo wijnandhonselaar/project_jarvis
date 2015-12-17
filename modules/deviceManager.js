@@ -1,4 +1,3 @@
-/*jslint node: true */
 "use strict";
 
 var devices = {
@@ -312,6 +311,39 @@ function executeCommand(command, device, params, cb){
     }
 }
 
+/**
+ *
+ * @param id Actuator id
+ * @param scenario name
+ */
+function removeScenarioFromActuator(id, scenario) {
+    function thenCBsmall(res) {
+        if(res.err) throw err;
+    }
+    function catchCBsmall(err) {
+        console.log('Error bij verwijderen scenario uit config van een actuator.');
+        throw err;
+    }
+    function thenCB(actuator) {
+        delete actuator.config.scenarios[scenario];
+        actuator.save()
+            .then(thenCBsmall)
+            .catch(catchCBsmall)
+    }
+    function catchCB(err) {
+        console.log('Error bij ophalen actuator.');
+        throw err;
+    }
+    for(var i = 0; i < devices.actuators.length; i++) {
+        if (devices.actuators[i].id == id) {
+            delete devices.actuators[i].config.scenarios[scenario];
+            Actuator.get(parseInt(id))
+                .then(thenCB)
+                .catch(catchCB;
+        }
+    }
+}
+
 function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
 
@@ -342,7 +374,6 @@ function updateActuator(id, actuator, cb) {
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
             devices.actuators[i] = actuator;
-            console.log('Before get');
             Actuator.get(parseInt(id))
                 .then(thenCB2).catch(catchCB2);
         }
@@ -419,7 +450,8 @@ module.exports = {
     updateActuatorState: updateActuatorState,
     setRules: setRules,
     updateActuator: updateActuator,
-    executeCommand:executeCommand
+    executeCommand:executeCommand,
+    removeScenarioFromActuator: removeScenarioFromActuator
 };
 
 //circular dependency (export must be first)
