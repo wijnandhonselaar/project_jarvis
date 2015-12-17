@@ -193,7 +193,6 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
             found = true;
             var device = devices[devicetype][i];
             // save to the database!
-<<<<<<< HEAD
             rethinkManager.updateAlias(id, devicetype, alias, function(err, res) {
                 if(err) {
                     logger.logEvent(res, devicetype, logger.manual ,"Alias voor " + res.model.name + " niet aangepast.", logger.severity.warning);
@@ -202,16 +201,6 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
                     logger.logEvent(res, devicetype, logger.manual ,"Nieuwe alias voor " + res.model.name + " ingesteld.", logger.severity.notice);
                     io.emit("deviceUpdated", device);
                     callback( {success: "Success, alias for "+ id + " was successfully updated."});
-=======
-            rethinkManager.updateAlias(id, devicetype, alias, function (err, res) {
-                if (err) {
-                    logger.logEvent(res, devicetype, "Handmatig", "Alias voor " + res.model.name + " niet aangepast.", 3);
-                    callback({err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
-                } else {
-                    logger.logEvent(res, devicetype, "Handmatig", "Nieuwe alias voor " + res.model.name + " ingesteld.", 4);
-                    io.emit("deviceUpdated", devices[devicetype][i]);
-                    callback({success: "Success, alias for " + id + " was successfully updated."});
->>>>>>> development
                 }
             });
         }
