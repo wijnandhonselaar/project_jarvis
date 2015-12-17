@@ -88,7 +88,7 @@ function addDevice(device, remote, deviceType) {
             devices[deviceType].push(deviceObj);
             if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
-            };
+            }
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -103,7 +103,6 @@ function broadcastEvent(msg) {
     if (device) {
         updateManagers(msg);
         logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
-
         io.emit('deviceEvent', {device: device, event: msg})
     } else {
         console.log('What the fuck, ik kan mijn apparaat niet vinden');
@@ -206,7 +205,7 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
         }
     }
     if(found === false){
-        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."})
+        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."});
     }
 }
 
@@ -226,18 +225,18 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
             initiateStatusPolling(sensor);
             rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
                 if(err) {
-                     logger.logEvent(res, sensor.model.type, logger.manual ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", logger.severity.warning);
+                     logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
                      callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
                 } else {
                     io.emit("deviceUpdated", sensor);
-                    logger.logEvent(sensor, sensor.model.type, logger.manual ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", logger.severity.notice);
+                    logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
                     callback({success: "Success, interval for "+ id + " was successfully updated."});
                 }
             });
         }
-    };
+    }
     if(found === false){
-        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."})
+        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."});
     }
 }
 
@@ -281,12 +280,12 @@ function setRules(object) {
     var a = getActuatorById(object.id);
     if (a.err) {
         console.error(a.err);
-        return {err: 'Couldn\'t find actuator by id'}
+        return {err: 'Couldn\'t find actuator by id'};
     } else {
         //console.log('set new rules');
         a.config.rules = object.rules;
         //console.log(a.config);
-        return {success: 'set'}
+        return {success: 'set'};
     }
 }
 

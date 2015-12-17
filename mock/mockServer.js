@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 var express = require("express");
 var app = express();
 var server = require('http').Server(app);
@@ -536,3 +537,4 @@ function determineStateActuator(actuator, params) {
     console.log(status);
     return {status: status}
 }
+/* jshint ignore:end */

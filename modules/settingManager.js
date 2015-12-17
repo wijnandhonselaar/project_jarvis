@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 var Settings = require('../models/settings');

@@ -5,6 +5,7 @@ module.exports = function(grunt) {
 
         jshint: {
             all: [ 'Gruntfile.js', 'public/components/*.js', 'public/components/**/*module.js', 'public/components/**/*.js' ],
+            backend: [ '*.js', 'mock/*.js', 'modules/*.js', 'modules/**/*.js', 'routes/*.js' ],
             options: {
                 globals: {
                     "angular": true,

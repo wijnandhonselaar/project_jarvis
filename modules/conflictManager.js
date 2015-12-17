@@ -6,30 +6,32 @@ var resolvedConflicts = [];
 
 function detect(command, device, executingScenario) {
 
+    function getByNameCallback(scenario) {
+        if (scenario.status) {
+            //console.log(device.config.scenarios[scenario.name]);
+            if (device.config.scenarios[scenario.name].command != command) {
+                //console.log('(' + scenario.name + ') active: ' + device.config.scenarios[scenario.name].command + ' want to execute (' + executingScenario.name + ') ' + command);
+                var alreadyResolved = false;
+
+                for (var i = 0; i < resolvedConflicts.length; i++) {
+                    if ((resolvedConflicts[i].winner == scenario && resolvedConflicts[i].loser == executingScenario) || (resolvedConflicts[i].winner == executingScenario && resolvedConflicts[i].loser == scenario)) {
+                        alreadyResolved = true;
+                        return true;
+                    }
+                }
+
+                if (!alreadyResolved) {
+                    presentResolve(device, command, device.config.scenarios[scenario.name].command, executingScenario, scenario);
+                    return false;
+                }
+            }
+        }
+    }
+
     for (var scenario in device.config.scenarios) {
         if (device.config.scenarios.hasOwnProperty(scenario)) {
             //if (scenarioManager.getByName(scenario)) {
-            scenarioManager.getByName(scenario, function (scenario) {
-                if (scenario.status) {
-                    //console.log(device.config.scenarios[scenario.name]);
-                    if (device.config.scenarios[scenario.name].command != command) {
-                        //console.log('(' + scenario.name + ') active: ' + device.config.scenarios[scenario.name].command + ' want to execute (' + executingScenario.name + ') ' + command);
-                        var alreadyResolved = false;
-
-                        for (var i = 0; i < resolvedConflicts.length; i++) {
-                            if ((resolvedConflicts[i].winner == scenario && resolvedConflicts[i].loser == executingScenario) || (resolvedConflicts[i].winner == executingScenario && resolvedConflicts[i].loser == scenario)) {
-                                alreadyResolved = true;
-                                return true;
-                            }
-                        }
-
-                        if (!alreadyResolved) {
-                            presentResolve(device, command, device.config.scenarios[scenario.name].command, executingScenario, scenario);
-                            return false;
-                        }
-                    }
-                }
-            });
+            scenarioManager.getByName(scenario, getByNameCallback);
 
             //}
         }
@@ -49,14 +51,15 @@ function presentResolve(deviceObj, executingCommand, conflictingCommand, executi
 
 
 function resolve(resolveObject, callback) {
+    function executeCommandCB(){
+        callback('Conflict resolved');
+    }
     for (var scenario in resolveObject.device.config.scenarios) {
         if (resolveObject.device.config.scenarios.hasOwnProperty(scenario)) {
             if(scenario == resolveObject.winner){
                 scenarioManager.start(resolveObject.winner);
                 //resolvedConflicts.push(resolveObject);
-                deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, function(){
-                    callback('Conflict resolved');
-                });
+                deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, executeCommandCB);
                 //console.log('execute', resolveObject.device.config.scenarios[scenario].command);
             }
         }

@@ -1,4 +1,4 @@
-process.env.TZ = 'Europe/Amsterdam'
+process.env.TZ = 'Europe/Amsterdam';
 GLOBAL.logToConsole = false;
 GLOBAL.dev = true;
 GLOBAL.port = 3221;

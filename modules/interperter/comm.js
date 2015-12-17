@@ -8,7 +8,7 @@ var postMethod = function(command, deviceObject, paramList, callback){
         var everythingIsValidated = true;
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
-                if(!data[property].validated) everythingIsValidated = false
+                if(!data[property].validated) everythingIsValidated = false;
             }
         }
         if(everythingIsValidated) {
@@ -26,14 +26,14 @@ var postMethod = function(command, deviceObject, paramList, callback){
             logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd. Maar er was een error.", 2);
             callback(data);
         }
-    })
+    });
 };
 
 var getMethod = function(command, deviceObject, callback){
     superAgent.get('http://'+deviceObject.config.ip+'/'+command).end(function(err,res){
         if(err) console.log(err);
         callback(res.text);
-    })
+    });
 };
 
 module.exports = {

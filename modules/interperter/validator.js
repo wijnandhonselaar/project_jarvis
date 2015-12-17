@@ -87,13 +87,14 @@ function validateCommand(command, device, paramList, callback) {
             var paramObj = device.model.commands[command].parameters[param];
 
             var accepts = paramObj.accepts;
+            var validates = null;
 
             if (param in paramList) {
 
                 if (GLOBAL.logToConsole) console.log('Found ' + param + ' in paramlist');
 
                 var value = paramList[param];
-                var validates = true;
+                validates = true;
 
                 for (var i = 0; i < accepts.length; i++) {
                     var acceptObj = accepts[i];
@@ -112,11 +113,13 @@ function validateCommand(command, device, paramList, callback) {
                     }
                 }
 
-            } else validates = !param.required;
+            } else {
+                validates = !param.required;
+            }
         }
     }
     if (GLOBAL.logToConsole) console.log(validatedParams);
-    callback(validatedParams)
+    callback(validatedParams);
 }
 
 /**

@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 var Scenario = require('../models/scenario');
@@ -85,11 +86,13 @@ function toggleState(scenario, cb) {
                 scenarios[i].status = false;
                 cb(null, scenarios[i]);
             }
-            updateById(scenarios[i].id, scenarios[i],function(err, data){
-                if(err) {console.error(err); throw err;}
-                //console.log(data);
-            });
+            updateById(scenarios[i].id, scenarios[i],updateCB);
         }
+    }
+
+    function updateCB(err, data){
+        if(err) {console.error(err); throw err;}
+        //console.log(data);
     }
 }
 
@@ -100,11 +103,12 @@ function start(scenario, cb){
                 scenarios[i].status = true;
                 if(cb) cb(null, scenarios[i]);
             }
-            updateById(scenarios[i].id, scenarios[i],function(err, data){
-                if(err) {console.error(err); throw err;}
-                //console.log(data);
-            });
+            updateById(scenarios[i].id, scenarios[i],updateCB);
         }
+    }
+    function updateCB(err, data){
+        if(err) {console.error(err); throw err;}
+        //console.log(data);
     }
 }
 
@@ -115,11 +119,12 @@ function stop(scenario, cb){
                 scenarios[i].status = false;
                 if(cb) cb(null, scenarios[i]);
             }
-            updateById(scenarios[i].id, scenarios[i],function(err, data){
-                if(err) {console.error(err); throw err;}
-                //console.log(data);
-            });
+            updateById(scenarios[i].id, scenarios[i],updateCB);
         }
+    }
+    function updateCB(err, data){
+        if(err) {console.error(err); throw err;}
+        //console.log(data);
     }
 }
 

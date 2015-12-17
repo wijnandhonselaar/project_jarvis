@@ -17,7 +17,7 @@ function pullData(sensor){
         if(intervalArray[i].id === sensor.id){
             intervalArray.splice(i, 1);  
         }
-    };
+    }
     intervalArray.push({id: sensor.id, timeout:timeout});
 }
 
@@ -25,7 +25,7 @@ function pullData(sensor){
 function addIntervalsToSensors(list){
     for (var i = 0; i < list.length; i++) {
         pullData(list[i]);
-    };
+    }
 }
 
 module.exports = {
@@ -34,8 +34,8 @@ module.exports = {
     reInitiateIntervals : function (list){
         for (var i = 0; i < intervalArray.length; i++) {
             clearTimeout(intervalArray[i]);
-        };
+        }
         intervalArray.splice(0,intervalArray.length);
         addIntervalsToSensors(list);
     }
-}
+};
