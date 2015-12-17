@@ -304,6 +304,35 @@ function executeCommand(command, device, params, cb){
     }
 }
 
+/**
+ *
+ * @param id Actuator id
+ * @param scenario name
+ */
+function removeScenarioFromActuator(id, scenario) {
+    for(var i = 0; i < devices.actuators.length; i++) {
+        if (devices.actuators[i].id == id) {
+            delete devices.actuators[i].config.scenarios[scenario];
+            Actuator.get(parseInt(id))
+                .then(function(actuator) {
+                    delete actuator.config.scenarios[scenario];
+                    actuator.save()
+                        .then(function (res) {
+                            if(res.err) throw err;
+                        })
+                        .catch(function (err) {
+                            console.log('Error bij verwijderen scenario uit config van een actuator.');
+                            throw err;
+                        })
+                })
+                .catch(function(err) {
+                    console.log('Error bij ophalen actuator.');
+                    throw err;
+                });
+        }
+    }
+}
+
 function updateActuator(id, actuator, cb) {
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
@@ -397,7 +426,8 @@ module.exports = {
     updateActuatorState: updateActuatorState,
     setRules: setRules,
     updateActuator: updateActuator,
-    executeCommand:executeCommand
+    executeCommand:executeCommand,
+    removeScenarioFromActuator: removeScenarioFromActuator
 };
 
 //circular dependency (export must be first)

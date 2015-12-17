@@ -107,6 +107,12 @@ module.exports = (function () {
         });
     });
 
+    route.put('/actuators/removescenario/:id', function (req, res) {
+       deviceManager.removeScenarioFromActuator(req.params.id, req.body.scenario, function (response) {
+          res.send(JSON.stringify(response));
+       });
+    });
+
     return route;
 
 })();
