@@ -5,9 +5,9 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope"];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope", "$timeout"];
 
-    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout) {
         var sdc = this;
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
@@ -24,6 +24,29 @@
         sdc.actuators = [];
         sdc.GoToDetail = GoToDetail;
         var swiper = null;
+
+        sdc.log = function(log){
+            console.log("log:\n", log);
+        };
+
+
+        var elisteners = [];
+        function addListeners() {
+            function changeListenerCreator(device) {
+                return function(){
+                    sdc.updateActuator(device.id);
+                };
+            }
+            sdc.devices.forEach(function(device){
+                if(elisteners.indexOf(device.id) == -1) {
+                    var el = document.getElementById("selectChange" + device.id);
+                    el.addEventListener("change", changeListenerCreator(device));
+                    elisteners.push(device.id);
+                }
+            });
+        }
+
+        $timeout(addListeners, 2000);
 
         /**
          * Scenario model
@@ -126,6 +149,7 @@
                 priority: 100
             });
             updateScenario();
+            $timeout(addListeners);
         }
 
         function updateScenario(){
@@ -141,12 +165,18 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
+                    console.log("Scenario\n",data.scenario);
                     sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
                     sdc.scenario.actuators.forEach(function(actuator) {
+                        var act = actuator;
                         ScenarioService.getActuatorByID(actuator.deviceid)
                             .then(function(data) {
+                                data.action = {
+                                    command: act.action.command
+                                };
+                                console.log("data\n", data);
                                 sdc.devices.push(data);
                                 $scope.$apply();
                             })
@@ -154,6 +184,9 @@
                                 console.error(err);
                             });
                     });
+                    $timeout(function(){
+
+                    },1000);
                     return data;
                 })
                 .catch(function (err) {
@@ -204,7 +237,7 @@
         }
 
         function updateActuator(id) {
-            var action = $('#'+id + ' option:selected').val();
+            var action = $('#selectChange'+id + ' option:selected').val();
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id == id) {
                     sdc.devices[i].config.scenarios[sdc.scenario.name].command = action;
@@ -221,7 +254,7 @@
         }
 
         function selectedAction(key, actuator) {
-            console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
+            //console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
             for(var i = 0; i < sdc.scenario.actuators.length; i++) {
                 var item = sdc.scenario.actuators[i];
                 if(item.deviceid == actuator.id) {
