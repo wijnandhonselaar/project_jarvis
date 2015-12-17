@@ -86,7 +86,7 @@ function addDevice(device, remote, deviceType) {
             devices[deviceType].push(deviceObj);
             if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
-            };
+            }
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -101,7 +101,7 @@ function broadcastEvent(msg) {
     if (device) {
         updateManagers(msg);
         logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
-        io.emit('deviceEvent', {device: device, event: msg})
+        io.emit('deviceEvent', {device: device, event: msg});
     } else {
         console.log('What the fuck, ik kan mijn apparaat niet vinden');
     }
@@ -184,25 +184,28 @@ function getActuatorById(id) {
 
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
+
+    function aliasCB(err, res) {
+        if (err) {
+            logger.logEvent(res, devicetype, "Handmatig", "Alias voor " + res.model.name + " niet aangepast.", 3);
+            callback({err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
+        } else {
+            logger.logEvent(res, devicetype, "Handmatig", "Nieuwe alias voor " + res.model.name + " ingesteld.", 4);
+            io.emit("deviceUpdated", devices[devicetype][i]);
+            callback({success: "Success, alias for " + id + " was successfully updated."});
+        }
+    }
+
     for (var i = 0; i < devices[devicetype].length; i++) {
         if (devices[devicetype][i].id === id) {
             devices[devicetype][i].config.alias = alias;
             found = true;
             // save to the database!
-            rethinkManager.updateAlias(id, devicetype, alias, function (err, res) {
-                if (err) {
-                    logger.logEvent(res, devicetype, "Handmatig", "Alias voor " + res.model.name + " niet aangepast.", 3);
-                    callback({err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
-                } else {
-                    logger.logEvent(res, devicetype, "Handmatig", "Nieuwe alias voor " + res.model.name + " ingesteld.", 4);
-                    io.emit("deviceUpdated", devices[devicetype][i]);
-                    callback({success: "Success, alias for " + id + " was successfully updated."});
-                }
-            });
+            rethinkManager.updateAlias(id, devicetype, alias, aliasCB );
         }
     }
     if(found === false){
-        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."})
+        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."});
     }
 }
 
@@ -214,26 +217,29 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
  */
 function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
     var found = false;
+
+    function criCB(err, res) {
+        if(err) {
+            logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
+            callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
+        } else {
+            io.emit("deviceUpdated", sensor);
+            logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
+            callback({success: "Success, interval for "+ id + " was successfully updated."});
+        }
+    }
+
     for (var i = 0; i < devices.sensors.length; i++) {
         if (devices.sensors[i].id === id) {
             found = true;
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
             var sensor = devices.sensors[i];
             initiateStatusPolling(sensor);
-            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
-                if(err) {
-                     logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
-                     callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
-                } else {
-                    io.emit("deviceUpdated", sensor);
-                    logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
-                    callback({success: "Success, interval for "+ id + " was successfully updated."});
-                }
-            });
+            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, criCB);
         }
-    };
+    }
     if(found === false){
-        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."})
+        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."});
     }
 }
 
@@ -277,12 +283,12 @@ function setRules(object) {
     var a = getActuatorById(object.id);
     if (a.err) {
         console.error(a.err);
-        return {err: 'Couldn\'t find actuator by id'}
+        return {err: 'Couldn\'t find actuator by id'};
     } else {
         //console.log('set new rules');
         a.config.rules = object.rules;
         //console.log(a.config);
-        return {success: 'set'}
+        return {success: 'set'};
     }
 }
 
@@ -306,28 +312,37 @@ function executeCommand(command, device, params, cb){
 
 function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
+
+    function thenFn(res) {
+        cb(null, res);
+    }
+
+    function catchFn(err) {
+        console.log('Error bij opslaan');
+        cb({error: err, message: 'Could not update actuator.'});
+    }
+
+    function persistFn(persisted) {
+        persisted.merge(actuator);
+        console.log("merged");
+        console.log(persisted);
+        console.log('Before save');
+        persisted.save()
+            .then(thenFn)
+            .catch(catchFn);
+    }
+
+    function catchFn2(err) {
+        console.log('Error bij ophalen met id: ' + id);
+        cb({error: err, message: 'Could not update actuator.'});
+    }
+
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
             devices.actuators[i] = actuator;
             console.log('Before get');
             Actuator.get(parseInt(id))
-                .then(function (persisted) {
-                    persisted.merge(actuator);
-                    console.log("merged");
-                    console.log(persisted);
-                    console.log('Before save');
-                    persisted.save()
-                        .then(function (res) {
-                            cb(null, res);
-                        })
-                        .catch(function (err) {
-                            console.log('Error bij opslaan');
-                            cb({error: err, message: 'Could not update actuator.'});
-                        });
-                }).catch(function (err) {
-                console.log('Error bij ophalen met id: ' + id);
-                cb({error: err, message: 'Could not update actuator.'});
-            });
+                .then(persistFn).catch(catchFn2);
         }
     }
 }
