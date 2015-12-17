@@ -1,0 +1,66 @@
+<div class="row" style="margin-top:15px;">
+    <div class="col m2">
+
+        <div ng-click="adc.toggleState(adc.actuator)" class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
+            <div class="status" ng-class="adc.actuator.status.state ? 'green' : 'red'"></div>
+            <div style="background-image:url({{adc.actuator.model.image}}); margin:0 auto; width: 50px; height:55px; background-size:cover;"></div>
+            <!--<img src="{{adc.actuator.model.image}}" style="width:40px; margin-top:3px;">-->
+        </div>
+
+        <div ng-click="adc.GoToDetail(adc.actuator)" class="card text-center touch waves-light" style="padding:5px; margin-top:-12px;">
+            <img src="images/icon_condition.png" width="25px;">
+        </div>
+    </div>
+    <div class="col m10">
+        <div class="row detaildescrip" style="margin-top:8px;">
+            <div class="col m12">
+                <input id="aliasAct" type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="adc.actuatoralias" ng-change="adc.updateAlias('alias',adc.actuatoralias)" style="margin-top:-10px;"/>
+            </div>
+            <div class="col m12" style="margin-top:-25px;">
+                <p class="description">{{adc.actuator.model.description}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top:-15px;">
+    <div class="col m4 nopad">
+        <div class="row">
+            <div class="col m12">
+                <div class="command nopad valign-wrapper card" ng-repeat="(key, command) in adc.actuator.model.commands" ng-if="command.name != 'status'">
+                    <div class="actuatorCommand" id='{{key}}' ng-click="adc.showCommand(adc.actuator.model.id, command, key, 'actuator');" class="touch valign" style="display: inline-block; width: 85%;">{{command.name}}</div>
+                    <div data-position="top" data-delay="50" data-tooltip="{{command.description}}" class="tooltipped text-center" style="display: inline-block; width:15%; background-color:#F84E19; color:white; font-size:24px;">i</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="commandModal" class="modal" style="margin-top:-25px;">
+    <div class="modal-content">
+        <h4 id="commandTitle">{{adc.currentcommand.name}}</h4>
+        <div class="modalWrapper">
+            <div class="command">
+                <div class="parameters" ng-repeat="(paramkey, param) in adc.currentcommand.parameters">
+                    <div ng-if="adc.checkInputType(param.accepts[0], 'slider')">
+                        <rzslider rz-slider-model="adc.currentvalues[paramkey]" rz-slider-options="{floor: param.accepts[0].limit[0].min, ceil: param.accepts[0].limit[0].max}"></rzslider>
+                    </div>
+                    <div ng-if="adc.checkInputType(param.accepts[0], 'input')">
+                        <input type="text" edit-dir placeholder="{{paramkey}}" ng-model="adc.currentvalues[paramkey]"/>
+                    </div>
+                    <div ng-if="adc.checkInputType(param.accepts[0], 'checkbox')">
+                        <p>
+                            <input type="checkbox" id="check{{paramkey}}" ng-model="adc.currentvalues[paramkey]" />
+                            <label for="check{{paramkey}}">{{paramkey}}</label>
+                        </p>
+                    </div>
+                </div>
+                <br><br>
+                <button class="btn btn-primary" ng-click="adc.HandleCommand()">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

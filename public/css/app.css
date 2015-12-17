@@ -1,0 +1,308 @@
+html{
+    /*box-sizing:;*/
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /*cursor: none;*/
+}
+
+
+body{
+    height: 480px !important;
+    width: 800px !important;
+    overflow: hidden !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color:#FAFAFA;
+}
+
+.mainwindow{
+    height: 325px !important;
+    background-color:#FAFAFA;
+}
+
+.ptop_50{
+    padding-top:50px !important;
+}
+
+
+.ptop_30{
+    padding-top:30px !important;
+}
+
+.ptop_10{
+    padding-top:10px !important;
+}
+
+.nopad{
+    padding:0px !important;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.logwindow{
+    height: 100vh;
+}
+
+.menucontainer{
+    /*border-top:1px solid RGBA(149, 149, 149, 1);*/
+    height: 100vh;
+    z-index: 9999;
+    background-color: white;
+}
+
+.backpanel_dark{
+    background-color: #EAEAEA;
+}
+
+.backpanel_light{
+    background-color: white;
+    -webkit-box-shadow: 2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    -moz-box-shadow:    2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    box-shadow:         2px 2px 5px 0px RGBA(234, 234, 234, 1);
+}
+
+.backpanel_light.wshadow{
+    -webkit-box-shadow: -1px 0px 5px 0px #959595;
+    -moz-box-shadow:    -1px 0px 5px 0px #959595;
+    box-shadow:         -1px 0px 5px 0px #959595;
+}
+
+.menu_item{
+    margin-top:-2px;
+    height: 100vh;
+    padding-top:12px !important;
+}
+
+.menu_item.active{
+    background-color: white;
+    border-left:1px solid #EDEDED;
+    /*border-right: 1px solid RGBA(149, 149, 149, 1);*/
+    -webkit-box-shadow: 2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    -moz-box-shadow:    2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    box-shadow:         2px 2px 5px 0px RGBA(234, 234, 234, 1);
+}
+
+.menu_item.active span{
+    color:#f54f29;
+}
+
+.customCard{
+    border-radius: 3px;
+    position: relative;
+    height: 50px;
+    border:1px solid RGBA(234, 234, 234, 1);
+    background-color: white;
+    -webkit-box-shadow: 2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    -moz-box-shadow:    2px 2px 5px 0px RGBA(234, 234, 234, 1);
+    box-shadow:         2px 2px 5px 0px RGBA(234, 234, 234, 1);
+}
+
+.customCard .detailcontainer{
+    padding:3px;
+    color:RGBA(149, 149, 149, 1);
+}
+
+.highlight{
+    color:#F84E19;
+}
+
+.no-shadow{
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
+
+.customCard:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.customCard .detailcontainer .description{
+    font-size:11px;
+    color:RGBA(149, 149, 149, 1);
+}
+
+.card .touch:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.card.touch:active{
+    background-color: #F4F4F4;
+    -moz-box-shadow:    inset 0 0 7px #EAEAEA;
+    -webkit-box-shadow: inset 0 0 7px #EAEAEA;
+    box-shadow:         inset 0 0 7px #EAEAEA;
+}
+
+.status.off{
+    background-color: #f54f29;
+}
+
+.status.on{
+    background-color: RGBA(189, 244, 106, 1);
+}
+
+
+
+.statusscenario {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    position: absolute;
+    right: 33%;
+    top: 28%;
+}
+
+.status{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    right:5px;
+    top:5px;
+}
+
+.top-nav{
+    border-bottom: 1px solid #f54f29;
+}
+
+.loglevel{
+    border-right: 1px solid white;
+    height: 100%;
+    width: 4px !important;
+}
+
+.loglevel.n1{
+    background-color: RGBA(255, 0, 0, 1);
+}
+.loglevel.n2{
+    background-color: RGBA(255, 0, 0, 1);
+}
+.loglevel.n3{
+    background-color: RGBA(255, 154, 0, 1);
+}
+.loglevel.n4{
+    background-color: RGBA(0, 102, 204, 1);
+}
+
+.loglevel.newdevice{
+    background-color: RGBA(189, 244, 106, 1);
+}
+
+.loglevel.auto{
+    background-color: #45B5C3;
+}
+.log-container{
+    height:450px;
+    overflow-y:hidden;
+    overflow: scroll;
+}
+::-webkit-scrollbar { 
+    display: none; 
+}
+.lognotice{
+    height: 65%;
+    font-size: 12px;
+    padding-top:2px;
+}
+
+.lognotice.date{
+    font-size:11px;
+    margin-left: 10px;
+    color:RGBA(149, 149, 149, 1);
+}
+
+.logentry{
+    box-sizing: content-box;
+    height: 53px;
+    border-bottom: 1px solid white;
+}
+.row.logentry{
+    margin-bottom:0px;
+}
+
+.detaildescrip{
+    color:#959595;
+}
+
+.detaildescrip .description{
+    font-size:12px;
+}
+
+.command{
+    vertical-align: middle;
+    padding:5px;
+}
+
+.command .touch{
+    height: 36px;
+    padding:6px;
+}
+
+.swiper-pagination-bullet{
+    margin-right:5px;
+}
+
+.swiper-pagination-bullet-active{
+    background:#F84E19;
+}
+
+.pin1-4{
+    height: 140px;
+    padding:10px;
+}
+
+.no-overflow{
+    overflow:hidden;
+}
+
+.event{
+    z-index: 9999;
+    width: 800px;
+    height: 100%;
+    position: absolute;
+    background-color: #F84E19;
+    text-align: center;
+    color:white;
+    font-size:28px;
+    padding-top:20vh;
+    display: none;
+    top: 0;
+}
+
+.invert{
+    -webkit-filter: brightness(0) invert(1);
+    filter: brightness(0) invert(1);
+}
+
+.severity5{
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f77d59+0,ff6060+53,ff4949+100 */
+    background: #f77d59; /* Old browsers */
+    background: -moz-linear-gradient(left,  #f77d59 0%, #ff6060 53%, #ff4949 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #f77d59 0%,#ff6060 53%,#ff4949 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #f77d59 0%,#ff6060 53%,#ff4949 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f77d59', endColorstr='#ff4949',GradientType=1 ); /* IE6-9 */
+}
+
+.ui-keyboard {
+    z-index: 9999;
+}
+
+input:focus {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+}

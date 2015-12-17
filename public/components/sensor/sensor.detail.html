@@ -1,0 +1,81 @@
+<div class="row" style="margin-top:10px; margin-bottom:5px;">
+    <div class="col m2">
+        <div class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
+            <div style="background-image:url({{sdc.sensor.model.image}}); margin:0 auto; background-repeat: no-repeat; width: 50px; height:55px; background-size:contain;"></div>
+        </div>
+    </div>
+    <div class="col m10">
+        <div class="row detaildescrip" style="margin-top:8px;">
+            <div class="col m6">
+                <input id="alias" type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="sdc.sensoralias" ng-change="sdc.updateAlias('alias',sdc.sensoralias)" style="margin-top:-10px;"/>
+            </div>
+            <div class="col m6 nopad" style="margin-top:-10px;">
+                <div class="col m12">
+                    <input id="interval"type="text" edit-dir="" placeholder="Interval" ng-model="sdc.sensor.config.clientRequestInterval" ng-change="sdc.updateInterval(sdc.sensor.config.clientRequestInterval)"/>
+                </div>
+            </div>
+            <div class="col m12" style="margin-top: -20px;">
+                <p class="description">{{sdc.sensor.model.description}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="clear :both;"></div>
+
+<div class="row">
+    <div class="col m5 nopad">
+        <div class="row">
+            <div class="col m12">
+                <div class="command nopad valign-wrapper card" ng-repeat="(key, value) in sdc.sensor.status" >
+                    <div class="touch valign" style="display: inline-block; width: 85%;" ng-click="sdc.onHistoryClick()">{{key}} : {{value}}</div>
+                    <div data-position="top" data-delay="50" data-tooltip="{{command.description}}" class="tooltipped text-center" style="display: inline-block; width:15%; background-color:#F84E19; color:white; font-size:24px;">i</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col m7 nopad" style="margin-top:-40px;">
+        <canvas id="line" class="chart chart-line" chart-options="sdc.chartoptions"  chart-data="sdc.data"
+              chart-labels="sdc.labels" chart-legend="false" chart-series="sdc.series"
+              chart-click="sdc.onChartClick" width='280px' height='175px'>
+        </canvas> 
+    </div>
+</div>
+
+<div id="graphModal" class="modal modal-fixed-footer" style="width: 800px; max-height:800px; width:750px; height:400px;">
+    <div class="modal-content">
+        <h4>Grafiek voor {{sdc.sensor.config.alias}}</h4>
+        <div class="row" style="margin-top:15px;">
+            <div class="col m12">
+                <canvas id="line" class="chart chart-line" chart-options="sdc.chartoptions" chart-data="sdc.data"
+                  chart-labels="sdc.labels" chart-legend="false" chart-series="sdc.series"
+                  width='730px' height='300px'>
+                </canvas> 
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#/sensors/{{sdc.sensor.model.id}}" class="modal-action modal-close waves-effect waves-green btn-flat ">Sluiten</a>
+    </div>
+</div>
+
+<div id="historyModal" class="modal modal-fixed-footer" style="width: 800px; max-height:800px; width:750px; height:400px;">
+    <div class="modal-content">
+        <h4>Historie voor {{sdc.sensor.config.alias}}</h4>
+        <div class="row" style="margin-top:15px;">
+            <div class="row">
+                <div class="col m12">
+                    <div class="card" style="padding:7px;"  ng-repeat="log in sdc.logData">
+                        <div <div ng-repeat="(key, value) in log.status">
+                            <div class="touch valign" style="display: inline-block; width: 85%;">{{key}} : {{value}}</div>
+                            <div class="touch valign" style="display: inline-block; width: 85%;">{{log.timestamp *1000 | date:'dd-MM-yyyy HH:mm:ss Z'}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#/sensors/{{sdc.sensor.model.id}}" class="modal-action modal-close waves-effect waves-green btn-flat ">Sluiten</a>
+    </div>
+</div>

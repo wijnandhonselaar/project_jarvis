@@ -1,0 +1,43 @@
+<!--<pre>-->
+<!--{{aoc.actuator | json}}-->
+<!--</pre>-->
+<div class="ptop_30">
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="swiper-container">
+
+    <div class="swiper-wrapper">
+
+        <div class="swiper-slide" ng-repeat="repeat in soc.repeater">
+            <div class="col m6" ng-if="$index >= ($parent.$index * 8) && $index < (($parent.$index+1) * 8)" ng-repeat="sensor in soc.sensors">
+                <div class="row">
+                    <div class="col m4">
+                        <div class="customCard onoff text-center">
+                            <div style="background-image:url({{sensor.model.image}}); margin:0 auto; margin-top:6px; width: 36px; background-repeat: no-repeat; height:36px; background-size:contain;"></div>
+                            <!--<img src="{{actuator.model.image}}" style="width:25px; margin-top:3px;">-->
+                        </div>
+                    </div>
+                    <div class="col m8" ng-click="soc.GoToDetail(sensor)" style="margin-left:-8px; margin-top:0px;">
+                        <div class="customCard" style="padding:1px;">
+                            <div id="sensor" class="detailcontainer">
+                                {{sensor.config.alias}}<br>
+                        <span class="description" ng-repeat="(key, value) in sensor.status"
+                              ng-if="$index == 0">{{key}}: {{value}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div style="left:285px; width: 12%; position: absolute; bottom:115px;">
+    <div class="swiper-pagination"></div>
+</div>
