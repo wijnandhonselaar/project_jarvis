@@ -68,7 +68,7 @@ describe("Test scenario", function () {
     beforeEach(function (done) {
         setTimeout(function () {
             done();
-        }, 500);
+        }, 2000);
     });
 
 
@@ -173,15 +173,61 @@ describe("Test scenario", function () {
                 done(exception);
             })
     });
+
+    it("Should toggle the scenario and activate actuator", function (done) {
+        browser
+            .click(".statusscenario")
+            .getHTML("#status").then(function(value){
+                expect(value).to.be.equal('<div id="status" class="statusscenario green" ng-class="scenario.status ? \'green\' : \'red\' "></div>')
+                setTimeout(function () {
+                    done();
+                }, 2000);
+            })
+    });
+
+    it("should show the mainscreen 5 menu items and go to devices", function (done) {
+        browser
+            .elements(".menu_item").then(function (result) {
+                expect(result.value).to.have.length(5);
+                browser
+                    .click('#devices');
+                setTimeout(function () {
+                    done();
+                }, 500);
+            })
+            .catch(function (exception) {
+                console.log("EXCEPTION", exception);
+                done(exception);
+            })
+    });
+    //turn on if function werkt
+    it("should see if devices is turnt on", function (done) {
+        browser
+            .getHTML(".status").then(function (value) {
+                browser
+                    .click('#scenario');
+                //expect(value).to.be.equal('<div class="status green" ng-class="actuator.status.state ? \'green\' : \'red\'"></div>');
+
+                setTimeout(function () {
+                    done();
+                }, 500);
+            })
+            .catch(function (exception) {
+                console.log("EXCEPTION", exception);
+                done(exception);
+            })
+    });
+
     it("Should open detailpage of the scenario with devices change name", function (done) {
         browser
-            .click("#scenarioAmount")
-            .setValue('#name', '1')
-            .setValue('#description', '2')
-            .click('#scenario');
+            .click("#scenarioAmount");
         setTimeout(function () {
+            browser
+                .setValue('#name', '1')
+                .setValue('#description', '2')
+                .click('#scenario');
             done();
-        }, 2000);
+        }, 1500);
     });
 
     it("Should see if overview is changed", function (done) {
