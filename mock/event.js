@@ -1,4 +1,3 @@
-/* jshint ignore:start */
 var dgram = require('dgram');
 var broadcastAddress = "255.255.255.255";
 var message = new Buffer('{"id":0,"msg":"Lamp is klaar","key":"finish","severity":1}');
@@ -11,4 +10,3 @@ client.on("listening", function () {
     });
 
 });
-/* jshint ignore:end */

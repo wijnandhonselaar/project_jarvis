@@ -1,8 +1,7 @@
-/* jshint ignore:start */
 var PORT = 80;
 var UDPPORT = 3221;
 
-var broadcastTime = 100;
+var broadcastTime = 500;
 var broadcastAddress = "0.0.0.0";
 //var broadcastAddress = "255.255.255.255";
 
@@ -13,19 +12,18 @@ var actuatoren = {
 	 verwarmingen 	: 5,
 	 tvs 			: 5,
 	 deursloten 	: 5
-}
+};
 
 var sensoren  = {
  lichtsensoren			:5,
  temperatuursensoren	:5,
  vochtsensoren			:5
-}
+};
 
 
 //DONT EDIT BELOW
 var numberOfActuators = 0;
 for (var key in actuatoren) {
-	console.log(key);
   if (actuatoren.hasOwnProperty(key)) {
 	numberOfActuators += actuatoren[key];
   }
@@ -48,5 +46,3 @@ module.exports = {
     broadcastAddress : broadcastAddress
 };
 
-
-/* jshint ignore:end */

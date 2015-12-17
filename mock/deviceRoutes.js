@@ -1,11 +1,9 @@
-/* jshint ignore:start */
-//send all devices at once
 module.exports = (function() {
 	var express = require('express');
 	var route = express.Router();
-	var helper = require('./device')
+	var helper = require('./device');
 	var index = 0;
-	var config = require("./config")
+	var config = require("./config");
 
 	route.get('/sok', function (req, res) {
 	    if (index == (config.numberOfSensors + config.numberOfActuators)) {
@@ -31,7 +29,7 @@ module.exports = (function() {
 	route.post('/on', function (req, res) {
 	    actuator = helper.getActuatorById(req.body.id);
 	    if (req.body.id === 0) {
-	        actuator.status = {state: true, intensity: 255}
+	        actuator.status = {state: true, intensity: 255};
 	    }
 	    else {
 	        actuator.status = {state: true};
@@ -43,10 +41,10 @@ module.exports = (function() {
 	route.post('/off', function (req, res) {
 	    actuator = helper.getActuatorById(req.body.id);
 	    if (req.body.id === 0) {
-	        actuator.status = {state: false, intensity: 0}
+	        actuator.status = {state: false, intensity: 0};
 	    }
 	    else {
-	        actuator.status = {state: false}
+	        actuator.status = {state: false};
 	    }
 	    //status = determineStateActuator(actuator, null);
 	    res.send(actuator.status);
@@ -65,4 +63,3 @@ module.exports = (function() {
  return route;
 
 })();
-/* jshint ignore:end */

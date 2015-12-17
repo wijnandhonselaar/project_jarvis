@@ -1,4 +1,3 @@
-/* jshint ignore:start */
 var express = require("express");
 var app = express();
 var server = require('http').Server(app);
@@ -21,5 +20,3 @@ app.use("/", deviceRoutes);
 
 
 device.init();
-
-/* jshint ignore:end */
