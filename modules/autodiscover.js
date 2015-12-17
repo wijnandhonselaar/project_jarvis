@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 var supportedSOKVersions = ['0.0.1'];
 var httpPending = [];
@@ -35,7 +36,7 @@ module.exports = {
             if("id" in msg && "msg" in msg && "key" in msg && "severity" in msg){
                 deviceManager.broadcastEvent(msg);
             } else if (supportedSOKVersions.indexOf(msg.version) !== -1) {
-                if (!httpPending[remote.address] || httpPending[remote.address] == undefined && devices.getByIP(remote.address)) {
+                if (!httpPending[remote.address] || httpPending[remote.address] === undefined && deviceManager.getByIP(remote.address)) {
                     http
                         .get('http://' + remote.address + '/sok')
                         .end(function (err, res) {
@@ -49,5 +50,5 @@ module.exports = {
             }
         });
     },
-    getDevices: function(){return deviceManager.get()}
+    getDevices: function(){return deviceManager.get();}
 };

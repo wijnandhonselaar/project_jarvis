@@ -5,9 +5,9 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope"];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope", "$timeout"];
 
-    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout) {
         var sdc = this;
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
@@ -19,12 +19,34 @@
         sdc.updateActuator = updateActuator;
         sdc.selectedAction = selectedAction;
         sdc.isAllowedCommand = ScenarioService.isAllowedCommand;
-        sdc.selected = 'on';
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
         sdc.GoToDetail = GoToDetail;
         var swiper = null;
+
+        sdc.log = function(log){
+            console.log("log:\n", log);
+        };
+
+
+        var elisteners = [];
+        function addListeners() {
+            function changeListenerCreator(device) {
+                return function(){
+                    sdc.updateActuator(device.id);
+                };
+            }
+            sdc.devices.forEach(function(device){
+                if(elisteners.indexOf(device.id) == -1) {
+                    var el = document.getElementById("selectChange" + device.id);
+                    el.addEventListener("change", changeListenerCreator(device));
+                    elisteners.push(device.id);
+                }
+            });
+        }
+
+        $timeout(addListeners, 2000);
 
         /**
          * Scenario model
@@ -65,7 +87,6 @@
                             }
                         }
                         if(!exists){
-                            data.actuators[i].selected = data.actuators[i].model.commands[i];
                             sdc.actuators.push(data.actuators[i]);
                         }
                     }
@@ -93,10 +114,9 @@
 
         function removeActuator(id) {
             for(var i = 0; i < sdc.devices.length; i++) {
-                var device = sdc.devices[i];
-                if(device.id === id) {
-                    delete device.config.scenarios[sdc.scenario.name];
-                    ScenarioService.updateActuator(device);
+                if(sdc.devices[i].id === id) {
+                    delete sdc.devices[i].config.scenarios[sdc.scenario.name];
+                    ScenarioService.removeScenarioFromActuator(sdc.devices[i].id, sdc.scenario.name);
                     sdc.devices.splice(i, 1);
                 }
             }
@@ -114,7 +134,7 @@
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === actuator.id) {
                     sdc.devices[i].config.scenarios[sdc.scenario.name] = {
-                        command: '',
+                        command: 'on',
                         parameters: []
                     };
                     ScenarioService.updateActuator(sdc.devices[i]);
@@ -129,6 +149,7 @@
                 priority: 100
             });
             updateScenario();
+            $timeout(addListeners);
         }
 
         function updateScenario(){
@@ -144,12 +165,18 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
+                    console.log("Scenario\n",data.scenario);
                     sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
                     sdc.scenario.actuators.forEach(function(actuator) {
+                        var act = actuator;
                         ScenarioService.getActuatorByID(actuator.deviceid)
                             .then(function(data) {
+                                data.action = {
+                                    command: act.action.command
+                                };
+                                console.log("data\n", data);
                                 sdc.devices.push(data);
                                 $scope.$apply();
                             })
@@ -157,6 +184,9 @@
                                 console.error(err);
                             });
                     });
+                    $timeout(function(){
+
+                    },1000);
                     return data;
                 })
                 .catch(function (err) {
@@ -191,6 +221,9 @@
 
 
         function deleteScenario(scenario) {
+            for(var i = 0; i < sdc.scenario.actuators.length; i++) {
+                sdc.removeActuator(sdc.scenario.actuators[i].deviceid);
+            }
             ScenarioService.delete(scenario)
                 .then(function (data) {
                     goToOverview();
@@ -203,34 +236,34 @@
                 });
         }
 
-        function updateActuator(command, id) {
-            //var action = $('#'+actuatorID + ' option:selected').data("value");
-            console.log(command);
-            //for(var i = 0; i < sdc.devices.length; i++) {
-            //    if(sdc.devices[i].id == id) {
-            //        console.log("Found device in devicemanager");
-            //        sdc.devices[i].config.scenarios[sdc.scenario.name].command = command.name;
-            //        ScenarioService.updateActuator(sdc.devices[i]);
-            //    }
-            //}
-            //for(i = 0; i < sdc.scenario.actuators.length; i++) {
-            //    if(sdc.scenario.actuators[i].deviceid == id) {
-            //        console.log("Found device in Scenario");
-            //        sdc.scenario.actuators[i].command = command.name;
-            //        ScenarioService.update(sdc.scenario.id, sdc.scenario);
-            //    }
-            //}
+        function updateActuator(id) {
+            var action = $('#selectChange'+id + ' option:selected').val();
+            for(var i = 0; i < sdc.devices.length; i++) {
+                if(sdc.devices[i].id == id) {
+                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = action;
+                    ScenarioService.updateActuator(sdc.devices[i]);
+                }
+            }
+            for(i = 0; i < sdc.scenario.actuators.length; i++) {
+                if(sdc.scenario.actuators[i].deviceid == id) {
+                    sdc.scenario.actuators[i].action.command = action;
+                    ScenarioService.update(sdc.scenario.id, sdc.scenario);
+                }
+            }
 
         }
 
-        function selectedAction(command, actuator) {
-            console.log(command);
-            for(var i = 0; i < actuator.model.commands.length; i++) {
-                if(actuator.model.commands[i].name == command.name) {
-                    console.log(command);
-                    return command;
+        function selectedAction(key, actuator) {
+            //console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
+            for(var i = 0; i < sdc.scenario.actuators.length; i++) {
+                var item = sdc.scenario.actuators[i];
+                if(item.deviceid == actuator.id) {
+                    if(item.action.command == key) {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
 
         function goToOverview() {

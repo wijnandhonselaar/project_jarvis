@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 var Actuator = require('../models/actuator.js'),
@@ -154,7 +155,7 @@ function setStatus(id, type, status, cb) {
     type = checkType(type);
 
     if(!type) {
-        fn({Error: "type is unknown"});
+        cb({Error: "type is unknown"});
         return false;
     }
     //console.log('status', status);

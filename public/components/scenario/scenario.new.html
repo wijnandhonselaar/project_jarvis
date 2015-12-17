@@ -17,11 +17,11 @@
         </div>
         <div class="col m1" style="margin-left:-5px;">
             <div class="card touch" ng-click="snc.addActuator()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
-                <img src="/images/icon_adddevice.png" width="100%;">
+                <img id="addDevice" src="/images/icon_adddevice.png" width="100%;">
             </div>
         </div>
         <div class="col m1" style="margin-left:-5px;">
-            <div class="card touch" ng-click="snc.create()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+            <div id="createNew" class="card touch" ng-click="snc.create()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
                 <img src="/images/icon_save.png" width="100%;">
             </div>
         </div>
@@ -61,7 +61,7 @@
             <img src="{{actuator.model.image}}" width="100%">
         </div>
         <div class="col m3">
-            <span class="col m3">{{actuator.config.alias}}</span>
+            <span id="actuatorAliasactuator" class="col m3">{{actuator.config.alias}}</span>
         </div>
         <div class="col m5">
             <select id="{{actuator.id}}" style="display: block;">
@@ -100,7 +100,7 @@
                                     <div class="col m8" ng-click="snc.select(actuator)"
                                          style="margin-left:-8px; margin-top:0px;">
                                         <div class="customCard" style="padding:1px;">
-                                            <div class="detailcontainer">
+                                            <div id="actuatoralias" class="detailcontainer">
                                                 {{actuator.config.alias}}<br>
                                                 <span class="description">{{actuator.model.description.substring(0, 25)}}...</span>
                                             </div>

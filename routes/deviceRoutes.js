@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 module.exports = (function() {
     var deviceManager = require('../modules/deviceManager');
@@ -31,7 +32,7 @@ module.exports = (function() {
         }
 
         var response = comm.get(req.params.command, device, function () {
-            res.send(JSON.stringify(response))
+            res.send(JSON.stringify(response));
         });
     });
     route.post('/actuators/:id/rules', function (req, res) {
@@ -39,7 +40,7 @@ module.exports = (function() {
             id: parseInt(req.params.id),
             rules: req.body.rules
         };
-        res.json(deviceManager.setRules(object))
+        res.json(deviceManager.setRules(object));
     });
 
     route.get('/actuators/:id', function (req, res) {
@@ -106,6 +107,12 @@ module.exports = (function() {
         deviceManager.updateActuator(req.params.id, req.body.actuator, function (response) {
             res.send(JSON.stringify(response));
         });
+    });
+
+    route.put('/actuators/removescenario/:id', function (req, res) {
+       deviceManager.removeScenarioFromActuator(req.params.id, req.body.scenario, function (response) {
+          res.send(JSON.stringify(response));
+       });
     });
 
     return route;

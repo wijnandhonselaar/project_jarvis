@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 /**
  * Created by nickyromeijn on 24/11/15.
@@ -14,7 +15,7 @@ var deviceManager = require('../modules/deviceManager');
 //listtest
 router.post('/validate/:command', function(req, res){
     validator.validate(req.params.command, sok, req.body, function(interperterResponse){
-        res.json(interperterResponse)
+        res.json(interperterResponse);
     });
 });
 
@@ -24,7 +25,7 @@ router.post('/devices/add', function(req, res){
 });
 
 router.post('/devices/delete', function(req, res){
-	console.log("hier")
+	console.log("hier");
     deviceManager.removeAll();
     res.send('done');
 });

@@ -1,3 +1,4 @@
+/*jslint evil: true */
 var deviceManager = null;
 var scenarioManager = null;
 var comm = require('./interperter/comm');
@@ -46,9 +47,10 @@ function apply(scenario, event) {
                         console.error("NO ERROR OR STATUS\n", s);
                         return false.toString();
                     }
+                    break;
                 case 'timers':
                     var tobj = rule;
-                    var timeObj = new Date;
+                    var timeObj = new Date();
                     var temp = tobj.time.split(/\:|\-/g);
                     timeObj.setHours(temp[0]);
                     timeObj.setMinutes(temp[1]);

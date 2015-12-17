@@ -5,6 +5,7 @@ module.exports = function(grunt) {
 
         jshint: {
             all: [ 'Gruntfile.js', 'public/components/*.js', 'public/components/**/*module.js', 'public/components/**/*.js' ],
+            backend: [ '*.js', 'mock/*.js', 'modules/*.js', 'modules/**/*.js', 'routes/*.js' ],
             options: {
                 globals: {
                     "angular": true,
@@ -94,7 +95,7 @@ module.exports = function(grunt) {
                     'public/components/modules.js',
                     'public/css/app.css'
                 ],
-                tasks: [ 'jshint', 'html2js:dist', 'concat:dist', 'concat:css'],
+                tasks: [ 'jshint:all', 'html2js:dist', 'concat:dist', 'concat:css'],
                 options: {
                     atBegin: true,
                     livereload: 5050
