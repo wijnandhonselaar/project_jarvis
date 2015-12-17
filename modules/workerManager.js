@@ -1,3 +1,5 @@
+"use strict";
+
 var cp = require('child_process');
 var child = cp.fork('./modules/workers/sensorPolling');
 var intervalArray = [];
@@ -10,7 +12,7 @@ child.on('message', function(m) {
 //sending job to childprocess
 function pullData(sensor){
     child.send(sensor);
-    timeout = setTimeout(pullData, sensor.config.clientRequestInterval, sensor);
+    var timeout = setTimeout(pullData, sensor.config.clientRequestInterval, sensor);
     for (var i = 0; i < intervalArray.length; i++) {
         if(intervalArray[i].id === sensor.id){
             intervalArray.splice(i, 1);  

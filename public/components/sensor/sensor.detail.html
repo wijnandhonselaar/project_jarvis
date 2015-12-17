@@ -6,14 +6,16 @@
     </div>
     <div class="col m10">
         <div class="row detaildescrip" style="margin-top:8px;">
-            <div class="col m12">
-                <input type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="sdc.sensoralias" ng-change="sdc.updateAlias('alias',sdc.sensoralias)" style="margin-top:-10px;"/>
+            <div class="col m6">
+                <input id="alias" type="text" edit-dir="" placeholder="Druk hier om de alias aan te passen" ng-model="sdc.sensoralias" ng-change="sdc.updateAlias('alias',sdc.sensoralias)" style="margin-top:-10px;"/>
+            </div>
+            <div class="col m6 nopad" style="margin-top:-10px;">
+                <div class="col m12">
+                    <input id="interval"type="text" edit-dir="" placeholder="Interval" ng-model="sdc.sensor.config.clientRequestInterval" ng-change="sdc.updateInterval(sdc.sensor.config.clientRequestInterval)"/>
+                </div>
             </div>
             <div class="col m12" style="margin-top: -20px;">
                 <p class="description">{{sdc.sensor.model.description}}</p>
-            </div>
-            <div class="col m12">
-                <input type="text" edit-dir="" placeholder="Interval" ng-model="sdc.sensor.config.clientRequestInterval" ng-change="sdc.updateInterval(sdc.sensor.config.clientRequestInterval)"/>
             </div>
         </div>
     </div>

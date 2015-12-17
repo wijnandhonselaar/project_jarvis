@@ -137,15 +137,11 @@
         }
 
         function updateActuator(actuator) {
-            console.log('Scenario service before put');
             $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
                 .success(function(data) {
                     if(data.error) console.error(data.error);
-                    console.log('Put success');
-                    console.log(data);
                 })
                 .error(function (err) {
-                    console.log('Put fail');
                     console.error(err);
                     throw err;
                 });
@@ -155,6 +151,22 @@
             console.log('Dingen yolo hier ook 100 keer per seconde? WHAT THE FUCCCKKKK!!');
             return (commandname.toLowerCase() === 'on' || commandname.toLowerCase() === 'off');
 
+        }
+
+        /**
+         *
+         * @param id actuator id
+         * @param scenario name
+         */
+        function removeScenarioFromActuator(id, scenario) {
+            $http.put('/devices/actuators/removescenario/' + id, {scenario: scenario})
+                .success(function(res) {
+                    if(res.err) console.error(res.err);
+                })
+                .error(function (err) {
+                    console.error(err);
+                    throw err;
+                });
         }
 
         return {
@@ -167,7 +179,8 @@
             getActuators: getActuators,
             getActuatorByID: getActuatorByID,
             updateActuator: updateActuator,
-            isAllowedCommand: isAllowedCommand
+            isAllowedCommand: isAllowedCommand,
+            removeScenarioFromActuator: removeScenarioFromActuator
         };
 
     }

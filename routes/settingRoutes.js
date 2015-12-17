@@ -1,3 +1,4 @@
+"use strict";
 module.exports = (function() {
     var deviceManager = require('../modules/deviceManager');
     var express= require('express');

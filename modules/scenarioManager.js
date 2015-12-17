@@ -172,6 +172,7 @@ function getByName(name, cb) {
 
 module.exports = {
     init: function (socketio) {
+        getAll(function(){});
         if (socketio) io = socketio;
     },
     validate: validateRules,

@@ -1,3 +1,5 @@
+"use strict";
+
 var devices = {
     actuators: [],
     sensors: []
@@ -32,9 +34,9 @@ var rules = {
  */
 
 function updateManagers(event) {
-    for (var i = 0; i < getActuators().length; i++) {
-        ruleEngine.apply(getActuators()[i], event);
-    }
+    //for (var i = 0; i < getActuators().length; i++) {
+    //    ruleEngine.apply(getActuators()[i], event);
+    //}
     scenarioManager.validate(event);
 }
 
@@ -76,9 +78,9 @@ function addDevice(device, remote, deviceType) {
             }, device.type, function (err, res) {
                 if (err) {
                     console.log(err);
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, 2, null);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, logger.severity.notice);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", 4, null);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", logger.severity.notice);
                 }
             });
         } else {
@@ -101,6 +103,7 @@ function broadcastEvent(msg) {
     if (device) {
         updateManagers(msg);
         logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
+
         io.emit('deviceEvent', {device: device, event: msg})
     } else {
         console.log('What the fuck, ik kan mijn apparaat niet vinden');
@@ -188,15 +191,16 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
         if (devices[devicetype][i].id === id) {
             devices[devicetype][i].config.alias = alias;
             found = true;
+            var device = devices[devicetype][i];
             // save to the database!
-            rethinkManager.updateAlias(id, devicetype, alias, function (err, res) {
-                if (err) {
-                    logger.logEvent(res, devicetype, "Handmatig", "Alias voor " + res.model.name + " niet aangepast.", 3);
-                    callback({err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
+            rethinkManager.updateAlias(id, devicetype, alias, function(err, res) {
+                if(err) {
+                    logger.logEvent(res, devicetype, logger.manual ,"Alias voor " + res.model.name + " niet aangepast.", logger.severity.warning);
+                    callback( {err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
                 } else {
-                    logger.logEvent(res, devicetype, "Handmatig", "Nieuwe alias voor " + res.model.name + " ingesteld.", 4);
-                    io.emit("deviceUpdated", devices[devicetype][i]);
-                    callback({success: "Success, alias for " + id + " was successfully updated."});
+                    logger.logEvent(res, devicetype, logger.manual ,"Nieuwe alias voor " + res.model.name + " ingesteld.", logger.severity.notice);
+                    io.emit("deviceUpdated", device);
+                    callback( {success: "Success, alias for "+ id + " was successfully updated."});
                 }
             });
         }
@@ -222,11 +226,11 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
             initiateStatusPolling(sensor);
             rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
                 if(err) {
-                     logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
+                     logger.logEvent(res, sensor.model.type, logger.manual ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", logger.severity.warning);
                      callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
                 } else {
                     io.emit("deviceUpdated", sensor);
-                    logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
+                    logger.logEvent(sensor, sensor.model.type, logger.manual ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", logger.severity.notice);
                     callback({success: "Success, interval for "+ id + " was successfully updated."});
                 }
             });
@@ -301,6 +305,35 @@ function executeCommand(command, device, params, cb){
                 if(cb) cb(state);
             });
             break;
+    }
+}
+
+/**
+ *
+ * @param id Actuator id
+ * @param scenario name
+ */
+function removeScenarioFromActuator(id, scenario) {
+    for(var i = 0; i < devices.actuators.length; i++) {
+        if (devices.actuators[i].id == id) {
+            delete devices.actuators[i].config.scenarios[scenario];
+            Actuator.get(parseInt(id))
+                .then(function(actuator) {
+                    delete actuator.config.scenarios[scenario];
+                    actuator.save()
+                        .then(function (res) {
+                            if(res.err) throw err;
+                        })
+                        .catch(function (err) {
+                            console.log('Error bij verwijderen scenario uit config van een actuator.');
+                            throw err;
+                        })
+                })
+                .catch(function(err) {
+                    console.log('Error bij ophalen actuator.');
+                    throw err;
+                });
+        }
     }
 }
 
@@ -397,7 +430,8 @@ module.exports = {
     updateActuatorState: updateActuatorState,
     setRules: setRules,
     updateActuator: updateActuator,
-    executeCommand:executeCommand
+    executeCommand:executeCommand,
+    removeScenarioFromActuator: removeScenarioFromActuator
 };
 
 //circular dependency (export must be first)
