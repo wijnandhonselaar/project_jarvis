@@ -19,7 +19,6 @@
         sdc.updateActuator = updateActuator;
         sdc.selectedAction = selectedAction;
         sdc.isAllowedCommand = ScenarioService.isAllowedCommand;
-        sdc.selected = 'on';
         sdc.devices = [];
         sdc.repeater = [];
         sdc.actuators = [];
@@ -65,7 +64,6 @@
                             }
                         }
                         if(!exists){
-                            data.actuators[i].selected = data.actuators[i].model.commands[i];
                             sdc.actuators.push(data.actuators[i]);
                         }
                     }
@@ -114,7 +112,7 @@
             for(var i = 0; i < sdc.devices.length; i++) {
                 if(sdc.devices[i].id === actuator.id) {
                     sdc.devices[i].config.scenarios[sdc.scenario.name] = {
-                        command: '',
+                        command: 'on',
                         parameters: []
                     };
                     ScenarioService.updateActuator(sdc.devices[i]);
@@ -203,34 +201,34 @@
                 });
         }
 
-        function updateActuator(command, id) {
-            //var action = $('#'+actuatorID + ' option:selected').data("value");
-            console.log(command);
-            //for(var i = 0; i < sdc.devices.length; i++) {
-            //    if(sdc.devices[i].id == id) {
-            //        console.log("Found device in devicemanager");
-            //        sdc.devices[i].config.scenarios[sdc.scenario.name].command = command.name;
-            //        ScenarioService.updateActuator(sdc.devices[i]);
-            //    }
-            //}
-            //for(i = 0; i < sdc.scenario.actuators.length; i++) {
-            //    if(sdc.scenario.actuators[i].deviceid == id) {
-            //        console.log("Found device in Scenario");
-            //        sdc.scenario.actuators[i].command = command.name;
-            //        ScenarioService.update(sdc.scenario.id, sdc.scenario);
-            //    }
-            //}
+        function updateActuator(id) {
+            var action = $('#'+id + ' option:selected').val();
+            for(var i = 0; i < sdc.devices.length; i++) {
+                if(sdc.devices[i].id == id) {
+                    sdc.devices[i].config.scenarios[sdc.scenario.name].command = action;
+                    ScenarioService.updateActuator(sdc.devices[i]);
+                }
+            }
+            for(i = 0; i < sdc.scenario.actuators.length; i++) {
+                if(sdc.scenario.actuators[i].deviceid == id) {
+                    sdc.scenario.actuators[i].action.command = action;
+                    ScenarioService.update(sdc.scenario.id, sdc.scenario);
+                }
+            }
 
         }
 
-        function selectedAction(command, actuator) {
-            console.log(command);
-            for(var i = 0; i < actuator.model.commands.length; i++) {
-                if(actuator.model.commands[i].name == command.name) {
-                    console.log(command);
-                    return command;
+        function selectedAction(key, actuator) {
+            console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
+            for(var i = 0; i < sdc.scenario.actuators.length; i++) {
+                var item = sdc.scenario.actuators[i];
+                if(item.deviceid == actuator.id) {
+                    if(item.action.command == key) {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
 
         function goToOverview() {

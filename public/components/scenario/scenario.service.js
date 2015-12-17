@@ -137,17 +137,22 @@
         }
 
         function updateActuator(actuator) {
+            console.log('Scenario service before put');
             $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
                 .success(function(data) {
                     if(data.error) console.error(data.error);
+                    console.log('Put success');
+                    console.log(data);
                 })
                 .error(function (err) {
+                    console.log('Put fail');
                     console.error(err);
                     throw err;
                 });
         }
 
         function isAllowedCommand(commandname) {
+            console.log('Dingen yolo hier ook 100 keer per seconde? WHAT THE FUCCCKKKK!!');
             return (commandname.toLowerCase() === 'on' || commandname.toLowerCase() === 'off');
 
         }

@@ -305,17 +305,12 @@ function executeCommand(command, device, params, cb){
 }
 
 function updateActuator(id, actuator, cb) {
-    console.log('Update actuator');
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
             devices.actuators[i] = actuator;
-            console.log('Before get');
             Actuator.get(parseInt(id))
                 .then(function (persisted) {
                     persisted.merge(actuator);
-                    console.log("merged");
-                    console.log(persisted);
-                    console.log('Before save');
                     persisted.save()
                         .then(function (res) {
                             cb(null, res);
