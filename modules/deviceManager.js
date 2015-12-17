@@ -261,6 +261,31 @@ function updateSensorStatusFunction(obj) {
     }
 }
 
+
+function checkState(command, device) {
+    if (device.status) {
+        var state = device.status.state;
+        switch (command) {
+            case 'on':
+                if (!state) {
+                    return true;
+                } else if (state) {
+                    return false;
+                }
+                break;
+            case 'off':
+                if (!state) {
+                    return false;
+                } else if (state) {
+                    return true;
+                }
+                break
+        }
+    } else {
+        return true;
+    }
+}
+
 function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
     actuator.status = state;
@@ -406,7 +431,8 @@ module.exports = {
     updateActuatorState: updateActuatorState,
     setRules: setRules,
     updateActuator: updateActuator,
-    executeCommand:executeCommand
+    executeCommand:executeCommand,
+    checkState:checkState
 };
 
 //circular dependency (export must be first)

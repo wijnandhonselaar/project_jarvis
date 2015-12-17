@@ -2,9 +2,10 @@
 
 var Scenario = require('../models/scenario');
 var ruleEngine = require('./ruleEngine');
-var devicemanager = require('./deviceManager');
 var comm = require('./interperter/comm');
 var io = null;
+var deviceManager = null;
+var conflictManager = null;
 var scenarios = [];
 
 function create(name, description, actuators, cb) {
@@ -73,22 +74,56 @@ function update(scenario, cb) {
     });
 }
 
+/**
+ * Temp functie voor het finish command, mooiste zou zijn als hiervoor een apart tabje in de front-end gemaakt zou worden waar gebruikers kunnen
+ * aangeven wat er gebeurt op het moment dat het scenario eindigt
+ */
+function invert(scenario){
+    var scenarioCopy = JSON.parse(JSON.stringify(scenario));
+    for(var i = 0; i<scenarioCopy.actuators.length; i++){
+        var ac = scenarioCopy.actuators[i];
+        if(ac.action.command == 'on'){
+            ac.action.command = 'off';
+        } else {
+            ac.action.command = 'on';
+        }
+        console.log( scenarioCopy.actuators[i]);
+    }
+    return scenarioCopy;
+}
+
 function toggleState(scenario, cb) {
     if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
-        if (scenario.id === scenarios[i].id) {
+        if (scenario.id == scenarios[i].id) {
             if (scenarios[i].status === false) {
-                scenarios[i].status = true;
-                cb(null, scenarios[i]);
+                execute(scenario, 'start', function(err, data){
+                    cb(err, data)
+                });
             }
             else {
-                scenarios[i].status = false;
-                cb(null, scenarios[i]);
+                execute(scenario, 'finish', function(err, data){
+                    cb(err, data);
+                });
             }
-            updateById(scenarios[i].id, scenarios[i],function(err, data){
-                if(err) {console.error(err); throw err;}
-                //console.log(data);
-            });
+        }
+    }
+}
+
+function execute(scenario, scenarioState, cb){
+    if(scenarioState == 'start') {
+        start(scenario , cb);
+    } else {
+        stop(scenario, cb);
+        //scenario = invert(scenario);
+    }
+    for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
+        var command = scenario.actuators[deviceLoop].action.command;
+        var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
+        if (deviceManager.checkState(command, device)) {
+            if (!conflictManager.detect(command, device, scenario)) {
+                deviceManager.executeCommand(command, device, {});
+            }
         }
     }
 }
@@ -98,7 +133,9 @@ function start(scenario, cb){
         if (scenario.id === scenarios[i].id) {
             if (scenarios[i].status === false) {
                 scenarios[i].status = true;
-                if(cb) cb(null, scenarios[i]);
+                if(cb) {
+                    cb(null, scenarios[i]);
+                }
             }
             updateById(scenarios[i].id, scenarios[i],function(err, data){
                 if(err) {console.error(err); throw err;}
@@ -117,7 +154,6 @@ function stop(scenario, cb){
             }
             updateById(scenarios[i].id, scenarios[i],function(err, data){
                 if(err) {console.error(err); throw err;}
-                //console.log(data);
             });
         }
     }
@@ -171,9 +207,11 @@ function getByName(name, cb) {
 }
 
 module.exports = {
-    init: function (socketio) {
+    init: function (socketio, cnflictmanager, dviceManager) {
         getAll(function(){});
         if (socketio) io = socketio;
+        if(cnflictmanager) conflictManager = cnflictmanager;
+        if(dviceManager) deviceManager = dviceManager;
     },
     validate: validateRules,
     toggleState: toggleState,
@@ -185,5 +223,6 @@ module.exports = {
     updateById: updateById,
     getByName: getByName,
     start:start,
-    stop:stop
+    stop:stop,
+    execute:execute
 };

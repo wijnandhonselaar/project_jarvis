@@ -5,10 +5,12 @@ var deviceManager = null;
 var resolvedConflicts = [];
 
 function detect(command, device, executingScenario) {
-
     for (var scenario in device.config.scenarios) {
         if (device.config.scenarios.hasOwnProperty(scenario)) {
             //if (scenarioManager.getByName(scenario)) {
+            //if(scenario == executingScenario.name){
+            //    return true;
+            //}
             scenarioManager.getByName(scenario, function (scenario) {
                 if (scenario.status) {
                     //console.log(device.config.scenarios[scenario.name]);
@@ -17,8 +19,8 @@ function detect(command, device, executingScenario) {
                         var alreadyResolved = false;
 
                         for (var i = 0; i < resolvedConflicts.length; i++) {
-                            if ((resolvedConflicts[i].winner == scenario && resolvedConflicts[i].loser == executingScenario) || (resolvedConflicts[i].winner == executingScenario && resolvedConflicts[i].loser == scenario)) {
-                                alreadyResolved = true;
+                            //(resolvedConflicts[i].winner == scenario.name && resolvedConflicts[i].loser == executingScenario.name) ||
+                            if (device.id == resolvedConflicts[i].device.id && (resolvedConflicts[i].winner == executingScenario.name && resolvedConflicts[i].loser == scenario.name)) {
                                 return true;
                             }
                         }
@@ -53,11 +55,10 @@ function resolve(resolveObject, callback) {
         if (resolveObject.device.config.scenarios.hasOwnProperty(scenario)) {
             if(scenario == resolveObject.winner){
                 scenarioManager.start(resolveObject.winner);
-                //resolvedConflicts.push(resolveObject);
+                resolvedConflicts.push(resolveObject);
                 deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, function(){
                     callback('Conflict resolved');
                 });
-                //console.log('execute', resolveObject.device.config.scenarios[scenario].command);
             }
         }
     }

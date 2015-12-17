@@ -22,7 +22,7 @@ var commandValidator = require('./modules/interperter/validator');
 
 server.listen(GLOBAL.port);
 
-scenarioManager.init(io);
+scenarioManager.init(io, conflictManager, deviceManager);
 conflictManager.init(io, null, deviceManager);
 autoDiscover.init(server, io);
 logManager.init(io);
@@ -48,7 +48,6 @@ app.use("/settings", settingRoutes);
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
 });
-
 
 app.get('/testRule', function(req,res){
     ruleEngine.apply(deviceManager.getActuator(0));

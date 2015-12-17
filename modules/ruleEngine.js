@@ -11,14 +11,14 @@ function apply(scenario, event) {
     var hasRules = false;
     var statementString = '';
 
-    function getScenarioRuleById(ruleKey,searchId) {
-        var types = [ "events", "thresholds", "timers" ];
+    function getScenarioRuleById(ruleKey, searchId) {
+        var types = ["events", "thresholds", "timers"];
         var rule = null;
-        types.forEach(function(type){
-            if(scenario.rules[ruleKey][type]) {
+        types.forEach(function (type) {
+            if (scenario.rules[ruleKey][type]) {
                 var found = null;
-                scenario.rules[ruleKey][type].forEach(function(element){
-                    if(element.id == searchId) {
+                scenario.rules[ruleKey][type].forEach(function (element) {
+                    if (element.id == searchId) {
                         found = element;
                     }
                 });
@@ -32,15 +32,15 @@ function apply(scenario, event) {
     }
 
     function checkRule(rule) {
-        if(rule.type) {
+        if (rule.type) {
             hasRules = true;
             switch (rule.type) {
                 case "thresholds":
                     var s = deviceManager.getSensor(parseInt(rule.device));
-                    if(s.err) {
+                    if (s.err) {
                         console.error("GETSENSOR ERROR\n", s.err);
                         return false.toString();
-                    } else if(s.status) {
+                    } else if (s.status) {
                         return validateStatement(s.status[rule.field], rule.value, rule.operator).toString();
                     } else {
                         console.error("NO ERROR OR STATUS\n", s);
@@ -66,41 +66,41 @@ function apply(scenario, event) {
         }
     }
 
-    if(scenario.rules) {
+    if (scenario.rules) {
         for (var ruleKey in scenario.rules) {
             if (scenario.rules.hasOwnProperty(ruleKey) && scenario.rules[ruleKey].andgroups) {
-                var mappedAndGroups = scenario.rules[ruleKey].andgroups.map(function(andgroup){
-                    var andGroupStrings = andgroup.map(function(ruleId){
-                        var scenarioRule = getScenarioRuleById(ruleKey,ruleId);
-                        return checkRule(scenarioRule);
-                    });
+                var mappedAndGroups = scenario.rules[ruleKey].andgroups.map(function (andgroup) {
+                    var andGroupStrings = andgroup.map(
+                        function (ruleId) {
+                            var scenarioRule = getScenarioRuleById(ruleKey, ruleId);
+                            return checkRule(scenarioRule);
+                        });
                     return "( " + andGroupStrings.join(" && ") + " )";
                 });
                 statementString = mappedAndGroups.join(" || ");
-
-                //console.log("STATEMENT\n",statementString);
-
                 if (hasRules) {
                     if (eval(statementString)) {
-                        //console.log("EVALUATED");
                         if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
-                            if (ruleKey === start) {
-                                scenarioManager.start(scenario);
-                            } else {
-                                scenarioManager.stop(scenario);
-                            }
-                            for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
-                                var command = scenario.actuators[deviceLoop].action.command;
-                                var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
-                                if (checkState(command, device)) {
-                                    if (!conflictManager.detect(command, device, scenario)) {
-                                        deviceManager.executeCommand(command, device, {});
-                                    }
-                                }
-                            }
+                            scenarioManager.execute(scenario, ruleKey);
+                            //if (ruleKey === start) {
+                            //    scenarioManager.start(scenario);
+                            //} else {
+                            //    scenarioManager.stop(scenario);
+                            //}
+                            //for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
+                            //    var command = scenario.actuators[deviceLoop].action.command;
+                            //    var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
+                            //    if (checkState(command, device)) {
+                            //        if (!conflictManager.detect(command, device, scenario)) {
+                            //            deviceManager.executeCommand(command, device, {});
+                            //        }
+                            //    }
+                            //}
                         }
                     }
                 }
+
+                hasRules = false;
             }
         }
     }
@@ -208,30 +208,6 @@ function validateStatement(var1, var2, operator) {
         '!==': var1 !== var2
     };
     return statements[operator];
-}
-
-function checkState(command, device) {
-    if (device.status) {
-        var state = device.status.state;
-        switch (command) {
-            case 'on':
-                if (!state) {
-                    return true;
-                } else if (state) {
-                    return false;
-                }
-                break;
-            case 'off':
-                if (!state) {
-                    return false;
-                } else if (state) {
-                    return true;
-                }
-                break
-        }
-    } else {
-        return true;
-    }
 }
 
 module.exports = {
