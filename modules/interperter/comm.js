@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 var validator = require('./validator');
 var superAgent = require('superagent');

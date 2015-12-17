@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 /**
  * Created by nickyromeijn on 24/11/15.
