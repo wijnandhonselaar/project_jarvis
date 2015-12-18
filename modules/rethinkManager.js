@@ -1,7 +1,10 @@
+/*jslint node: true */
 "use strict";
 
 var Actuator = require('../models/actuator.js'),
     Sensor = require('../models/sensor.js');
+var thinky = require('../models/thinky.js');
+var r = thinky.r;
 
 /**
  * checkType - returns the model based on the type (string) paramater
@@ -53,7 +56,7 @@ function getAllDevices(type, fn) {
         return false;
     }
 
-    type.run().then(function(res) {
+    type.orderBy((r.asc('savedAt'))).run().then(function(res) {
         fn(null, res);
     }).error(function(err) {
         fn({Error: "The "+ type +" wasn't found", Message: err});
@@ -141,6 +144,30 @@ function updateActive(id, type, status, fn) {
         fn(err);
     });
 }
+/**
+ * set the status
+ * @param id
+ * @param type - is it a sensor? is it a actuator?
+ * @param status
+ * @param cb
+ */
+function setStatus(id, type, status, cb) {
+    type = checkType(type);
+
+    if(!type) {
+        cb({Error: "type is unknown"});
+        return false;
+    }
+    //console.log('status', status);
+    type.get(id).run().then(function (res) {
+        //console.log('res', res);
+        res.merge({status: status}).save().then(function (result) {
+            cb(null, result);
+        });
+    }).error(function (error) {
+        cb(error);
+    });
+}
 
 module.exports = {
     saveDevice: saveDevice,
@@ -148,5 +175,6 @@ module.exports = {
     updateAlias: updateAlias,
     updateClientRequestInterval: updateClientRequestInterval,
     updateActive: updateActive,
-    getAllDevices: getAllDevices
+    getAllDevices: getAllDevices,
+    setStatus: setStatus
 };

@@ -10,6 +10,7 @@ describe('Actuator', function () {
         // create the new actuators
         var newactuator = new Actuator({
             id: id,
+            savedAt: 345345345,
             model: {
                 name: 'Philips hue',
                 type: 'actuator',
@@ -80,6 +81,7 @@ describe('Actuator', function () {
         // create the new actuators
         var newactuator = new Actuator({
             id: id,
+            savedAt: 345345345,
             model: {
                 ip: '192.168.0.201',
                 name: 'Philips hue',
@@ -158,7 +160,7 @@ describe('Actuator', function () {
         // get the sensors
         Actuator.get(id).then(function(actuator) {
             // check if the savedAt exists (which is done by the model)
-            expect(actuator.model.savedAt).to.exist;
+            expect(actuator.savedAt).to.exist;
             done();
             // something went wrong
         }).error(console.log);

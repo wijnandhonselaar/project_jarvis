@@ -1,3 +1,5 @@
+/*jslint node: true */
+"use strict";
 var devices = require('../deviceManager');
 
 /**
@@ -78,21 +80,26 @@ function validateCommand(command, device, paramList, callback) {
 
     for (var param in device.model.commands[command].parameters) {
         if (device.model.commands[command].parameters.hasOwnProperty(param)) {
+
             validatedParams[param] = {};
+
             validatedParams[param].validated = true;
+
             var paramObj = device.model.commands[command].parameters[param];
+
             var accepts = paramObj.accepts;
+            var validates = null;
 
             if (param in paramList) {
 
                 if (GLOBAL.logToConsole) console.log('Found ' + param + ' in paramlist');
 
                 var value = paramList[param];
-                var validates = true;
+                validates = true;
 
                 for (var i = 0; i < accepts.length; i++) {
                     var acceptObj = accepts[i];
-                    if (paramObj.list.length > 0) {
+                    if (paramObj.list && paramObj.list.length > 0) {
                         validatedParams[param] = validators.inList(value, paramObj.list);
                     } else {
                         for (var b = 0; b < acceptObj.limit.length; b++) {
@@ -107,11 +114,13 @@ function validateCommand(command, device, paramList, callback) {
                     }
                 }
 
-            } else validates = !param.required;
+            } else {
+                validates = !param.required;
+            }
         }
     }
     if (GLOBAL.logToConsole) console.log(validatedParams);
-    callback(validatedParams)
+    callback(validatedParams);
 }
 
 /**

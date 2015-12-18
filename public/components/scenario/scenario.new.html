@@ -1,0 +1,123 @@
+<div class="col m12" style="margin-top:15px; padding:0px;">
+    <div class="row" style="padding:0px; ">
+        <div class="col m2">
+            <div class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
+                <div class="statusscenario" ng-class="scenario.status ? 'green' : 'red' "></div>
+            </div>
+            <div ng-click="adc.GoToDetail(adc.actuator)" class="card text-center touch waves-light" style="padding:5px; margin-top:-12px;">
+                <img src="images/icon_condition.png" width="25px;">
+            </div>
+        </div>
+        <div class="col m9">
+            <input type="text" edit-dir id="name" placeholder="Naam" ng-model="snc.scenario.name"
+                   />
+
+            <input type="text" edit-dir placeholder="Omschrijving..." id="description" ng-model="snc.scenario.description"
+                   style="margin-top:-10px; margin-bottom:0;">
+        </div>
+        <div class="col m1" style="margin-left:-5px;">
+            <div class="card touch" ng-click="snc.addActuator()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+                <img id="addDevice" src="/images/icon_adddevice.png" width="100%;">
+            </div>
+        </div>
+        <div class="col m1" style="margin-left:-5px;">
+            <div id="createNew" class="card touch" ng-click="snc.create()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+                <img src="/images/icon_save.png" width="100%;">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--<div class="col m12">-->
+<!--<div class="row detaildescrip" style="margin-top:8px;">-->
+<!--<div class="col m10">-->
+<!--<label class="col m3" style="margin-top: 10px" for="name">Naam</label>-->
+<!--<input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="sdc.scenarioName"-->
+<!--ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>-->
+<!--</div>-->
+<!--<div class="card col m2" style="padding:1px; background-color:lightgrey">-->
+<!--<div style="text-align: center; margin-top: 3px;" ng-click="sdc.delete(sdc.scenario)">Scenario verwijderen-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="col m10">-->
+<!--<label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>-->
+<!--<input type="text" edit-dir="" placeholder="" id="description" ng-model="sdc.scenarioDescription"-->
+<!--ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)"-->
+<!--style="margin-top:-10px; margin-bottom:0;">-->
+<!--</div>-->
+<!--<div class="card col m2" style="padding:1px; background-color:lightgrey">-->
+<!--<div style="text-align: center; margin-top: 3px;" ng-click="sdc.addActuator()">Actuator toevoegen</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+
+<div style="overflow-y: scroll; height: 180px; width:575px; top:210px; position: absolute;">
+    <div class="row"
+         style="padding-top:5px; height: 57px; border-bottom:1px solid #EEEEEE"
+         ng-repeat="actuator in snc.devices">
+        <div class="col m1">
+            <img src="{{actuator.model.image}}" width="100%">
+        </div>
+        <div class="col m3">
+            <span id="actuatorAliasactuator" class="col m3">{{actuator.config.alias}}</span>
+        </div>
+        <div class="col m5">
+            <select id="{{actuator.id}}" style="display: block;">
+                <option ng-repeat="(key, command) in actuator.model.commands"
+                        ng-if="snc.isAllowedCommand(key)"
+                        ng-click="snc.updateActuator(actuator.id)" ng-selected="snc.scenario.actuators[snc.devices.indexOf(actuator)].action.command === key"
+                        data-value="{{ {deviceid: actuator.id, command: key} }}">
+                    {{command.name}}
+                </option>
+            </select>
+        </div>
+        <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="snc.removeActuator(actuator.id)">
+            <div style="text-align: center; margin-top: 3px; padding-top:8px; color:white;" >X</div>
+        </div>
+    </div>
+</div>
+
+<div id="actuatorscenario" class="modal" style="margin-top:-25px;">
+    <div class="modal-content">
+        <h4 id="commandTitle">Apparaat toevoegen</h4>
+
+        <div class="modalWrapper">
+            <div class="actuator">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" ng-repeat="repeat in snc.repeater">
+                            <div class="col m6 repeater"
+                                 ng-if="$index >= ($parent.$index * 6) && $index < (($parent.$index+1) * 6)"
+                                 ng-repeat="actuator in snc.actuators">
+                                <div class="row" style="margin-bottom:10px">
+                                    <div class="col m4">
+                                        <div class="customCard onoff text-center">
+                                            <div style="background-image:url({{actuator.model.image}}); margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col m8" ng-click="snc.select(actuator)"
+                                         style="margin-left:-8px; margin-top:0px;">
+                                        <div class="customCard" style="padding:1px;">
+                                            <div id="actuatoralias" class="detailcontainer">
+                                                {{actuator.config.alias}}<br>
+                                                <span class="description">{{actuator.model.description.substring(0, 25)}}...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="left:285px; width: 12%; position: absolute; bottom:30px;">
+                    <div class="swiper-pagination">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

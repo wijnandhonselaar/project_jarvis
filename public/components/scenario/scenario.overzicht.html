@@ -1,0 +1,49 @@
+<div class="ptop_30">
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+        </div>
+    </div>
+</div>
+
+
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide" ng-repeat="repeat in scena.repeater">
+            <div class="col m6 repeater" ng-if="$index >= ($parent.$index * 8) && $index < (($parent.$index+1) * 8)"
+                 ng-repeat="scenario in scena.scenarios track by $index">
+                <div class="row" style="margin-bottom:10px">
+                    <div class="col m4">
+                        <div ng-click="scena.toggleState(scenario)" class="customCard onoff text-center">
+                            <div class="statusscenario" ng-class="scenario.status ? 'green' : 'red' "></div>
+                            <div style=" margin:0 auto; margin-top:6px; width: 36px; height:36px; background-size:cover;"></div>
+                        </div>
+                    </div>
+                    <div class="col m8" ng-click="scena.goToDetail(scenario)"
+                         style="margin-left:-8px; margin-top:0px;">
+                        <div id="scenarioAmount"  class="customCard" style="padding:1px;">
+                            <div id="scenarioName" class="detailcontainer">
+                                {{scenario.name}}<br>
+                                <span class="description">{{scenario.description.substring(0, 25)}}...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col m6 offset-m6" ng-click="scena.goToNew()" style="text-align:center">
+    <div class="col m12" style="margin-left:-8px; margin-top:0px; margin-right:-10px;">
+        <div class="customCard" style="padding:1px; background-color:lightgrey">
+            <p id="newscenario" style="margin-top:10px;">Nieuw Scenario</p>
+        </div>
+    </div>
+</div>
+
+    <div style="left:285px; width: 12%; position: absolute; bottom:115px;">
+
+        <div class="swiper-pagination">
+        </div>
+
+    </div>

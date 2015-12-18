@@ -1,3 +1,5 @@
+/*jslint node: true */
+"use strict";
 var supportedSOKVersions = ['0.0.1'];
 var httpPending = [];
 var dgram = require('dgram');
@@ -30,16 +32,16 @@ module.exports = {
     init: function (svr, socket) {
         io = socket;
         server = svr;
-        deviceManager.init(io);
         listenForUDPPackets(function (msg, remote) {
             if("id" in msg && "msg" in msg && "key" in msg && "severity" in msg){
                 deviceManager.broadcastEvent(msg);
             } else if (supportedSOKVersions.indexOf(msg.version) !== -1) {
-                if (!httpPending[remote.address] || httpPending[remote.address] == undefined && devices.getByIP(remote.address)) {
+                if (!httpPending[remote.address] || httpPending[remote.address] === undefined && deviceManager.getByIP(remote.address)) {
                     http
                         .get('http://' + remote.address + '/sok')
                         .end(function (err, res) {
                             var msg = JSON.parse(res.text);
+                            if(GLOBAL.logToConsole) console.log(msg.name + 'found');
                             deviceManager.add(msg, remote);
                             httpPending[remote.address] = false;
                         });
@@ -48,5 +50,5 @@ module.exports = {
             }
         });
     },
-    getDevices: function(){return deviceManager.get()}
+    getDevices: function(){return deviceManager.get();}
 };

@@ -42,7 +42,8 @@ describe('Sensor', function () {
                 ip: '192.168.0.201',
                 alias: 'Temperatuur woonkamer',
                 clientRequestInterval: 3000
-            }
+            },
+            savedAt: 58718187
         }
         rethinkManager.saveDevice(sensor, 'sensor' ,function(err, res){
             if(err) {
@@ -89,10 +90,12 @@ describe('Sensor', function () {
                 ip: '192.168.0.201',
                 alias: 'Temperatuur woonkamer',
                 clientRequestInterval: 3000
-            }
+            },
+            savedAt: 58718187
         }
         rethinkManager.saveDevice(sensor, 'sensor' ,function(err, res){
             if(err) {
+                console.log(err);
                 done(err);
             } else {
                 done();
@@ -126,7 +129,8 @@ describe('Sensor', function () {
                 ip: '192.168.0.203',
                 alias: 'Temperatuur woonkamer',
                 clientRequestInterval: 3000
-            }
+            },
+            savedAt: 58718187
         }
 
         rethinkManager.saveDevice(sensor, 'sensor' ,function(err, res){
@@ -299,7 +303,8 @@ describe('Actuator', function () {
             config: {
                 ip: '192.168.0.202',
                 alias: 'Lamp woonkamer',
-            }
+            },
+            savedAt: 58718187
         }
         rethinkManager.saveDevice(actuator, 'actuator' ,function(err, res){
             if(err) {
@@ -387,7 +392,8 @@ describe('Actuator', function () {
             config: {
                 ip: '192.168.0.202',
                 alias: 'Lamp woonkamer',
-            }
+            },
+            savedAt: 58718187
         }
 
         rethinkManager.saveDevice(actuator,'Actuator', function(err, res){
@@ -465,7 +471,8 @@ describe('Actuator', function () {
             config: {
                 ip: '192.168.0.202',
                 alias: 'Lamp woonkamer',
-            }
+            },
+            savedAt: 58718187
         }
 
         rethinkManager.saveDevice(actuator,'Actuator', function(err, res){
@@ -506,6 +513,19 @@ describe('Actuator', function () {
             } else {
                 expect(res).to.be.an('object');
                 expect(res.config.active).to.equal(false);
+                done();
+            }
+        });
+    });
+
+    it('Should set the status', function(done) {
+        rethinkManager.setStatus(id, 'actuator', {test: true, celcius: 20}, function(err, res){
+            if(err) {
+                done(err);
+            } else {
+                expect(res).to.be.an('object');
+                console.log(res);
+                expect(res.status.test).to.equal(true);
                 done();
             }
         });
