@@ -78,7 +78,7 @@ function addDevice(device, remote, deviceType) {
                 }
             }, device.type, function (err, res) {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                     logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, logger.severity.notice);
                 } else {
                     logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", logger.severity.notice);
@@ -106,7 +106,7 @@ function broadcastEvent(msg) {
         logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
         io.emit('deviceEvent', {device: device, event: msg});
     } else {
-        console.log('What the fuck, ik kan mijn apparaat niet vinden');
+        console.error('What the fuck, ik kan mijn apparaat niet vinden');
     }
 }
 
@@ -259,7 +259,7 @@ function updateSensorStatusFunction(obj) {
         io.emit("deviceUpdated", sensor);
         rethinkManager.setStatus(obj.id, 'sensor', obj.status, function (err, res) {
             if (err) {
-                console.log('set status to database error:', err);
+                console.error('set status to database error:', err);
             }
         });
     }
@@ -296,7 +296,7 @@ function updateActuatorState(id, state) {
     io.emit("deviceUpdated", actuator);
     rethinkManager.setStatus(id, 'actuator', state, function(err, res){
         if(err) {
-            console.log('set status to database error:', err);
+            console.error('set status to database error:', err);
         }
     });
 }
@@ -312,9 +312,7 @@ function setRules(object) {
         console.error(a.err);
         return {err: 'Couldn\'t find actuator by id'};
     } else {
-        //console.log('set new rules');
         a.config.rules = object.rules;
-        //console.log(a.config);
         return {success: 'set'};
     }
 }
@@ -347,7 +345,7 @@ function removeScenarioFromActuator(id, scenario) {
         if(res.err) throw res.err;
     }
     function catchCBsmall(err) {
-        console.log('Error bij verwijderen scenario uit config van een actuator.');
+        console.error('Error bij verwijderen scenario uit config van een actuator.');
         throw err;
     }
     function thenCB(actuator) {
@@ -357,7 +355,7 @@ function removeScenarioFromActuator(id, scenario) {
             .catch(catchCBsmall);
     }
     function catchCB(err) {
-        console.log('Error bij ophalen actuator.');
+        console.error('Error bij ophalen actuator.');
         throw err;
     }
     for(var i = 0; i < devices.actuators.length; i++) {
@@ -371,29 +369,24 @@ function removeScenarioFromActuator(id, scenario) {
 }
 
 function updateActuator(id, actuator, cb) {
-    console.log('Update actuator');
-
     function thenCB1(res) {
         cb(null, res);
     }
 
     function catchCB1(err) {
-        console.log('Error bij opslaan');
+        console.error('Error bij opslaan');
         cb({error: err, message: 'Could not update actuator.'});
     }
 
     function thenCB2(persisted) {
         persisted.merge(actuator);
-        console.log("merged");
-        console.log(persisted);
-        console.log('Before save');
         persisted.save()
             .then(thenCB1)
             .catch(catchCB1);
     }
 
     function catchCB2(err) {
-        console.log('Error bij ophalen met id: ' + id);
+        console.error('Error bij ophalen met id: ' + id);
         cb({error: err, message: 'Could not update actuator.'});
     }
 
@@ -409,9 +402,8 @@ function updateActuator(id, actuator, cb) {
 function loadDevicesFromDatabase() {
     rethinkManager.getAllDevices('sensors', function (err, res) {
         if (err) {
-            console.log(err);
+            console.error(err);
         } else {
-            //console.log(res);
             for (var i = 0; i < res.length; i++) {
                 addToDeviceList(res[i], res[i].ip, 'sensors');
             }
@@ -420,7 +412,7 @@ function loadDevicesFromDatabase() {
 
     rethinkManager.getAllDevices('actuators', function (err, res) {
         if (err) {
-            console.log(err);
+            console.error(err);
         } else {
 
             for (var i = 0; i < res.length; i++) {

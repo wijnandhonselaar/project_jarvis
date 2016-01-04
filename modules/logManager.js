@@ -4,6 +4,7 @@
 var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
+var scenarioLog = require('../models/scenarioLog');
 var settings = require('../modules/settingManager');
 var thinky = require('../models/thinky.js');
 var r = thinky.r;
@@ -84,6 +85,39 @@ function logData(device, cb) {
     });
 }
 /**
+ * log scenario event
+ * @param scenario
+ * @param cb
+ */
+function logScenario(scenario, cb) {
+    var message = '';
+    if(scenario.status) {
+        message = 'Scenario: ' + scenario.name + ' is ingeschakeld.';
+    } else {
+        message = 'Scenario: ' + scenario.name + ' is uitgeschakeld.';
+    }
+    var log = new scenarioLog({
+        name: scenario.name,
+        status: scenario.status,
+        severity: severity.notice,
+        message: message,
+        timestamp: Math.round((new Date()).getTime() / 1000)
+    });
+    scenarioLog.save(log).then(function (res) {
+        io.emit('logAdded', log);
+        console.log(log);
+        if(typeof cb === "function") {
+            cb(null, res);
+        }
+    }).error(function(err) {
+        console.error(err);
+        if(typeof cb === "function") {
+            cb(err);
+        }
+    });
+}
+
+/**
  * get events for 1 device
  * @param deviceid
  * @param cb
@@ -161,8 +195,9 @@ module.exports = {
     automatic: automatic,
     logEvent: logEvent,
     logData: logData,
+    logScenario: logScenario,
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,
-    getStatus: getStatus
+    getStatus: getStatus,
 };
