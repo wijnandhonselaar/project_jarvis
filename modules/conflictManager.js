@@ -1,63 +1,73 @@
 var ruleEngine = null;
 var io = null;
+var scenarioManager = null;
+var deviceManager = null;
 var resolvedConflicts = [];
-var scenarioManager = require('./scenarioManager');
 
 function detect(command, device, executingScenario) {
 
-    for (var scenario in device.config.scenarios) {
-        if (device.config.hasOwnProperty(scenario)) {
+    function getByNameCallback(scenario) {
+        if (scenario.status) {
+            //console.log(device.config.scenarios[scenario.name]);
+            if (device.config.scenarios[scenario.name].command != command) {
+                //console.log('(' + scenario.name + ') active: ' + device.config.scenarios[scenario.name].command + ' want to execute (' + executingScenario.name + ') ' + command);
+                var alreadyResolved = false;
 
-            if (scenarioManager.getScenarioState(scenario)) {
-
-                if (device.config.scenarios[scenario].command != command) {
-                    var alreadyResolved = false;
-                    for (var i = 0; i < resolvedConflicts.length; i++) {
-
-                        if ((resolvedConflicts[i].winner.id == scenario && resolvedConflicts[i].loser.id == executingScenario) || (resolvedConflicts[i].winner.id == executingScenario && resolvedConflicts[i].loser.id == scenario)) {
-                            alreadyResolved = true;
-                        }
-
-                        if (!alreadyResolved) presentResolve(executingScenario, scenario);
+                for (var i = 0; i < resolvedConflicts.length; i++) {
+                    if (device.id == resolvedConflicts[i].device.id && (resolvedConflicts[i].winner == executingScenario.name && resolvedConflicts[i].loser == scenario.name)) {
+                        return true;
                     }
+                }
+
+                if (!alreadyResolved) {
+                    presentResolve(device, command, device.config.scenarios[scenario.name].command, executingScenario, scenario);
+                    return false;
                 }
             }
         }
     }
 
-    return true;
+    for (var scenario in device.config.scenarios) {
+        if (device.config.scenarios.hasOwnProperty(scenario)) {
+            //if (scenarioManager.getByName(scenario)) {
+                scenarioManager.getByName(scenario, getByNameCallback);
+            //}
+        }
+    }
+    return false;
 }
 
-function presentResolve(executingScenario, conflictingScenario) {
+function presentResolve(deviceObj, executingCommand, conflictingCommand, executingScenario, conflictingScenario) {
     io.emit('resolveConflict', {
-        executed: scenarioManager.getScenario(executingScenario),
-        conflicting: scenarioManager.getScenario(conflictingScenario)
+        executed: {scenario: executingScenario.name, command:executingCommand, device:deviceObj },
+        conflicting: {scenario:conflictingScenario.name, command:conflictingCommand, device:deviceObj }
     });
 }
 
 
-//ResolveObject?
-
-//var t = {
-//    winner: scenario,
-//    loser: scenario,
-//    device: 1337
-//};
-
 function resolve(resolveObject, callback) {
-    resolveObject.winner.priority += 1;
-    resolveObject.loser.priority -= 2;
-    resolvedConflicts.push(resolveObject);
-    scenarioManager.update(resolveObject.winner);
-    scenarioManager.update(resolveObject.loser);
-    callback('Conflict resolved');
+    function executeCommandCB(){
+        callback('Conflict resolved');
+    }
+    for (var scenario in resolveObject.device.config.scenarios) {
+        if (resolveObject.device.config.scenarios.hasOwnProperty(scenario)) {
+            if(scenario == resolveObject.winner){
+                scenarioManager.start(resolveObject.winner);
+                resolvedConflicts.push(resolveObject);
+                deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, executeCommandCB);
+                //console.log('execute', resolveObject.device.config.scenarios[scenario].command);
+            }
+        }
+    }
 }
 
 
 module.exports = {
-    init: function (socketio) {
+    init: function (socketio, sm, dm) {
+        if (sm) scenarioManager = sm;
         if (socketio) io = socketio;
+        if (dm) deviceManager = dm;
     },
-    resolve:resolve
-    //detect:detect
+    resolve: resolve,
+    detect: detect
 };

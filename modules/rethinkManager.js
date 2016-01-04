@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 var Actuator = require('../models/actuator.js'),
@@ -55,7 +56,7 @@ function getAllDevices(type, fn) {
         return false;
     }
 
-    type.orderBy((r.desc('savedAt'))).run().then(function(res) {
+    type.orderBy((r.asc('savedAt'))).run().then(function(res) {
         fn(null, res);
     }).error(function(err) {
         fn({Error: "The "+ type +" wasn't found", Message: err});
@@ -143,10 +144,22 @@ function updateActive(id, type, status, fn) {
         fn(err);
     });
 }
+/**
+ * set the status
+ * @param id
+ * @param type - is it a sensor? is it a actuator?
+ * @param status
+ * @param cb
+ */
+function setStatus(id, type, status, cb) {
+    type = checkType(type);
 
-function setStatus(id, status, cb) {
+    if(!type) {
+        cb({Error: "type is unknown"});
+        return false;
+    }
     //console.log('status', status);
-    Sensor.get(id).run().then(function (res) {
+    type.get(id).run().then(function (res) {
         //console.log('res', res);
         res.merge({status: status}).save().then(function (result) {
             cb(null, result);

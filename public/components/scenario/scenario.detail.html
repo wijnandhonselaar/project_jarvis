@@ -1,46 +1,69 @@
-<div class="col m12">
-    <div class="row detaildescrip" style="margin-top:8px;">
-        <div class="col m10">
-            <label class="col m3" style="margin-top: 10px" for="name">Naam</label>
-            <input type="text" edit-dir="" id="name" placeholder="Scenarionaam" ng-model="sdc.scenarioName"
-                   ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)" style="margin-top:-10px;margin-bottom:0;"/>
-        </div>
-        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.delete(sdc.scenario)">Scenario verwijderen
+<div class="col m12" style="margin-top:15px; padding:0px;">
+    <div class="row" style="padding:0px; ">
+        <div class="col m2">
+            <div ng-click="scena.toggleState(scenario)"  class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
+                <div class="statusscenario" ng-class="scenario.status ? 'green' : 'red' "></div>
+            </div>
+            <div ng-click="sdc.GoToDetail(sdc.scenario)" class="card text-center touch waves-light" style="padding:5px; margin-top:-14px;">
+                <img src="images/icon_condition.png" width="25px;">
             </div>
         </div>
-        <div class="col m10">
-            <label class="col m3" style="margin-top: 10px" for="description">Omschrijving</label>
-            <input type="text" edit-dir="" placeholder="" id="description" ng-model="sdc.scenarioDescription"
-                   ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)"
-                   style="margin-top:-10px; margin-bottom:0;">
+        <div class="col m9">
+            <input type="text" edit-dir id="name" placeholder="Naam" ng-model="sdc.scenarioName"
+            ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)"/>
+
+            <input type="text" edit-dir placeholder="Omschrijving..." id="description" ng-model="sdc.scenarioDescription"
+            ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)"
+            style="margin-top:-10px; margin-bottom:0;">
         </div>
-        <div class="customCard col m2" style="padding:1px; background-color:lightgrey">
-            <div style="text-align: center; margin-top: 3px;" ng-click="sdc.addActuator()">Actuator toevoegen</div>
+        <div class="col m1" style="margin-left:-5px;">
+            <div class="card touch" ng-click="sdc.addActuator()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+                <img src="/images/icon_adddevice.png" width="100%;">
+            </div>
         </div>
+
+        <div class="col m1" style="margin-left:-5px;">
+            <div id="trashcan" class="card touch" ng-click="sdc.delete(sdc.scenario)" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+                <img src="/images/icon_trash.png" width="100%;">
+            </div>
+        </div>
+
+
     </div>
 </div>
 
 
-<div style="overflow-y: scroll; height: 265px; width:100%;">
-    <div class="row"
-         style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
-         ng-repeat="actuator in sdc.devices">
+<div style="overflow-y: scroll; height: 180px; width:575px; top:210px; position: absolute;">
+    <div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
+         ng-repeat="actuator in sdc.devices track by $index">
+        <div class="col m1">
+            <img src="{{actuator.model.image}}" width="100%">
+        </div>
         <div class="col m3">
             <span class="col m3">{{actuator.config.alias}}</span>
         </div>
         <div class="col m5">
-            <select id="{{actuator.id}}" style="display: block;">
-                <option ng-repeat="command in actuator.model.commands"
-                        ng-if="sdc.isAllowedCommand(command.name)"
-                        ng-click="sdc.updateActuator(actuator.id)" ng-selected="sdc.scenario.actuators[sdc.devices.indexOf(actuator)].action.command === command.name"
-                        data-value="{{ {deviceid: actuator.id, command: command} }}">
+            <select style="display:block;" id="selectChange{{actuator.id}}">
+                <option ng-repeat="(key, command) in actuator.model.commands"
+                        ng-if="key == 'on' || key == 'off'"
+                        ng-selected="actuator.action.command == key"
+                        value="{{key}}">
                     {{command.name}}
                 </option>
             </select>
+            <!--<select id="{{actuator.id}}"-->
+                    <!--ng-model="sdc.devices[$index].action.command"-->
+                    <!--ng-change="sdc.updateActuator(actuator.id)"-->
+                    <!--style="display: block;">-->
+                <!--<option ng-repeat="(key, command) in actuator.model.commands"-->
+                        <!--ng-if="key == 'on' || key == 'off'"-->
+                        <!--ng-value="{{key}}">-->
+                    <!--{{command.name}}-->
+                <!--</option>-->
+            <!--</select>-->
         </div>
-        <div class="customCard col m4 offset-m1" style="padding:1px; background-color:#A13A2D" ng-click="sdc.removeActuator(actuator.id)">
-            <div style="text-align: center; margin-top: 3px;" >Verwijder</div>
+        <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="sdc.removeActuator(actuator.id)">
+            <div style="text-align: center; margin-top: 3px; padding-top:8px; color:white;" >X</div>
         </div>
     </div>
 </div>

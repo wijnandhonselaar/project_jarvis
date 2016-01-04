@@ -1,14 +1,10 @@
 local simplewificonfig = {}
-local json = require "cjson"
 
 function simplewificonfig.setupWifiMode(action)
     print("set up wifi mode")
-    file.open("wifi_settings.json", "r")
-    settings = json.decode(file.read());
-    file.close();
-    collectgarbage();
+    local settings = require 'wifi_settings'
     wifi.setmode(wifi.STATION)
-    wifi.sta.config(settings.ssid,settings.password)
+    wifi.sta.config(settings.ssid, settings.password)
     
     wifi.sta.connect()
     tmr.alarm(1, 1000, 1, function()

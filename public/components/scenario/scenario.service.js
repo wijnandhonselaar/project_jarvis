@@ -139,7 +139,7 @@
         function updateActuator(actuator) {
             $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
                 .success(function(data) {
-                    if(data.err) console.error(data.err);
+                    if(data.error) console.error(data.error);
                 })
                 .error(function (err) {
                     console.error(err);
@@ -148,11 +148,25 @@
         }
 
         function isAllowedCommand(commandname) {
-            return (commandname.toLowerCase() === 'on' ||
-            commandname.toLowerCase() === 'off' ||
-            commandname.toLowerCase() === 'open' ||
-            commandname.toLowerCase() === 'close');
+            //console.log('Dingen yolo hier ook 100 keer per seconde? WHAT THE FUCCCKKKK!!');
+            return (commandname.toLowerCase() === 'on' || commandname.toLowerCase() === 'off');
 
+        }
+
+        /**
+         *
+         * @param id actuator id
+         * @param scenario name
+         */
+        function removeScenarioFromActuator(id, scenario) {
+            $http.put('/devices/actuators/removescenario/' + id, {scenario: scenario})
+                .success(function(res) {
+                    if(res.err) console.error(res.err);
+                })
+                .error(function (err) {
+                    console.error(err);
+                    throw err;
+                });
         }
 
         return {
@@ -165,7 +179,8 @@
             getActuators: getActuators,
             getActuatorByID: getActuatorByID,
             updateActuator: updateActuator,
-            isAllowedCommand: isAllowedCommand
+            isAllowedCommand: isAllowedCommand,
+            removeScenarioFromActuator: removeScenarioFromActuator
         };
 
     }

@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 var deviceManager = null;
 var comm = require('./interperter/comm');
 var conflictManager = require('./conflictManager');
@@ -11,7 +12,7 @@ function apply(device, event, callback) {
             var statementString = '';
             var andGate = false.toString();
 
-            if (device.config.rules[command].thresholds.length != 0) {
+            if (device.config.rules[command].thresholds.length !== 0) {
                 hasRules = true;
                 for (var i = 0; i < device.config.rules[command].thresholds.length; i++) {
                     var rule = device.config.rules[command].thresholds[i];
@@ -32,12 +33,12 @@ function apply(device, event, callback) {
             }
 
 
-            if (device.config.rules[command].timers.length != 0) {
+            if (device.config.rules[command].timers.length !== 0) {
                 hasRules = true;
                 for (var b = 0; b < device.config.rules[command].timers.length; b++) {
                     var tobj = device.config.rules[command].timers[b];
 
-                    var timeObj = new Date
+                    var timeObj = new Date();
                     var temp = tobj.time.split(/\:|\-/g);
                     timeObj.setHours(temp[0]);
                     timeObj.setMinutes(temp[1]);
@@ -55,7 +56,7 @@ function apply(device, event, callback) {
                 }
             }
 
-            if (device.config.rules[command].events.length != 0 && event) {
+            if (device.config.rules[command].events.length !== 0 && event) {
                 hasRules = true;
                 for (var c = 0; c < device.config.rules[command].events.length; c++) {
                     var eobj = device.config.rules[command].events[c];
@@ -76,7 +77,7 @@ function apply(device, event, callback) {
 
             if (hasRules) {
                 statementString = andGate + ' ' + statementString;
-                if (event) console.log(statementString);
+                //if (event) console.log(statementString);
                 if (eval(statementString) && checkState(command, device)) {
                     //if (!conflictManager.detect(command, device, scenario)) {
                     switch (device.model.commands[command].httpMethod) {
@@ -136,7 +137,7 @@ function checkState(command, device) {
                 } else if (state) {
                     return true;
                 }
-                break
+                break;
         }
     } else {
         return true;
@@ -150,3 +151,4 @@ module.exports = {
     },
     apply: apply
 };
+/* jshint ignore:end */

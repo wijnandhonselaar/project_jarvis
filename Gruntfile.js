@@ -5,6 +5,7 @@ module.exports = function(grunt) {
 
         jshint: {
             all: [ 'Gruntfile.js', 'public/components/*.js', 'public/components/**/*module.js', 'public/components/**/*.js' ],
+            backend: [ '*.js', 'mock/*.js', 'modules/*.js', 'modules/**/*.js', 'routes/*.js' ],
             options: {
                 globals: {
                     "angular": true,
@@ -42,6 +43,7 @@ module.exports = function(grunt) {
                     'public/bower_components/Chart.js/Chart.js',
                     'public/bower_components/angular-chart.js/dist/angular-chart.js',
                     'public/bower_components/jquery-timepicker-jt/jquery.timepicker.js',
+                    'public/bower_components/jquery-ui/jquery-ui.min.js',
                     
                     'tmp/templates.js',
 
@@ -93,7 +95,7 @@ module.exports = function(grunt) {
                     'public/components/modules.js',
                     'public/css/app.css'
                 ],
-                tasks: [ 'jshint', 'html2js:dist', 'concat:dist', 'concat:css'],
+                tasks: [ 'jshint:all', 'html2js:dist', 'concat:dist', 'concat:css'],
                 options: {
                     atBegin: true,
                     livereload: 5050

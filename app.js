@@ -1,4 +1,4 @@
-process.env.TZ = 'Europe/Amsterdam'
+process.env.TZ = 'Europe/Amsterdam';
 GLOBAL.logToConsole = false;
 GLOBAL.dev = true;
 GLOBAL.port = 3221;
@@ -10,21 +10,24 @@ var io = require('socket.io')(server);
 var deviceManager = require('./modules/deviceManager');
 var bodyParser = require('body-parser');
 var autoDiscover = require('./modules/autodiscover');
+var scenarioManager = require('./modules/scenarioManager');
 var logManager = require('./modules/logManager');
 var testRoutes = require('./routes/testRoutes');
 var deviceRoutes = require('./routes/deviceRoutes');
 var settingRoutes = require('./routes/settingRoutes');
-var alertRoutes = require('./routes/alertRoutes');
 var scenarioRoutes = require('./routes/scenarioRoutes');
-var ruleEngine = require('./modules/ruleEngineForDeviceCommands');
+var ruleEngine = require('./modules/ruleEngine');
 var conflictManager = require('./modules/conflictManager');
+var commandValidator = require('./modules/interperter/validator');
 
 server.listen(GLOBAL.port);
-conflictManager.init(io);
+
+scenarioManager.init(io, conflictManager, deviceManager);
+conflictManager.init(io, null, deviceManager);
 autoDiscover.init(server, io);
 logManager.init(io);
-deviceManager.init(io, ruleEngine);
-ruleEngine.init(deviceManager);
+deviceManager.init(io, ruleEngine, commandValidator);
+ruleEngine.init(deviceManager, scenarioManager);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -45,7 +48,6 @@ app.use("/settings", settingRoutes);
 app.get('/', function (req, res) {
     res.sendfile(__dirname+'/public/index.html');
 });
-
 
 app.get('/testRule', function(req,res){
     ruleEngine.apply(deviceManager.getActuator(0));

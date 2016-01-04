@@ -1,3 +1,6 @@
+/*jslint node: true */
+"use strict";
+
 var cp = require('child_process');
 var child = cp.fork('./modules/workers/sensorPolling');
 var intervalArray = [];
@@ -10,12 +13,12 @@ child.on('message', function(m) {
 //sending job to childprocess
 function pullData(sensor){
     child.send(sensor);
-    timeout = setTimeout(pullData, sensor.config.clientRequestInterval, sensor);
+    var timeout = setTimeout(pullData, sensor.config.clientRequestInterval, sensor);
     for (var i = 0; i < intervalArray.length; i++) {
         if(intervalArray[i].id === sensor.id){
             intervalArray.splice(i, 1);  
         }
-    };
+    }
     intervalArray.push({id: sensor.id, timeout:timeout});
 }
 
@@ -23,7 +26,7 @@ function pullData(sensor){
 function addIntervalsToSensors(list){
     for (var i = 0; i < list.length; i++) {
         pullData(list[i]);
-    };
+    }
 }
 
 module.exports = {
@@ -32,8 +35,8 @@ module.exports = {
     reInitiateIntervals : function (list){
         for (var i = 0; i < intervalArray.length; i++) {
             clearTimeout(intervalArray[i]);
-        };
+        }
         intervalArray.splice(0,intervalArray.length);
         addIntervalsToSensors(list);
     }
-}
+};

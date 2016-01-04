@@ -1,0 +1,285 @@
+<div class="row" style="margin-top:15px; margin-bottom: 0px;">
+    <div class="col m1" style="padding-left:3px; padding-top: 5px;">
+             <div class="statusscenario" style="left:15px; top:75px;" ng-class="scenario.status ? 'green' : 'red' "></div>
+    </div>
+    <div class="col m9" style="padding-left:11px; margin-left:-3px;">
+        <p>Scenario: {{rec.scenario.name}}</p>
+    </div>
+    <div class="col m2">
+        <select ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
+            <option value="start">Start</option>
+            <option value="finish">Finish</option>
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col m1" style="margin-top:0px; margin-left:-13px; padding-right: 50px; height: 100vh;">
+        <div class="row" style="margin-top:5px; margin-bottom: 0px;">
+            <div class="col m12 card touch" style="width:40px; padding-left:7px;" ng-click="rec.openModal('ruleModal')">
+                <div style="margin-top:5px; background-image:url('images/icon_condition.png'); width: 25px; height:30px; background-repeat:no-repeat; background-size:contain;"></div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 0px;">
+            <div class="col m12 card touch" style="width:40px; padding-left:7px;"
+                 ng-click="rec.openModal('eventModal')">
+                <div style="margin-top:5px; background-image:url('images/icon_event.png'); width: 25px; height:30px;background-repeat:no-repeat; background-size:contain;"></div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 0px;">
+            <div class="col m12 card touch" style="width:40px; padding-left:7px;"
+                 ng-click="rec.openModal('timerModal')">
+                <div style="margin-top:5px; background-image:url('images/icon_timer.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 0px;">
+            <div class="col m12 card touch" style="width:40px; padding-left:7px; background-color: #00C853;"
+                 ng-click="rec.saveAll()">
+                <div style="margin-top:5px; background-image:url('images/icon_save.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col m11" style="padding-left:0px; margin-top:5px;">
+        <div class="row" style="padding-left: 11px;">
+            <div class="col m12" style="padding-left:0px;">
+                <div ng-repeat="group in rec.currentGroups" class="col m6" style="padding-left: 10px;padding-right: 10px;">
+                    <div class="row">
+                        <div class="col m12 recgroup" style="border: 1px solid black;" data-groupindex="{{$index}}">
+                            <div class="row">
+
+                                <div ng-click="rec.showDetail(rule)" ng-repeat="rule in rec.currentGroups[$index]" class="col m12 recgrouprule" data-groupindex="{{$parent.$index}}" data-ownindex="{{$index}}">
+                                    <div class="touch card" style="padding:5px; height: 25px;">
+                                        {{rule.name}}
+                                        <div style="position: absolute; right:0px; width: 25px; height: 26px; padding-top:2px; margin-top:-27px; text-align: center; background-color: #F84E19">
+                                            <img ng-src="{{rec.getRuleIcon(rule)}}" class="invert" width="80%">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="row" style="margin-top:15px;">-->
+<!--<div class="col m1">-->
+<!--<div style="margin-top:5px; background-image:url({{rec.actuator.model.image}}); width: 25px; height:30px; background-size:cover;"></div>-->
+<!--</div>-->
+<!--<div class="col m11">-->
+<!--<select ng-model="rec.selectedCommand" style="display: block;">-->
+<!--<option ng-selected="true" value="">Selecteer een actie</option>-->
+<!--<option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"-->
+<!--ng-if="command.name != 'status'">{{command.name}}-->
+<!--</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="row" style="margin-top:15px;">-->
+<!--<div class="col m2">-->
+<!--<select ng-model="rec.selectedCommand" style="display: block;">-->
+<!--<option ng-selected="true" value="">Selecteer een actie</option>-->
+<!--<option value="{{key}}" ng-repeat="(key, command) in rec.actuator.model.commands"-->
+<!--ng-if="command.name != 'status'">{{command.name}}-->
+<!--</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m2">-->
+<!--<select ng-model="rec.threshold.device" style="display: block;" ng-change="rec.updateFieldList()">-->
+<!--<option value="">Sensor</option>-->
+<!--<option ng-repeat="sensor in rec.sensors" value="{{sensor.id}}">{{sensor.config.alias}}</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m2">-->
+<!--<select ng-model="rec.threshold.field" style="display: block;">-->
+<!--<option value="">Veld</option>-->
+<!--<option ng-repeat="(key, val) in rec.selectedSensor.model.commands.status.returns" value="{{key}}">{{key}}</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m3">-->
+<!--<select ng-model="rec.threshold.operator" style="display: block;">-->
+<!--<option value="">Operator</option>-->
+<!--<option value="==="> Gelijk aan</option>-->
+<!--<option value="<"> Kleiner dan</option>-->
+<!--<option value=">"> Groter dan</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m2">-->
+<!--<input ng-model="rec.threshold.value" edit-dir placeholder="Waarde" id="value" type="text">-->
+<!--</div>-->
+<!--<div class="col m1">-->
+<!--<div style="width: 100%; height: 45px; color:white; border-radius: 2px; text-align: center; font-size:24px; font-weight: 100; padding-top:4px; cursor:pointer; background-color: #F84E19;" ng-click="rec.addToThresholds()"> +</div>-->
+<!--</div>-->
+<!--</div>-->
+
+
+<!--<div class="row" style="height: 10px;">-->
+<!--<div class="col m12" style="margin-top:-25px;">-->
+<!--<p>Voer {{rec.selectedCommand}} uit op {{rec.actuator.config.alias}} als</p>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--<div style="overflow-y: scroll; height: 265px; width:100%;">-->
+<!--<div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"-->
+<!--ng-repeat="rule in rec.ruleObjects[rec.selectedCommand].thresholds">-->
+<!--<div class="col m3">-->
+<!--<select ng-model="rule.device" style="display: block;">-->
+<!--<option value="">Sensor </option>-->
+<!--<option ng-selected="rule.device === sensor.id" ng-repeat="sensor in rec.sensors" value="{{sensor.id}}">{{sensor.config.alias}}</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m3">-->
+<!--<select ng-model="rule.field" style="display: block;">-->
+<!--<option ng-repeat="(key, val) in rec.getSensorFields(rule.device)" value="{{key}}">{{key}}</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m3">-->
+<!--<select ng-model="rule.operator" style="display: block;">-->
+<!--<option value="">Operator</option>-->
+<!--<option value="==="> Gelijk aan</option>-->
+<!--<option value="<"> Kleiner dan</option>-->
+<!--<option value=">"> Groter dan</option>-->
+<!--</select>-->
+<!--</div>-->
+<!--<div class="col m2">-->
+<!--<input ng-model="rule.value" edit-dir placeholder="Waarde" type="text">-->
+<!--</div>-->
+<!--<div class="col m1">-->
+<!--<div ng-click="rec.showDetail(rule)" style="width: 100%; height: 45px; color:white; border-radius: 2px; text-align: center; font-size:24px; font-weight: 100; padding-top:4px; cursor:pointer; background-color: #F84E19;">></div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+<div id="ruleModal" class="modal modal-fixed-footer" style="height: 300px;">
+    <div class="modal-content">
+        <h4>Rule - {{rec.scenario.name}} {{rec.selectedCommand}}</h4>
+
+        <div class="row">
+            <div class="input-field col m12">
+                <input type="text" style="display:block;" id="ruleName" edit-dir="" placeholder="Naam" ng-model="rec.threshold.name">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col m3">
+                <select ng-model="rec.threshold.device" style="display: block;" ng-change="rec.updateFieldList()">
+                    <option value="">Sensor</option>
+                    <option ng-repeat="sensor in rec.sensors" value="{{sensor.id}}">{{sensor.config.alias}}</option>
+                </select>
+            </div>
+            <div class="col m3">
+                <select ng-model="rec.threshold.field" style="display: block;">
+                    <option value="">Veld</option>
+                    <option ng-repeat="(key, val) in rec.getSensorFields(rec.threshold.device)" value="{{key}}">
+                        {{key}}
+                    </option>
+                </select>
+            </div>
+            <div class="col m3">
+                <select ng-model="rec.threshold.operator" style="display: block;">
+                    <option value="">Operator</option>
+                    <option value="==="> Gelijk aan</option>
+                    <option value="<"> Kleiner dan</option>
+                    <option value=">"> Groter dan</option>
+                </select>
+            </div>
+            <div class="col m3">
+                <input ng-model="rec.threshold.value" edit-dir placeholder="Waarde" id="value" type="text">
+            </div>
+            <!--<div class="col m1">-->
+            <!--<div style="width: 100%; height: 45px; color:white; border-radius: 2px; text-align: center; font-size:24px; font-weight: 100; padding-top:4px; cursor:pointer; background-color: #F84E19;"-->
+            <!--ng-click="rec.addToThresholds()"> +-->
+            <!--</div>-->
+            <!--</div>-->
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col m3">
+                <a ng-if="rec.rule.name" ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
+                   class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
+                <div style="width: 10px; height: 5px;"></div>
+            </div>
+            <div class="col m3 offset-m6">
+                <a ng-click="rec.closeModal('ruleModal'); rec.addToThresholds()"
+                   class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="eventModal" class="modal modal-fixed-footer" style="height: 200px;">
+    <div class="modal-content">
+        <h4>Trigger - {{rec.scenario.name}} {{rec.selectedCommand}}</h4>
+
+        <div class="row">
+            <div class="input-field col m6">
+                <input type="text" style="display:block;" id="eventName" edit-dir="" placeholder="Naam" ng-model="rec.event.name">
+            </div>
+            <div class="col m3" style="margin-top:15px;">
+                <select ng-model="rec.event.device" style="display: block;" ng-change="rec.updateEventList()">
+                    <option value="">Apparaat</option>
+                    <option ng-repeat="actuator in rec.actuators" value="{{actuator.id}}">{{actuator.config.alias}}
+                    </option>
+                </select>
+            </div>
+            <div class="col m3" style="margin-top:15px;">
+                <select ng-model="rec.event.event" style="display: block;">
+                    <option value="">Veld</option>
+                    <option ng-repeat="(key, val) in rec.getActuatorById(rec.event.device).model.events"
+                            value="{{val}}">
+                        {{val}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col m3">
+                <a ng-if="rec.event.name" ng-click="rec.remove('events', rec.event.id, 'eventModal')"
+                   class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
+
+                <div style="width: 10px; height: 5px;"></div>
+            </div>
+            <div class="col m3 offset-m6">
+                <a ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
+                   class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="timerModal" class="modal modal-fixed-footer" style="height: 200px;">
+    <div class="modal-content">
+        <h4>Tijdklok - {{rec.scenario.name}} {{rec.selectedCommand}}</h4>
+
+        <div class="row">
+            <div class="input-field col m6">
+                <input edit-dir type="text" style="display:block;" id="timerName" placeholder="Naam" edit-dir="" ng-model="rec.timer.name">
+            </div>
+            <div class="input-field col m6">
+                <input type="text" id="timepicker" ng-model="rec.timer.time">
+                <label for="timerName">Tijd</label>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col m3">
+                <a ng-if="rec.timer.time" ng-click="rec.remove('timers', rec.timer.id, 'timerModal')"
+                   class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
+
+                <div style="width: 10px; height: 5px;"></div>
+            </div>
+            <div class="col m3 offset-m6">
+                <a ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
+                   class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
+            </div>
+        </div>
+    </div>
+</div>

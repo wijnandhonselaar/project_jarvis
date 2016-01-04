@@ -5,9 +5,9 @@
         .module('jarvis.scenario')
         .controller('ScenarioOverzichtctrl', ScenarioOverzichtctrl);
 
-    ScenarioOverzichtctrl.$inject = ["ScenarioService", "$state","$timeout","$stateParams", "$scope"];
+    ScenarioOverzichtctrl.$inject = ["DevicesService","ScenarioService", "$state","$timeout","$stateParams", "$scope"];
 
-    function ScenarioOverzichtctrl(ScenarioService, $state, $timeout, $sp, $scope) {
+    function ScenarioOverzichtctrl(DS, ScenarioService, $state, $timeout, $sp, $scope) {
         var scena = this;
         var swiper = null;
         scena.repeater = [];
@@ -33,6 +33,7 @@
         function getScenarios() {
             ScenarioService.getall()
                 .then(function(data){
+                    console.log(data);
                     scena.scenarios = data.scenarios;
                     reloadSwiper();
                     return data;
@@ -55,10 +56,10 @@
         }
 
         function toggleState(scenario){
-            ScenarioService.toggleState(scenario.scenario)
+            ScenarioService.toggleState(scenario)
                 .then(function(data){
                     for(var i = 0; i<scena.scenarios.length; i++){
-                        if(data.scenario.id === scena.scenarios[i].scenario.id){
+                        if(data.id === scena.scenarios[i].id){
                             scena.scenarios[i].status = data.status;
                             $scope.$apply();
                             Materialize.toast("toggle state", 4000);

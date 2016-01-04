@@ -13,10 +13,22 @@
         aoc.actuator = DS.getActuators();
         aoc.GoToDetail = GoToDetail;
         aoc.toggleState = toggleState;
+        aoc.checkIfDeviceHas = checkIfDeviceHas;
         aoc.repeater = [];
 
         DS.addDeviceLoader(reloadSwiper);
         DS.setOnDeviceAdd(reloadSwiper);
+
+        function checkIfDeviceHas(type, actuator){
+            for (var property in actuator.config.rules) {
+                if (actuator.config.rules.hasOwnProperty(property)) {
+                    if( actuator.config.rules[property][type].length > 0){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         function toggleState(actuator){
             console.log(actuator);

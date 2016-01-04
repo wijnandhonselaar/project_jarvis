@@ -1,10 +1,21 @@
+/*jslint node: true */
 "use strict";
 
 var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
+var settings = require('../modules/settingManager');
 var thinky = require('../models/thinky.js');
 var r = thinky.r;
+var automatic = "Automatisch";
+var manual = "Handmatig";
+var severity = {
+           alert : 1,
+           error : 2,
+           warning : 3,
+           notice : 4,
+           all : 5
+    };
 
 /**
  * log event data
@@ -31,7 +42,7 @@ function logEvent(device, type, category, message, severity, cb) {
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
-        console.log("hier");
+
         if (typeof cb === "function") {
             cb(null, res);
         }
@@ -39,7 +50,7 @@ function logEvent(device, type, category, message, severity, cb) {
         if (typeof cb === "function") {
             cb(err);
         }
-        console.log(err);
+        console.error(err);
         logEvent(device, type, category, err, 2);
     });
 }
@@ -61,7 +72,6 @@ function logData(device, cb) {
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
     dataLog.save(log).then(function(res) {
-        console.log(log);
         io.emit('dataLogAdded', log);
         if (typeof cb === "function") {
             cb(null, res);
@@ -94,29 +104,25 @@ function getEvents(deviceid, cb) {
  * @param cb
  */
 
-function getAllEvents(severity, offset, limit, cb) {
-    if((severity > 0 || severity < 6) && severity !== null) {
+function getAllEvents(offset, limit, cb) {
+    settings.getLogLevel(function(err, res){
+        if(isNaN(offset)){
+            offset = 0;
+        }
 
-    } else {
-        severity = 5;
-    }
+        if(isNaN(limit)) {
+            limit = 50;
+        } else if(limit === 0) {
+            limit = 50;
+        }
 
-    if(isNaN(offset)){
-        offset = 0;
-    }
-
-    if(isNaN(limit)) {
-        limit = 50;
-    } else if(limit === 0) {
-        limit = 50;
-    }
-
-    eventLog.filter(function (log) {
-        return log("severity").lt(severity + 1);
-    }).orderBy((r.desc('timestamp'))).skip(offset).limit(limit).then(function(res) {
-        cb(null, res);
-    }).error(function(err) {
-        cb({error: "Not found.", message: err});
+        eventLog.filter(function (log) {
+            return log("severity").lt(res + 1);
+        }).orderBy((r.desc('timestamp'))).skip(offset).limit(limit).then(function(res) {
+            cb(null, res);
+        }).error(function(err) {
+            cb({error: "Not found.", message: err});
+        });
     });
 }
 
@@ -150,6 +156,9 @@ module.exports = {
     init: function (socket) {
         io = socket;
      },
+    severity : severity,
+    manual: manual,
+    automatic: automatic,
     logEvent: logEvent,
     logData: logData,
     getEvents: getEvents,
