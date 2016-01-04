@@ -133,7 +133,6 @@ function execute(scenario, scenarioState, cb){
 
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -151,7 +150,6 @@ function start(scenario, cb){
     }
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -167,7 +165,6 @@ function stop(scenario, cb){
     }
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 

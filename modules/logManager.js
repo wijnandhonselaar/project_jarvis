@@ -105,7 +105,6 @@ function logScenario(scenario, cb) {
     });
     scenarioLog.save(log).then(function (res) {
         io.emit('logAdded', log);
-        console.log(log);
         if(typeof cb === "function") {
             cb(null, res);
         }
