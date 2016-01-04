@@ -27,7 +27,9 @@ describe("Test scenario", function () {
 
     before(function (done) {
         r.connect({host: 'localhost', port: 28015}, function (err, conn) {
-            if (err) throw err;
+            if(err) {
+                done(err);
+            }
             connection = conn;
             done();
         })
@@ -37,7 +39,9 @@ describe("Test scenario", function () {
         r.db('jarvis').table('Scenario').
             delete().
             run(connection, function (err, result) {
-                if (err) throw err;
+                if(err) {
+                    done(err);
+                }
                 //console.log(JSON.stringify(result, null, 2));
                 done();
             });
@@ -47,7 +51,9 @@ describe("Test scenario", function () {
         r.db('jarvis').table('Actuator').
             delete().
             run(connection, function (err, result) {
-                if (err) throw err;
+                if(err) {
+                    done(err);
+                }
                 //console.log(JSON.stringify(result, null, 2));
                 done();
             });
@@ -59,8 +65,8 @@ describe("Test scenario", function () {
         api.post('http://localhost:3221/test/devices/add')
             .send({device: device, remote: {address: '192.186.24.2'}})
             .end(function (err, res) {
-                if (err) {
-                    throw err;
+                if(err) {
+                    done(err);
                 }
                 done();
             });

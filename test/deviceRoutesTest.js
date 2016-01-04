@@ -2,7 +2,6 @@ var expect              = require('chai').expect;
 var api                 = require('superagent');
 var Sensor              = require('../models/sensor');
 var Actuator            = require('../models/actuator');
-var rethinkManager      = require('../modules/rethinkManager');
 var thinky = require('thinky')();
 var r = thinky.r;
 var connection = null;
@@ -10,34 +9,7 @@ var connection = null;
 
 describe('Device routing', function() {
 
-    before(function(done){
-        r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
-            if (err) throw err;
-            connection = conn;
-            done();
-        })
-    });
-
-    before(function(done){
-        r.db('jarvis').table('Actuator').
-        delete().
-        run(connection, function(err, result) {
-            if (err) throw err;
-            //console.log(JSON.stringify(result, null, 2));
-            done();
-        });
-    });
-
-    before(function(done){
-        r.db('jarvis').table('Sensor').
-        delete().
-        run(connection, function(err, result) {
-            if (err) throw err;
-            //console.log(JSON.stringify(result, null, 2));
-            done();
-        });
-    });
-
+    require('./globalBefore');
 
     before(function (done) {
         var device = newDevice(1000015, 'a');
@@ -46,17 +18,23 @@ describe('Device routing', function() {
         api.post('http://localhost:3221/test/devices/add')
         .send({device : device, remote:{address:'192.186.24.1'}})
         .end(function (err, res) {
-            if (err) { throw err;}
+            if (err) {
+                done(err);
+            }
+            done();
         });
-
+    });
+    before(function (done) {
         device = newDevice(1000016, 'b');
         device.type = 'actuator';
         api.post('http://localhost:3221/test/devices/add')
-        .send({device : device, remote:{address:'192.186.24.2'}})
-        .end(function (err, res) {
-            if (err) { throw err;}
-            done();
-        });
+            .send({device : device, remote:{address:'192.186.24.2'}})
+            .end(function (err, res) {
+                if (err) {
+                    done(err);
+                }
+                done();
+            });
     });
 
     beforeEach(function(done){
@@ -72,7 +50,7 @@ describe('Device routing', function() {
                 //.expect(200) //Status code
                 .end(function(err,res) {
                     if (err) {
-                        throw err;
+                        done(err);
                     }
                     expect(res.body.devices.actuators.length).to.equal(1);
                     expect(res.body.devices.actuators[0].config.alias).to.equal('b');
@@ -88,7 +66,7 @@ describe('Device routing', function() {
                 .get('http://localhost:3221/devices/sensors')
                 .end(function(err,res) {
                     if (err) {
-                        throw err;
+                        done(err);
                     }
                     expect(res.body.sensors[0].id).to.be.equal(1000015);
                     expect(res.body.sensors.length).to.equal(1);
@@ -105,7 +83,7 @@ describe('Device routing', function() {
                 //.expect(200) //Status code
                 .end(function(err,res) {
                     if (err) {
-                        throw err;
+                        done(err);
                     }
                     expect(res.body.actuators[0].id).to.be.equal(1000016);
                     expect(res.body.actuators.length).to.be.equal(1);
@@ -121,7 +99,7 @@ describe('Device routing', function() {
                 .send({alias: 'nieuw'})
                 .end(function(err,res) {
                     if (err) {
-                        throw err;
+                        done(err);
                     }
                     expect(JSON.parse(res.text).success).to.be.equal("Success, alias for 1000015 was successfully updated.");
                     done();
@@ -134,7 +112,7 @@ describe('Device routing', function() {
                 .send({alias: 'nieuw'})
                 .end(function(err,res) {
                     if (err) {
-                        throw err;
+                        done(err);
                     }
                     expect(JSON.parse(res.text).success).to.be.equal("Success, alias for 1000016 was successfully updated.");
                     done();
@@ -165,7 +143,9 @@ describe('Device routing', function() {
             sensor.delete().then(function() {
                 done();
             });
-        }).error();
+        }).error(function(err) {
+            done(err);
+        });
     });
 
     after(function(done){
@@ -173,7 +153,9 @@ describe('Device routing', function() {
         Actuator.get(id).then(function(actuator) {
             actuator.delete().then(function() {
                 done();
-            }).error();
+            }).error(function(err) {
+                done(err);
+            });
         });
     });
 
@@ -182,7 +164,7 @@ describe('Device routing', function() {
         .post("http://localhost:3221/test/devices/delete")
         .end(function(err,res) {
             if (err) {
-                throw err;
+                done(err);
             }
             done();
         });
