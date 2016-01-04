@@ -29,15 +29,18 @@ function detect(command, device, executingScenario) {
 
     for (var scenario in device.config.scenarios) {
         if (device.config.scenarios.hasOwnProperty(scenario)) {
-            //if (scenarioManager.getByName(scenario)) {
+            if(scenario != executingScenario.name) {
                 scenarioManager.getByName(scenario, getByNameCallback);
-            //}
+            }
         }
     }
+
     return false;
+
 }
 
 function presentResolve(deviceObj, executingCommand, conflictingCommand, executingScenario, conflictingScenario) {
+    //console.log('presenting resolve');
     io.emit('resolveConflict', {
         executed: {scenario: executingScenario.name, command:executingCommand, device:deviceObj },
         conflicting: {scenario:conflictingScenario.name, command:conflictingCommand, device:deviceObj }
