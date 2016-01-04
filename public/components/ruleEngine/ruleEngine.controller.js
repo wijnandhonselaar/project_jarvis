@@ -55,7 +55,6 @@
 
         function remove(type, ruleID, modal){
             var obj = rec.ruleObjects[rec.selectedCommand][type];
-            console.log(obj);
             for(var i = 0; i<obj.length; i++){
                 if(obj[i].id == ruleID){
                     obj.splice(i,1);
@@ -82,7 +81,6 @@
         }
 
         function closeModal(modal){
-            console.log(modal);
             $('#'+modal).closeModal();
         }
 
@@ -117,7 +115,6 @@
         function getSensorFields(id){
             for(var i = 0; i<rec.sensors.length; i++){
                 if(rec.sensors[i].id == id){
-                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.sensors[i].model.commands.status.returns;
                 }
             }
@@ -126,7 +123,6 @@
         function getActuatorById(id){
             for(var i = 0; i<rec.actuators.length; i++) {
                 if (rec.actuators[i].id == id) {
-                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.actuators[i];
                 }
             }
@@ -134,7 +130,6 @@
 
         function updateFieldList() {
             DS.getDeviceById(rec.threshold.device, 'sensor').then(function (data) {
-                console.log(data);
                 rec.selectedSensor = data;
                 $scope.$apply();
             }).catch(function(e){
@@ -144,7 +139,6 @@
 
         function updateEventList() {
             DS.getDeviceById(rec.event.device, 'actuator').then(function (data) {
-                console.log(data);
                 rec.selectedActuator = data;
                 $scope.$apply();
             }).catch(function(e){
@@ -185,7 +179,6 @@
             }
 
             if(rec.event.device !== null){
-                console.log('ik sla een event op');
                 if(!rec.ruleObjects[rec.selectedCommand].events) {
                     rec.ruleObjects[rec.selectedCommand].events = [];
                 }

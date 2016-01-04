@@ -148,7 +148,6 @@
         }
 
         function isAllowedCommand(commandname) {
-            //console.log('Dingen yolo hier ook 100 keer per seconde? WHAT THE FUCCCKKKK!!');
             return (commandname.toLowerCase() === 'on' || commandname.toLowerCase() === 'off');
 
         }

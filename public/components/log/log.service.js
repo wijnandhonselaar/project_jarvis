@@ -13,7 +13,6 @@
         var onLogUpdate = null;
 
 		socket.socketListener("logAdded", function(data){
-            console.log(data);
             logs.push(data);
             if(logs.length >= 50){
                 logs.splice(0,1);
@@ -77,8 +76,6 @@
                             data.forEach(function (log) {
                                 logs.push(log);
                             });
-                            console.log(logs);
-                            console.log("Got log data.");
                             resolve();
                         })
                         .error(function (err) {
