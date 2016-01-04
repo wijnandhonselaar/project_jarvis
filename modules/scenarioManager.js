@@ -132,7 +132,7 @@ function execute(scenario, scenarioState, cb){
     }
 
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data)}
     }
 }
 
@@ -149,7 +149,7 @@ function start(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data)}
     }
 }
 
@@ -164,7 +164,7 @@ function stop(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -208,10 +208,11 @@ function validateRules(event) {
 
 function getByName(name, cb) {
         Scenario.filter({name: name}).run().then(function (res) {
-            cb(res[0]);
+            cb(null, res[0]);
         }).
         catch(function (err) {
-            throw err;
+            console.error(err);
+            cb(err, null);
         });
 }
 

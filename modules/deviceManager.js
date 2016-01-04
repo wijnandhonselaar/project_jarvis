@@ -342,11 +342,11 @@ function executeCommand(command, device, params, cb){
  */
 function removeScenarioFromActuator(id, scenario) {
     function thenCBsmall(res) {
-        if(res.err) throw res.err;
+        if(res.err) console.error(err);
     }
     function catchCBsmall(err) {
         console.error('Error bij verwijderen scenario uit config van een actuator.');
-        throw err;
+        console.error(err);
     }
     function thenCB(actuator) {
         delete actuator.config.scenarios[scenario];
@@ -356,7 +356,7 @@ function removeScenarioFromActuator(id, scenario) {
     }
     function catchCB(err) {
         console.error('Error bij ophalen actuator.');
-        throw err;
+        console.error(err);
     }
     for(var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
