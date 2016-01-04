@@ -17,7 +17,7 @@ var postMethod = function(command, deviceObject, paramList, callback){
             //console.log('Posting to: http://' + deviceObject.config.ip + '/' + command);
             superAgent.post('http://' + deviceObject.config.ip + '/' + command).send(paramList).end(function (err, res) {
                 if(err) {
-                    console.log(err);
+                    console.error(err);
                 } else {
                     logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd.", 4);
                     callback(res.body, deviceObject);
@@ -32,7 +32,7 @@ var postMethod = function(command, deviceObject, paramList, callback){
 
 var getMethod = function(command, deviceObject, callback){
     superAgent.get('http://'+deviceObject.config.ip+'/'+command).end(function(err,res){
-        if(err) console.log(err);
+        if(err) console.error(err);
         callback(res.text);
     });
 };

@@ -8,9 +8,7 @@ function detect(command, device, executingScenario) {
 
     function getByNameCallback(scenario) {
         if (scenario.status) {
-            //console.log(device.config.scenarios[scenario.name]);
             if (device.config.scenarios[scenario.name].command != command) {
-                //console.log('(' + scenario.name + ') active: ' + device.config.scenarios[scenario.name].command + ' want to execute (' + executingScenario.name + ') ' + command);
                 var alreadyResolved = false;
 
                 for (var i = 0; i < resolvedConflicts.length; i++) {
@@ -40,7 +38,6 @@ function detect(command, device, executingScenario) {
 }
 
 function presentResolve(deviceObj, executingCommand, conflictingCommand, executingScenario, conflictingScenario) {
-    //console.log('presenting resolve');
     io.emit('resolveConflict', {
         executed: {scenario: executingScenario.name, command:executingCommand, device:deviceObj },
         conflicting: {scenario:conflictingScenario.name, command:conflictingCommand, device:deviceObj }
@@ -58,7 +55,6 @@ function resolve(resolveObject, callback) {
                 scenarioManager.start(resolveObject.winner);
                 resolvedConflicts.push(resolveObject);
                 deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, executeCommandCB);
-                //console.log('execute', resolveObject.device.config.scenarios[scenario].command);
             }
         }
     }

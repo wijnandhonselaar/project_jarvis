@@ -158,9 +158,7 @@ function setStatus(id, type, status, cb) {
         cb({Error: "type is unknown"});
         return false;
     }
-    //console.log('status', status);
     type.get(id).run().then(function (res) {
-        //console.log('res', res);
         res.merge({status: status}).save().then(function (result) {
             cb(null, result);
         });

@@ -7,6 +7,7 @@ var comm = require('./interperter/comm');
 var io = null;
 var deviceManager = null;
 var conflictManager = null;
+var Logger = require('./logManager');
 var scenarios = [];
 
 function create(name, description, actuators, cb) {
@@ -99,11 +100,13 @@ function toggleState(scenario, cb) {
         if (scenario.id == scenarios[i].id) {
             if (scenarios[i].status === false) {
                 execute(scenario, 'start', function(err, data){
+                    Logger.logScenario(scenarios[i], null);
                     cb(err, data)
                 });
             }
             else {
                 execute(scenario, 'finish', function(err, data){
+                    Logger.logScenario(scenarios[i], null);
                     cb(err, data);
                 });
             }
@@ -130,7 +133,6 @@ function execute(scenario, scenarioState, cb){
 
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -148,7 +150,6 @@ function start(scenario, cb){
     }
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -164,7 +165,6 @@ function stop(scenario, cb){
     }
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 

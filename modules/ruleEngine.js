@@ -22,7 +22,6 @@ function apply(scenario, event) {
                     }
                 });
                 if (found) {
-                    //console.log("Found\n",found);
                     rule = found;
                 }
             }
@@ -110,7 +109,6 @@ function apply(scenario, event) {
 
                             if (checkState(newcommand, device)) {
                                 if (!conflictManager.detect(newcommand, device, scenario)) {
-                                    console.log("EXECUTING ", newcommand);
                                     deviceManager.executeCommand(newcommand, device, {});
                                 }
                             }
