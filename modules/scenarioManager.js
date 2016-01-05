@@ -7,16 +7,17 @@ var comm = require('./interperter/comm');
 var io = null;
 var deviceManager = null;
 var conflictManager = null;
+var Logger = require('./logManager');
 var scenarios = [];
 
 function create(name, description, actuators, cb) {
     var scenario = new Scenario(
         {
-        name: name,
-        description: description,
-        actuators: actuators,
-        status: false
-    });
+            name: name,
+            description: description,
+            actuators: actuators,
+            status: false
+        });
     Scenario.save(scenario).then(function (res) {
         cb(null, res);
     }).error(function (err) {
@@ -36,7 +37,7 @@ function get(id, cb) {
 function getAll(cb) {
     scenarios = [];
     Scenario.run().then(function (res) {
-          scenarios = res;
+        scenarios = res;
         cb(null, scenarios);
     }).error(function (err) {
         cb({error: "Not found.", message: err});
@@ -99,11 +100,13 @@ function toggleState(scenario, cb) {
         if (scenario.id == scenarios[i].id) {
             if (scenarios[i].status === false) {
                 execute(scenario, 'start', function(err, data){
+                    Logger.logScenario(scenarios[i], null);
                     cb(err, data)
                 });
             }
             else {
                 execute(scenario, 'finish', function(err, data){
+                    Logger.logScenario(scenarios[i], null);
                     cb(err, data);
                 });
             }
@@ -130,7 +133,6 @@ function execute(scenario, scenarioState, cb){
 
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -148,7 +150,6 @@ function start(scenario, cb){
     }
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -164,7 +165,6 @@ function stop(scenario, cb){
     }
     function updateCB(err, data){
         if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
@@ -207,12 +207,12 @@ function validateRules(event) {
 //}
 
 function getByName(name, cb) {
-        Scenario.filter({name: name}).run().then(function (res) {
-            cb(res[0]);
-        }).
-        catch(function (err) {
-            throw err;
-        });
+    Scenario.filter({name: name}).run().then(function (res) {
+        cb(res[0]);
+    }).
+    catch(function (err) {
+        throw err;
+    });
 }
 
 module.exports = {

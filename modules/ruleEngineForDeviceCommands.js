@@ -18,7 +18,7 @@ function apply(device, event, callback) {
                     var rule = device.config.rules[command].thresholds[i];
                     var s = deviceManager.getSensor(parseInt(rule.device));
                     if (s.err) {
-                        console.log(s.err);
+                        console.error(s.err);
                     } else if (s.status) {
                         switch (rule.gate) {
                             case 'AND':
@@ -60,16 +60,12 @@ function apply(device, event, callback) {
                 hasRules = true;
                 for (var c = 0; c < device.config.rules[command].events.length; c++) {
                     var eobj = device.config.rules[command].events[c];
-                    if (eobj.device == event.id) {
-                        console.log('TESSSTTT');
-                    }
                     switch (eobj.gate) {
                         case 'AND':
                             andGate = (device.id == eobj.device && event.key == eobj.event).toString();
                             break;
                         case 'OR':
                             statementString += ' || ' + (parseInt(eobj.device) == parseInt(event.id) && event.key == eobj.event).toString();
-                            //console.log('resolve', parseInt(device.id) === parseInt(eobj.device));
                             break;
                     }
                 }
@@ -77,7 +73,6 @@ function apply(device, event, callback) {
 
             if (hasRules) {
                 statementString = andGate + ' ' + statementString;
-                //if (event) console.log(statementString);
                 if (eval(statementString) && checkState(command, device)) {
                     //if (!conflictManager.detect(command, device, scenario)) {
                     switch (device.model.commands[command].httpMethod) {
