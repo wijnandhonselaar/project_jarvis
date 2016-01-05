@@ -15,9 +15,7 @@ function detect(command, device, executingScenario) {
 
     function getByNameCallback(scenario) {
         if (scenario.status) {
-            //console.log(device.config.scenarios[scenario.name]);
             if (device.config.scenarios[scenario.name].command != command) {
-                //console.log('(' + scenario.name + ') active: ' + device.config.scenarios[scenario.name].command + ' want to execute (' + executingScenario.name + ') ' + command);
                 var alreadyResolved = false;
 
                 for (var i = 0; i < resolvedConflicts.length; i++) {
@@ -36,12 +34,14 @@ function detect(command, device, executingScenario) {
 
     for (var scenario in device.config.scenarios) {
         if (device.config.scenarios.hasOwnProperty(scenario)) {
-            //if (scenarioManager.getByName(scenario)) {
-            scenarioManager.getByName(scenario, getByNameCallback);
-            //}
+            if(scenario != executingScenario.name) {
+                scenarioManager.getByName(scenario, getByNameCallback);
+            }
         }
     }
+
     return false;
+
 }
 
 /**

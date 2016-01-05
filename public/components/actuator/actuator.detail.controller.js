@@ -25,7 +25,6 @@
 
         DS.getDeviceById($sp.uid, "actuator")
             .then(function (data) {
-                console.log("DeviceData: \n\n",data);
                 adc.actuator = data;
                 adc.actuatoralias = data.config.alias;
                 $scope.$apply();
@@ -81,7 +80,6 @@
          */
         function showCommand(id, command, commandkey, type) {
             adc.commandkey = commandkey;
-            console.log(command);
             var paramKeys = Object.keys(command.parameters);
             if (paramKeys.length > 0) {
                 paramKeys.forEach(function(param){
@@ -120,11 +118,10 @@
             DS.sendCommand(id, command, commandkey, type, values)
                 .then(function (data) {
                     Materialize.toast("Command successfull excecuted", 4000);
-                    console.log(data);
                 })
                 .catch(function (err) {
                     Materialize.toast("Command error", 4000);
-                    console.log(err);
+                    console.error(err);
                 });
         }
 

@@ -9,7 +9,6 @@ module.exports = (function() {
     var conflictManager = require('../modules/conflictManager');
 
     route.get('/', function (req, res) {
-        console.log(deviceManager.getAll());
         res.send({devices: deviceManager.getAll()});
     });
 

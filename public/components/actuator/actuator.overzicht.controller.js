@@ -41,7 +41,6 @@
          * @param actuator
          */
         function toggleState(actuator){
-            console.log(actuator);
             if(actuator.status.state === true){
                 sendcommand(actuator.id, actuator.model.commands.off,'off',actuator.model.type);
             } else {
@@ -86,11 +85,10 @@
             DS.sendCommand(id, command, commandkey, type)
                 .then(function (data) {
                     Materialize.toast("Command successfull excecuted", 4000);
-                    console.log(data);
                 })
                 .catch(function (err) {
                     Materialize.toast("Command error", 4000);
-                    console.log(err);
+                    console.error(err);
                 });
         }
 

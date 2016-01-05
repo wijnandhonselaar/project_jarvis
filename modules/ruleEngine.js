@@ -13,9 +13,7 @@ var start = 'start';
  * @param event (optional) this is given when an event is triggered.
  */
 function apply(scenario, event) {
-    //console.log(scenario);
     var hasRules = false;
-    var statementString = '';
 
     function getScenarioRuleById(ruleKey, searchId) {
         var types = ["events", "thresholds", "timers"];
@@ -29,7 +27,6 @@ function apply(scenario, event) {
                     }
                 });
                 if (found) {
-                    //console.log("Found\n",found);
                     rule = found;
                 }
             }
@@ -50,12 +47,12 @@ function apply(scenario, event) {
                     var s = deviceManager.getSensor(parseInt(rule.device));
                     if (s.err) {
                         console.error("GETSENSOR ERROR\n", s.err);
-                        return false.toString();
-                    } else if (s.status) {
-                        return validateStatement(s.status[rule.field], rule.value, rule.operator).toString();
+                        return false;
+                    } else if(s.status) {
+                        return validateStatement(s.status[rule.field], rule.value, rule.operator);
                     } else {
                         console.error("NO ERROR OR STATUS\n", s);
-                        return false.toString();
+                        return false;
                     }
                     break;
                 case 'timers':
@@ -66,13 +63,13 @@ function apply(scenario, event) {
                     timeObj.setMinutes(temp[1]);
                     var time = timeObj.getTime();
                     var curStamp = new Date().getTime();
-                    var resolve = ((time < (curStamp + 5000)) && (time > (curStamp - 5000))).toString();
+                    var resolve = ((time < (curStamp + 5000)) && (time > (curStamp - 5000)));
                     return resolve;
                 case 'events':
                     if (event) {
-                        return (parseInt(eobj.device) == parseInt(event.id) && event.key == eobj.event).toString();
+                        return (parseInt(eobj.device) == parseInt(event.id) && event.key == eobj.event);
                     } else {
-                        return false.toString();
+                        return false;
                     }
             }
         }
@@ -81,33 +78,50 @@ function apply(scenario, event) {
     if (scenario.rules) {
         for (var ruleKey in scenario.rules) {
             if (scenario.rules.hasOwnProperty(ruleKey) && scenario.rules[ruleKey].andgroups) {
-                var mappedAndGroups = scenario.rules[ruleKey].andgroups.map(function (andgroup) {
-                    var andGroupStrings = andgroup.map(
-                        function (ruleId) {
-                            var scenarioRule = getScenarioRuleById(ruleKey, ruleId);
-                            return checkRule(scenarioRule);
-                        });
-                    return "( " + andGroupStrings.join(" && ") + " )";
-                });
-                statementString = mappedAndGroups.join(" || ");
-                if (hasRules) {
-                    if (eval(statementString)) {
-                        if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
-                            scenarioManager.execute(scenario, ruleKey);
-                            //if (ruleKey === start) {
-                            //    scenarioManager.start(scenario);
-                            //} else {
-                            //    scenarioManager.stop(scenario);
-                            //}
-                            //for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
-                            //    var command = scenario.actuators[deviceLoop].action.command;
-                            //    var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
-                            //    if (checkState(command, device)) {
-                            //        if (!conflictManager.detect(command, device, scenario)) {
-                            //            deviceManager.executeCommand(command, device, {});
-                            //        }
-                            //    }
-                            //}
+                var execute = false;
+                for(var i = 0; i < scenario.rules[ruleKey].andgroups.length; i++){
+                    var andgroup = scenario.rules[ruleKey].andgroups[i];
+                    for(var ai = 0; ai < andgroup.length; ai++) {
+                        var scenarioRule = getScenarioRuleById(ruleKey,andgroup[ai]);
+                        if ( !checkRule(scenarioRule) ) {
+                            break;
+                        }
+                        if(ai+1 == andgroup.length) {
+                            execute = true;
+                        }
+                    }
+                    if(execute === true) {
+                        break;
+                    }
+                }
+
+                if (hasRules && execute) {
+                    if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
+                        if (ruleKey === start) {
+                            scenarioManager.start(scenario);
+                        } else {
+                            scenarioManager.stop(scenario);
+                        }
+                        for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
+                            var command = scenario.actuators[deviceLoop].action.command;
+                            var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
+
+                            var newcommand = "";
+                            if( (command == "on" || command == "off") && ruleKey === stop) {
+                                if (command == "on") {
+                                    newcommand = "off";
+                                } else {
+                                    newcommand = "on"
+                                }
+                            } else {
+                                newcommand = command;
+                            }
+
+                            if (checkState(newcommand, device)) {
+                                if (!conflictManager.detect(newcommand, device, scenario)) {
+                                    deviceManager.executeCommand(newcommand, device, {});
+                                }
+                            }
                         }
                     }
                 }
@@ -138,6 +152,30 @@ function validateStatement(var1, var2, operator) {
         '!==': var1 !== var2
     };
     return statements[operator];
+}
+
+function checkState(command, device) {
+    if (device.status) {
+        var state = device.status.state;
+        switch (command) {
+            case 'on':
+                if (!state) {
+                    return true;
+                } else if (state) {
+                    return false;
+                }
+                break;
+            case 'off':
+                if (!state) {
+                    return false;
+                } else if (state) {
+                    return true;
+                }
+                break;
+        }
+    } else {
+        return true;
+    }
 }
 
 module.exports = {
