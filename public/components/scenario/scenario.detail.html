@@ -8,7 +8,7 @@
                 <img src="images/icon_condition.png" width="25px;">
             </div>
         </div>
-        <div class="col m9">
+        <div class="col m8">
             <input type="text" edit-dir id="name" placeholder="Naam" ng-model="sdc.scenarioName"
             ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)"/>
 
@@ -19,6 +19,12 @@
         <div class="col m1" style="margin-left:-5px;">
             <div class="card touch" ng-click="sdc.addActuator()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
                 <img src="/images/icon_adddevice.png" width="100%;">
+            </div>
+        </div>
+
+        <div class="col m1" style="margin-left:-5px;">
+            <div id="conflicts" class="card touch" ng-click="sdc.showConflictList()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+                <img src="/images/conflict_icon.png" width="100%;">
             </div>
         </div>
 
@@ -111,8 +117,9 @@
     </div>
 </div>
 
+<a class="modal-trigger" style="display:none;" href="#conflictOverviewModal">Modal</a>
 
-<div id="modal1" class="modal">
+<div id="conflictOverviewModal" class="modal">
     <div class="modal-content">
         <div class="row" ng-if="value.length > 0" ng-repeat="(key, value) in sdc.preemtiveConflictDetection[sdc.scenario.name]">
             <div class="col m6" style="padding-bottom:5px;">

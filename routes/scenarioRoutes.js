@@ -6,25 +6,31 @@ module.exports = (function () {
     var conflictManager = require('../modules/conflictManager');
 
     // TODO replace thrown errors by error responses.
-    route.get('/', function (req, res) {
-        scenarioManager.getAll(function (err, result) {
-            if (err) throw err;
+    route.get('/', function(req, res) {
+        scenarioManager.getAll(function(err, result) {
+            if(err) throw err;
             res.send({scenarios: result});
         });
     });
 
-    route.get('/:id', function (req, res) {
-        scenarioManager.get(req.params.id, function (err, result) {
-            if (err) throw err;
-            res.send({scenario: result});
-        });
+    route.post('/:id/tickle', function(req,res){
+        conflictManager.preEmptiveDetect(req.body);
+        res.send('ok');
+    });
+
+    route.get('/:id', function(req, res) {
+       scenarioManager.get(req.params.id, function(err, result) {
+           if(err) throw err;
+           res.send({scenario: result});
+       });
     });
 
     route.post('/:id/resolveconflict', function (req, res) {
         if (req.body)
             conflictManager.resolve(req.body, function (r) {
-                res.send(r);
+                //res.send(r);
             }, false);
+        res.send('ok');
     });
 
     route.post('/', function (req, res) {
@@ -73,6 +79,7 @@ module.exports = (function () {
             res.send(result);
         });
     });
+
 
 
     return route;

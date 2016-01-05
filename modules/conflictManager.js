@@ -14,6 +14,9 @@ var resolvedConflicts = [];
 function detect(command, device, executingScenario) {
 
     function getByNameCallback(scenario) {
+        if(scenario.err) {
+            return false;
+        }
         if (scenario.status) {
             if (device.config.scenarios[scenario.name].command != command) {
                 var alreadyResolved = false;
@@ -117,7 +120,7 @@ function emitResolvedConflicts(){
             }
         });
     }
-    io.emit('resolvedConflicts', emitThis);
+    io.emit('resolvedConflictsList', emitThis);
 }
 
 var preemtiveConflictList = {};

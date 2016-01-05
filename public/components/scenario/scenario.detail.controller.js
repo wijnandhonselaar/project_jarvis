@@ -27,23 +27,48 @@
         sdc.setConflictingScenarioDevicePriority = setConflictingScenarioDevicePriority;
         sdc.resolvedConflicts = [];
         sdc.setClass = setClass;
+        sdc.showConflictList = showConflictList;
         var swiper = null;
+        var modalIsOpen = false;
 
         sdc.log = function(log){
             console.log("log:\n", log);
         };
 
+        $('.modal-trigger').leanModal({
+            dismissible: true, // Modal can be dismissed by clicking outside of the modal
+            ready: function() { modalIsOpen = true; }, // Callback for Modal open
+            complete: function() { modalIsOpen = false; } // Callback for Modal close
+        });
+
+        function showConflictListModal(){
+            $( ".modal-trigger" ).trigger( "click" );
+        }
+
+
         socketService.socketListener('preemtiveConflictDetection', function(data){
             sdc.preemtiveConflictDetection = data;
             $scope.$apply();
-            $('#modal1').openModal();
+            if(!modalIsOpen) {
+                modalIsOpen = true;
+                showConflictListModal();
+            }
+            //$('#conflictOverviewModal').openModal();
         });
 
-        socketService.socketListener('resolvedConflicts', function(data){
+        socketService.socketListener('resolvedConflictsList', function(data){
             sdc.resolvedConflicts = data;
             $scope.$apply();
             console.log(data);
         });
+
+        function showConflictList(){
+            $http.post('http://localhost:3221/scenario/'+ sdc.uid +'/tickle', sdc.scenario).success(function(data){
+
+            }).error(function(err){
+
+            });
+        }
 
         function setClass(scenario, device, toggle){
             for(var i = 0; i<sdc.resolvedConflicts.length; i++){
@@ -309,6 +334,8 @@
             }
             return false;
         }
+
+
 
         function goToOverview() {
             $state.go("scenarioOverzicht");
