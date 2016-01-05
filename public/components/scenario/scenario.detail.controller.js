@@ -5,9 +5,9 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope", "$timeout"];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope", "$timeout", "socketService", '$http'];
 
-    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout, socketService, $http) {
         var sdc = this;
         sdc.uid = $sp.uid;
         sdc.updatename = updateName;
@@ -23,11 +23,53 @@
         sdc.repeater = [];
         sdc.actuators = [];
         sdc.GoToDetail = GoToDetail;
+        sdc.preemtiveConflictDetection = {};
+        sdc.setConflictingScenarioDevicePriority = setConflictingScenarioDevicePriority;
+        sdc.resolvedConflicts = [];
+        sdc.setClass = setClass;
         var swiper = null;
 
         sdc.log = function(log){
             console.log("log:\n", log);
         };
+
+        socketService.socketListener('preemtiveConflictDetection', function(data){
+            sdc.preemtiveConflictDetection = data;
+            $scope.$apply();
+            $('#modal1').openModal();
+        });
+
+        socketService.socketListener('resolvedConflicts', function(data){
+            sdc.resolvedConflicts = data;
+            $scope.$apply();
+            console.log(data);
+        });
+
+        function setClass(scenario, device, toggle){
+            for(var i = 0; i<sdc.resolvedConflicts.length; i++){
+                if(sdc.resolvedConflicts[i].winner == scenario && sdc.resolvedConflicts[i].device.id == device && toggle == 'yes'){
+                   return 'yesActive';
+                } else if(sdc.resolvedConflicts[i].loser == scenario && sdc.resolvedConflicts[i].device.id == device && toggle == 'no') {
+                   return 'noActive';
+                }
+            }
+        }
+
+        function setConflictingScenarioDevicePriority(winner, loser, deviceId){
+            var object = {
+                winner: winner,
+                loser: loser,
+                device: deviceId
+            };
+
+            $http.post('http://localhost:3221/scenario/' + sdc.uid + '/resolveconflict', object).
+                success(function (data) {
+                    console.log('CONFLICT', 'resolved');
+                })
+                .error(function (err) {
+                    console.log('CONFLICT', 'error while resolving');
+                });
+        }
 
 
         var elisteners = [];
@@ -165,7 +207,6 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
-                    console.log("Scenario\n",data.scenario);
                     sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
@@ -176,7 +217,6 @@
                                 data.action = {
                                     command: act.action.command
                                 };
-                                console.log("data\n", data);
                                 sdc.devices.push(data);
                                 $scope.$apply();
                             })
@@ -254,7 +294,6 @@
         }
 
         function selectedAction(key, actuator) {
-            //console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
             for(var i = 0; i < sdc.scenario.actuators.length; i++) {
                 var item = sdc.scenario.actuators[i];
                 if(item.deviceid == actuator.id) {

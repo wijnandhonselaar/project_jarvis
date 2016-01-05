@@ -28,6 +28,16 @@ body{
     background-color:#FAFAFA;
 }
 
+.yesActive{
+    background-color: #008000 !important;
+    color:white !important;
+}
+
+.noActive{
+    background-color: #ff0000 !important;
+    color:white !important;
+}
+
 .ptop_50{
     padding-top:50px !important;
 }

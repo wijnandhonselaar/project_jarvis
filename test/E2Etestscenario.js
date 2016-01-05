@@ -7,7 +7,7 @@ var thinky = require('thinky')();
 var r = thinky.r;
 var expect = chai.expect;
 
-describe("Test scenario", function () {
+describe("Scenario E2E Test scenario", function () {
 
     // set up the tests
     this.timeout(20000);  // prevent mocha from terminating a test to soon,
@@ -78,7 +78,7 @@ describe("Test scenario", function () {
             .url(siteURL)
             .elements(".menu_item").then(function (result) {
                 expect(result.value).to.have.length(5);
-                    browser
+                browser
                     .click('#scenario');
                 setTimeout(function () {
                     done();
@@ -124,10 +124,6 @@ describe("Test scenario", function () {
                 expect(value).to.be.equal("Apparaat toevoegen");
                 done();
             })
-            .catch(function (exception) {
-                console.log("EXCEPTION", exception);
-                done(exception);
-            })
     });
 
 
@@ -147,7 +143,7 @@ describe("Test scenario", function () {
     it("should click a device option and save it to the scenario", function (done) {
         browser
             .getValue('#1000016', function (err, value) {
-                expect(value).to.be.equal("c");
+                expect(value).to.be.equal("on");
                 done();
             })
             .catch(function (exception) {
@@ -189,24 +185,89 @@ describe("Test scenario", function () {
     it("Should see if overview is changed", function (done) {
         browser
             .getText(".description").then(function (value) {
-            expect(value).to.be.equal("2..."); // true
-            done();
-        })
+                expect(value).to.be.equal("2..."); // true
+                done();
+            })
             .catch(function (exception) {
                 console.log("EXCEPTION", exception);
                 done(exception);
             })
     });
 
-    it("Should delete scenario", function (done) {
+    it("Should open detailpage of the scenario and go to create a rule", function (done) {
         browser
             .click("#scenarioAmount")
-            .click("#trashcan")
-            .click('#scenario');
+            .click('#rules')
+            .getText("#scenarioName").then(function (value) {
+                expect(value).to.be.equal("Scenario: 1"); // true
+                done();
+            });
+
+    });
+    it("Should select start of a rule ", function (done) {
+        browser
+            .click('//*[@id="selectStartFinish"]/option[@value="start"]')
+            .getValue('#selectStartFinish', function (err, value) {
+                expect(value).to.be.equal("start"); // true
+                done();
+            })
+    });
+
+
+    it("Should open a new rule modal", function (done) {
+        browser
+            .click("#timer")
+            .getText("#Rule").then(function (value) {
+                expect(value).to.be.equal("Tijdklok - 1 start"); // true
+                done();
+            });
+    });
+
+    it("Should add rule to scenario and ready to save", function (done) {
+        browser
+            .setValue('#timerName', 'Timer')
+            .click("#timepicker")
+            .click(".ui-timepicker-am")
+            .click('#Rule')
+            .getValue("#timerName").then(function (value) {
+                expect(value).to.be.equal("Timer"); // true
+                done();
+            });
+
+    });
+    it("Should save rule to scenario and see if is correctly set", function (done) {
+        browser
+            .click("#modalbewaren")
+            .elements("#rulesamount").then(function (result){
+                expect(result.value.length).to.be.equal(1);
+                done();
+            })
+    });
+
+    it("Should save the entire rule to scenario", function (done) {
+        browser
+            .click("#save");
         setTimeout(function () {
             done();
         }, 2000);
     });
+
+    it("Should delete scenario", function (done) {
+        browser
+            .click('#scenario');
+        setTimeout(function () {
+            browser
+                .click("#scenarioAmount")
+                .click("#trashcan")
+                .click('#scenario');
+            setTimeout(function () {
+                done();
+            }, 2000);
+        }, 2000);
+
+
+    });
+
     it("Should have deleted the scenario with devices and not be seen in overview", function (done) {
         browser
             .elements("#scenarioAmount").then(function (result) {
@@ -221,11 +282,24 @@ describe("Test scenario", function () {
 
 
     after(function (done) {
+        r.db('jarvis').table('Actuator').
+            delete().
+            run(connection, function (err, result) {
+                if (err) throw err;
+                //console.log(JSON.stringify(result, null, 2));
+                done();
+            });
+        r.db('jarvis').table('Sensor').
+            delete().
+            run(connection, function (err, result) {
+                if (err) throw err;
+                //console.log(JSON.stringify(result, null, 2));
+                done();
+            });
         browser.end(done);
     });
 })
 ;
-
 
 function newDevice(id, name) {
     return {
@@ -237,7 +311,7 @@ function newDevice(id, name) {
         savedAt: 1651981981,
         commands: {
             status: {
-                name: 'amigo',
+                name: 'status',
                 parameters: {},
                 requestInterval: 5000,
                 returns: {
@@ -248,7 +322,7 @@ function newDevice(id, name) {
                 description: "geeft de temperatuur"
             },
             on: {
-                name: 'c',
+                name: 'on',
                 parameters: {},
                 requestInterval: 5000,
                 returns: {
@@ -259,7 +333,7 @@ function newDevice(id, name) {
                 description: "geeft de temperatuur"
             },
             off: {
-                name: 'c',
+                name: 'off',
                 parameters: {},
                 requestInterval: 5000,
                 returns: {
@@ -272,3 +346,4 @@ function newDevice(id, name) {
         }
     }
 }
+
