@@ -13,6 +13,11 @@ module.exports = (function() {
         });
     });
 
+    route.post('/:id/tickle', function(req,res){
+        conflictManager.preEmptiveDetect(req.body);
+        res.send('ok');
+    });
+
     route.get('/:id', function(req, res) {
        scenarioManager.get(req.params.id, function(err, result) {
            if(err) throw err;
@@ -23,8 +28,9 @@ module.exports = (function() {
     route.post('/:id/resolveconflict', function (req, res) {
         if (req.body)
             conflictManager.resolve(req.body, function (r) {
-                res.send(r);
+                //res.send(r);
             }, false);
+        res.send('ok');
     });
 
     route.post('/', function(req, res) {
