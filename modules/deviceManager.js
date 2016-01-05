@@ -342,11 +342,11 @@ function executeCommand(command, device, params, cb){
  */
 function removeScenarioFromActuator(id, scenario) {
     function thenCBsmall(res) {
-        if(res.err) console.error(err);
+        if(res.err) throw res.err;
     }
     function catchCBsmall(err) {
         console.error('Error bij verwijderen scenario uit config van een actuator.');
-        console.error(err);
+        throw err;
     }
     function thenCB(actuator) {
         delete actuator.config.scenarios[scenario];
@@ -356,7 +356,7 @@ function removeScenarioFromActuator(id, scenario) {
     }
     function catchCB(err) {
         console.error('Error bij ophalen actuator.');
-        console.error(err);
+        throw err;
     }
     for(var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
@@ -424,9 +424,9 @@ function loadDevicesFromDatabase() {
 }
 
 //noinspection JSClosureCompilerSyntax
-    /**
-     *
-     * @type {{ init: Function,
+/**
+ *
+ * @type {{ init: Function,
  *          add: addToDeviceList,
  *          getByIP: getDeviceByIPAddress,
  *          getSensor: getSensorById,
@@ -438,7 +438,7 @@ function loadDevicesFromDatabase() {
  *          updateDeviceStatus: updateDeviceStatus,
  *          updateSensorInterval: updateSensorIntervalFunction
 *         }}
-     */
+ */
 module.exports = {
     init: function (socketio, rec, validatorInject) {
         io = socketio;
