@@ -51,6 +51,7 @@ describe('Scenario routing', function() {
                         throw err;
                     }
                     scenario = res.body.scenarios[0];
+                    console.log(scenario);
                     api
                         .get('http://localhost:3221/scenario/'+scenario.id)
                         .end(function(err,res) {
@@ -74,6 +75,7 @@ describe('Scenario routing', function() {
                         throw err;
                     }
                     scenario = res.body.scenarios[0];
+                    console.log(scenario);
                     scenario.name = 'Aangepast';
                     api
                         .put('http://localhost:3221/scenario/'+scenario.id)

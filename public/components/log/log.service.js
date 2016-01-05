@@ -45,7 +45,15 @@
                                 graphdata = setDataForGraph(data);
                                 resolve(graphdata);
                             }
-                            resolve(data);
+                            else{
+                                if(data.length > 60){
+                                   data.splice(60, data.length - 61);
+                                }
+                                for (var i = 0; i < data.length; i++) {
+                                    data[i].timestamp = convertUnixTime(data[i].timestamp);
+                                }
+                                resolve(data);
+                            }
                         })
                         .error(function (err) {
                             // ERROR
@@ -64,7 +72,8 @@
 	 		getLogs: getLogs,
             setOnLogUpdate: setOnlogUpdate,
             getDatalogById: getDatalogById,
-            loadLogsDetail: loadLogsDetail
+            loadLogsDetail: loadLogsDetail,
+            convertUnixTime: convertUnixTime
         };
 
         //severity as parameter TODO

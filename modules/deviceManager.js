@@ -96,7 +96,7 @@ function addDevice(device, remote, deviceType) {
                     console.error(err);
                     logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, logger.severity.notice);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", logger.severity.notice);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden.", logger.severity.notice);
                 }
             });
         } else {

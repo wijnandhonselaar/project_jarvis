@@ -28,6 +28,12 @@ describe('Sensor overzicht/detail test', function(){
 		browser.init(done);
 	});
 
+    beforeEach(function(done){
+        setTimeout(function() {
+            done();
+        }, 500);
+    });
+    
 	it("Should find the sensor with the correct name", function(done){
 		browser.
 			url("http://localhost:3221/#/sensors")
