@@ -6,23 +6,23 @@ module.exports = (function () {
     var conflictManager = require('../modules/conflictManager');
 
     // TODO replace thrown errors by error responses.
-    route.get('/', function(req, res) {
-        scenarioManager.getAll(function(err, result) {
-            if(err) throw err;
+    route.get('/', function (req, res) {
+        scenarioManager.getAll(function (err, result) {
+            if (err) throw err;
             res.send({scenarios: result});
         });
     });
 
-    route.post('/:id/tickle', function(req,res){
+    route.post('/:id/tickle', function (req, res) {
         conflictManager.preEmptiveDetect(req.body);
         res.send('ok');
     });
 
-    route.get('/:id', function(req, res) {
-       scenarioManager.get(req.params.id, function(err, result) {
-           if(err) throw err;
-           res.send({scenario: result});
-       });
+    route.get('/:id', function (req, res) {
+        scenarioManager.get(req.params.id, function (err, result) {
+            if (err) throw err;
+            res.send({scenario: result});
+        });
     });
 
     route.post('/:id/resolveconflict', function (req, res) {
@@ -56,7 +56,7 @@ module.exports = (function () {
         });
     });
 
-    route.put('/:id', function (req, res) {
+    route.put('/name/:id', function (req, res) {
         if (typeof req.body.scenario === 'string') req.body.scenario = JSON.parse(req.body.scenario);
         scenarioManager.getByName(req.body.scenario.name, function (scenario) {
             if (scenario === undefined) {
@@ -67,20 +67,31 @@ module.exports = (function () {
                     }
                     res.send({scenario: result});
                 });
-            }else{
+            } else {
                 res.send({err: "name"})
             }
         })
     });
 
-    route.delete('/:id', function (req, res) {
-        scenarioManager.deleteById(req.params.id, function (err, result) {
-            if (err) throw err;
-            res.send(result);
+    route.put('/:id', function (req, res) {
+        if (typeof req.body.scenario === 'string') req.body.scenario = JSON.parse(req.body.scenario);
+        scenarioManager.updateById(req.params.id, req.body.scenario, function (err, result) {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
         });
     });
 
 
+route.delete('/:id', function (req, res) {
+    scenarioManager.deleteById(req.params.id, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
 
-    return route;
-})();
+
+return route;
+})
+();

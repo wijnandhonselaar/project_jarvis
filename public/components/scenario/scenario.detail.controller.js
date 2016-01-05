@@ -261,7 +261,7 @@
         }
 
         function updateName(id, scenarioName){
-            ScenarioService.update(id, sdc.scenario)
+            ScenarioService.updateName(id, sdc.scenario)
                 .then(function(data){
                     sdc.scenario.name = scenarioName;
                     return data;
