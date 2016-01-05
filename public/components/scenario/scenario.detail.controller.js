@@ -49,7 +49,15 @@
         socketService.socketListener('preemtiveConflictDetection', function(data){
             sdc.preemtiveConflictDetection = data;
             $scope.$apply();
-            if(!modalIsOpen) {
+
+            var counter = 0;
+            for (var property in data[sdc.scenario.name]) {
+                if (data[sdc.scenario.name].hasOwnProperty(property)) {
+                    counter += data[sdc.scenario.name][property].length;
+                }
+            }
+
+            if(!modalIsOpen && counter > 0) {
                 modalIsOpen = true;
                 showConflictListModal();
             }
@@ -59,7 +67,7 @@
         socketService.socketListener('resolvedConflictsList', function(data){
             sdc.resolvedConflicts = data;
             $scope.$apply();
-            console.log(data);
+            //console.log(data);
         });
 
         function showConflictList(){
