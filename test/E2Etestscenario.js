@@ -10,7 +10,7 @@ var expect = chai.expect;
 describe("Scenario E2E Test scenario", function () {
 
     // set up the tests
-    this.timeout(20000);  // prevent mocha from terminating a test to soon,
+    this.timeout(10000);  // prevent mocha from terminating a test to soon,
                           // when browser is slow
     var siteURL = "http://localhost:3221/";
     var browser;
