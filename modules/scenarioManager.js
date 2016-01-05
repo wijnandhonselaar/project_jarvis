@@ -278,7 +278,8 @@ function getByName(name, cb) {
         cb(res[0]);
     }).
     catch(function (err) {
-
+        console.error('Cannot get scenario with name: ' + name);
+        console.error(err);
     });
 }
 
