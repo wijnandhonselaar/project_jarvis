@@ -22,7 +22,7 @@ function getLogLevel(cb) {
         cb(null, res.logLevel);
     }).catch(Errors.DocumentNotFound, function(err) {
         initSettings(function(err){
-           if(err) cb(err,null);
+            if(err) throw err;
 
             getLogLevel(cb);
         });
@@ -43,7 +43,7 @@ function setLogLevel(level, cb) {
                 });
             }).catch(Errors.DocumentNotFound, function (err) {
                 initSettings(function (err) {
-                    if (err) cb(err, null);
+                    if (err) throw err;
 
                     getLogLevel(cb);
                 });
