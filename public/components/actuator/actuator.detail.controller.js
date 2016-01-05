@@ -52,6 +52,13 @@
             });
         }
 
+
+        /**
+         * Update actuator object
+         * @param key
+         * @param value
+         * @returns {*}
+         */
         function updateActuator(key,value) {
             if(!key || !value) return console.error("no key or value");
             DS.updateDevice("actuators",adc.actuator.id,key,value)
@@ -64,6 +71,13 @@
                 });
         }
 
+        /**
+         * opens modal if command takes parameter values
+         * @param id
+         * @param command
+         * @param commandkey
+         * @param type
+         */
         function showCommand(id, command, commandkey, type) {
             adc.commandkey = commandkey;
             var paramKeys = Object.keys(command.parameters);
@@ -80,12 +94,26 @@
             }
         }
 
+        /**
+         * checks input type of parameter
+         * @param accept
+         * @param inputtype
+         * @returns {boolean|*}
+         */
         function checkInputType(accept, inputtype) {
             return ( inputtype === "slider" && accept.type === "number" && accept.limit ) ||
                 ( inputtype === "input" && ( (accept.type === "number" && !accept.limit ) || (accept.type === "string") ) ) ||
                 ( inputtype === "checkbox" && accept.type === "boolean" );
         }
 
+        /**
+         * Execute command
+         * @param id
+         * @param command command.name
+         * @param commandkey (key of command object)
+         * @param type
+         * @param values
+         */
         function sendcommand(id, command, commandkey, type, values) {
             DS.sendCommand(id, command, commandkey, type, values)
                 .then(function (data) {
@@ -101,6 +129,10 @@
             sendcommand(adc.actuator.id, adc.currentcommand, adc.commandkey, 'actuator', adc.currentvalues);
         }
 
+        /**
+         * Toggle actuator state (on/off)
+         * @param actuator
+         */
         function toggleState(actuator){
             if(actuator.status.state === true){
                 sendcommand(actuator.id, actuator.model.commands.off,'off',actuator.model.type);

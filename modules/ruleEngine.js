@@ -7,6 +7,11 @@ var conflictManager = require('./conflictManager');
 var stop = 'finish';
 var start = 'start';
 
+/**
+ * applies rules on given scenario
+ * @param scenario the scenario that's being checked against the set rules.
+ * @param event (optional) this is given when an event is triggered.
+ */
 function apply(scenario, event) {
     var hasRules = false;
 
@@ -29,6 +34,11 @@ function apply(scenario, event) {
         return rule;
     }
 
+    /**
+     * Checks if given rule validates
+     * @param rule
+     * @returns {*}
+     */
     function checkRule(rule) {
         if (rule.type) {
             hasRules = true;
@@ -122,6 +132,14 @@ function apply(scenario, event) {
     }
 }
 
+
+/**
+ * Validates statement
+ * @param var1
+ * @param var2
+ * @param operator
+ * @returns {*}
+ */
 function validateStatement(var1, var2, operator) {
     var statements = {
         '>': var1 > var2,

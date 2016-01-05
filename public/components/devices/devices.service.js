@@ -52,6 +52,9 @@
             checkQueue();
         });
 
+        /**
+         * Check queue. if one is active add to the end of the queue otherwise trigger resolveModal
+         */
         function checkQueue() {
             if (resolveQueue.length !== 0) {
                 currentlyResolving.data = resolveQueue[0];
@@ -62,6 +65,9 @@
             }
         }
 
+        /**
+         * Shows resolve modal. Gives user the option to select one of the conflicts
+         */
         function triggerResolve() {
             if (!currentlyResolving.status) {
                 var conflictPopUp = $('#conflictmodal');
@@ -89,6 +95,12 @@
             resolveConflict($(resolve2).data('scenario'), resolve1.data('scenario'));
         });
 
+
+        /**
+         * Resolve the conflict by sending the choice to the server
+         * @param winningScenario
+         * @param losingScenario
+         */
         function resolveConflict(winningScenario, losingScenario) {
 
             var object = {
@@ -101,7 +113,6 @@
                 success(function (data) {
                     currentlyResolving.status = false;
                     resolveQueue.splice(0, 1);
-
                     checkQueue();
                 })
                 .error(function (err) {
@@ -114,6 +125,11 @@
         }
 
 
+        /**
+         * Update device rules
+         * @param id
+         * @param obj
+         */
         function updateRules(id, obj) {
             $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules: obj})
                 .success(function (data) {

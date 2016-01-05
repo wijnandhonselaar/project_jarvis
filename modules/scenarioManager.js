@@ -10,6 +10,14 @@ var conflictManager = null;
 var Logger = require('./logManager');
 var scenarios = [];
 
+
+/**
+ * Create new scenario
+ * @param name
+ * @param description
+ * @param actuators
+ * @param cb
+ */
 function create(name, description, actuators, cb) {
     var scenario = new Scenario(
         {
@@ -19,6 +27,7 @@ function create(name, description, actuators, cb) {
             status: false
         });
     Scenario.save(scenario).then(function (res) {
+        conflictManager.preEmptiveDetect(scenario);
         cb(null, res);
     }).error(function (err) {
         console.log(err);
@@ -26,6 +35,11 @@ function create(name, description, actuators, cb) {
     });
 }
 
+/**
+ * Get scenario by id
+ * @param id
+ * @param cb
+ */
 function get(id, cb) {
     Scenario.get(id).then(function (res) {
         cb(null, res);
@@ -34,6 +48,10 @@ function get(id, cb) {
     });
 }
 
+/**
+ * Get all scenarios
+ * @param cb
+ */
 function getAll(cb) {
     scenarios = [];
     Scenario.run().then(function (res) {
@@ -44,10 +62,17 @@ function getAll(cb) {
     });
 }
 
+/**
+ * Update scenario by ID
+ * @param id
+ * @param scenario
+ * @param cb
+ */
 function updateById(id, scenario, cb) {
     Scenario.get(id).then(function (old) {
         old.merge(scenario);
         old.save().then(function (res) {
+            conflictManager.preEmptiveDetect(scenario);
             cb(null, res);
         }).catch(function (err) {
             console.error(err);
@@ -59,6 +84,11 @@ function updateById(id, scenario, cb) {
     });
 }
 
+/**
+ * Delete scenario by id
+ * @param id
+ * @param cb
+ */
 function deleteById(id, cb) {
     Scenario.get(id).delete().run(function (res) {
         cb(null, res);
@@ -68,6 +98,11 @@ function deleteById(id, cb) {
 }
 
 
+/**
+ * Update scenario by reference
+ * @param scenario
+ * @param cb
+ */
 function update(scenario, cb) {
     scenario.save().then(function (res) {
         cb(null, res);
@@ -89,11 +124,16 @@ function invert(scenario){
         } else {
             ac.action.command = 'on';
         }
-        console.log( scenarioCopy.actuators[i]);
+        //console.log( scenarioCopy.actuators[i]);
     }
     return scenarioCopy;
 }
 
+/**
+ * Toggle scenario state (active/disabled)
+ * @param scenario
+ * @param cb
+ */
 function toggleState(scenario, cb) {
     if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
@@ -114,12 +154,18 @@ function toggleState(scenario, cb) {
     }
 }
 
+/**
+ * Execute scenario
+ * @param scenario
+ * @param scenarioState
+ * @param cb
+ */
 function execute(scenario, scenarioState, cb){
     if(scenarioState == 'start') {
         start(scenario , cb);
     } else {
         stop(scenario, cb);
-        //scenario = invert(scenario);
+        scenario = invert(scenario);
     }
     for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
         var command = scenario.actuators[deviceLoop].action.command;
@@ -136,6 +182,11 @@ function execute(scenario, scenarioState, cb){
     }
 }
 
+/**
+ * Start scenario
+ * @param scenario
+ * @param cb
+ */
 function start(scenario, cb){
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id === scenarios[i].id) {
@@ -153,6 +204,12 @@ function start(scenario, cb){
     }
 }
 
+
+/**
+ * Stop Scenario
+ * @param scenario
+ * @param cb
+ */
 function stop(scenario, cb){
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id === scenarios[i].id) {
@@ -168,6 +225,10 @@ function stop(scenario, cb){
     }
 }
 
+/**
+ * Validate rules set on scenarios
+ * @param event
+ */
 function validateRules(event) {
     for (var i = 0; i < scenarios.length; i++) {
         ruleEngine.apply(scenarios[i], event);
@@ -206,6 +267,12 @@ function validateRules(event) {
 //    }
 //}
 
+
+/**
+ * Get scenario by name
+ * @param name
+ * @param cb
+ */
 function getByName(name, cb) {
     Scenario.filter({name: name}).run().then(function (res) {
         cb(res[0]);
@@ -233,5 +300,6 @@ module.exports = {
     getByName: getByName,
     start:start,
     stop:stop,
-    execute:execute
+    execute:execute,
+    scenarios:scenarios
 };

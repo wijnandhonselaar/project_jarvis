@@ -19,6 +19,12 @@
         DS.addDeviceLoader(reloadSwiper);
         DS.setOnDeviceAdd(reloadSwiper);
 
+        /**
+         * Check if device has rules
+         * @param type
+         * @param actuator
+         * @returns {boolean}
+         */
         function checkIfDeviceHas(type, actuator){
             for (var property in actuator.config.rules) {
                 if (actuator.config.rules.hasOwnProperty(property)) {
@@ -30,6 +36,10 @@
             return false;
         }
 
+        /**
+         * Toggle state of actuator (by clicking on the shortcut icon)
+         * @param actuator
+         */
         function toggleState(actuator){
             if(actuator.status.state === true){
                 sendcommand(actuator.id, actuator.model.commands.off,'off',actuator.model.type);
@@ -38,6 +48,10 @@
             }
         }
 
+
+        /**
+         * Reload swiper plugin (generates new slide tabs on the screen)
+         */
         function reloadSwiper() {
             var amount = Math.ceil( aoc.actuator.length / 8 );
             aoc.repeater = [];
@@ -60,6 +74,13 @@
             });
         }
 
+        /**
+         * Execute command
+         * @param id
+         * @param command
+         * @param commandkey
+         * @param type
+         */
         function sendcommand(id, command, commandkey, type) {
             DS.sendCommand(id, command, commandkey, type)
                 .then(function (data) {

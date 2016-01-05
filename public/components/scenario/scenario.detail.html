@@ -40,7 +40,7 @@
             <img src="{{actuator.model.image}}" width="100%">
         </div>
         <div class="col m3">
-            <span class="col m3">{{actuator.config.alias}}</span>
+            <span>{{actuator.config.alias | limitTo:30}}...</span>
         </div>
         <div class="col m5">
             <select style="display:block;" id="selectChange{{actuator.id}}">
@@ -104,6 +104,29 @@
                 <div style="left:285px; width: 12%; position: absolute; bottom:30px;">
                     <div class="swiper-pagination">
                     </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <div class="row" ng-if="value.length > 0" ng-repeat="(key, value) in sdc.preemtiveConflictDetection[sdc.scenario.name]">
+            <div class="col m6" style="padding-bottom:5px;">
+                <b>Conflict met scenario: {{key}}</b>
+            </div>
+            <div class="col m6">
+                <i>Heeft dit een hogere prioriteit?</i>
+            </div>
+            <div class="col m12" style="padding-top:3px; padding-bottom: 3px; margin-bottom: 8px; margin-top:3px; height: 30px;" ng-repeat="actuator in value">
+                <div class="row">
+                    <div class="col m5">{{actuator.deviceAlias}}</div>
+                    <div class="col m1">{{actuator.action.command}}</div>
+                    <div class="col m3"><div ng-class="sdc.setClass(key, actuator.deviceid, 'yes')" ng-click="sdc.setConflictingScenarioDevicePriority(key, sdc.scenario.name, actuator.deviceid)" style="padding:5px; border-radius:10px; color:black; text-align:center; cursor:pointer; background-color:#CCCCCC;">Ja</div></div>
+                    <div class="col m3"><div ng-class="sdc.setClass(key, actuator.deviceid, 'no')" ng-click="sdc.setConflictingScenarioDevicePriority(sdc.scenario.name, key, actuator.deviceid)" style="padding:5px; border-radius:10px; text-align:center; color:black; cursor:pointer; background-color:#CCCCCC;">Nee</div></div>
                 </div>
 
             </div>
