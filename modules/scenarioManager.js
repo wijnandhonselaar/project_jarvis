@@ -278,7 +278,7 @@ function getByName(name, cb) {
         cb(res[0]);
     }).
     catch(function (err) {
-        cb({}.err = err);
+        throw err;
     });
 }
 
