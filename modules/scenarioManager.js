@@ -200,7 +200,7 @@ function start(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -221,7 +221,7 @@ function stop(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -278,7 +278,7 @@ function getByName(name, cb) {
         cb(res[0]);
     }).
     catch(function (err) {
-        throw err;
+
     });
 }
 
