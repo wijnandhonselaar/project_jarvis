@@ -34,6 +34,11 @@ var rules = {
  * @param remote
  */
 
+
+/**
+ * Function that's called after each state update (both sensors and actuators)
+ * @param event
+ */
 function updateManagers(event) {
     //for (var i = 0; i < getActuators().length; i++) {
     //    ruleEngine.apply(getActuators()[i], event);
@@ -41,6 +46,16 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
+setInterval(function(){
+    updateManagers();
+}, 2500);
+
+/**
+ * Adds device to device array and / or adds it to the database when it does not exist
+ * @param device
+ * @param remote
+ * @param deviceType
+ */
 function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function (err, res) {
@@ -110,6 +125,13 @@ function broadcastEvent(msg) {
     }
 }
 
+
+/**
+ * called within addDevice method. This method adds the device to the in-memory list of devices. (array)
+ * @param device
+ * @param remote
+ * @param deviceType
+ */
 function addToDeviceList(device, remote, deviceType) {
     if (typeof deviceType === 'undefined') {
         switch (device.type) {
@@ -140,7 +162,7 @@ function addToDeviceList(device, remote, deviceType) {
 }
 
 /**
- *
+ * Omitted method, it's not used anymore.
  * @param ip
  * @returns {*}
  */
@@ -185,6 +207,14 @@ function getActuatorById(id) {
     return {err: "Error, could not find actuator with id: " + id + "."};
 }
 
+
+/**
+ * Exported method. Used to update the alias of a device.
+ * @param devicetype
+ * @param id
+ * @param alias
+ * @param callback
+ */
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
     function updateCB(err, res) {
@@ -212,7 +242,7 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
 }
 
 /**
- *
+ * Updates the sensor update interval. Sets the poll timer to given milliseconds
  * @param id
  * @param clientRequestInterval
  * @returns {*}
@@ -245,10 +275,18 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
     }
 }
 
+/**
+ * starts up the sensorpoll worker (offloaded to child process)
+ * @param sensor
+ */
 function initiateStatusPolling(sensor) {
     workerManager.pullData(sensor);
 }
 
+/**
+ * Parses the data from the poll child process and reads the sensor status (values) and pushes these to the client
+ * @param obj
+ */
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
     if (sensor.status !== obj.status) {
@@ -266,6 +304,12 @@ function updateSensorStatusFunction(obj) {
 }
 
 
+/**
+ * This method checks device state and only toggles if corresponding gate is active.
+ * @param command
+ * @param device
+ * @returns {boolean}
+ */
 function checkState(command, device) {
     if (device.status) {
         var state = device.status.state;
@@ -290,6 +334,12 @@ function checkState(command, device) {
     }
 }
 
+
+/**
+ * Updates the actuator state and pushes this to the client
+ * @param id
+ * @param state
+ */
 function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
     actuator.status = state;
@@ -302,10 +352,20 @@ function updateActuatorState(id, state) {
 }
 
 
+/**
+ * Returns a list of actuators
+ * @returns {*}
+ */
 function getActuators() {
     return devices.actuators;
 }
 
+
+/**
+ * Adds a rule (set from within the ruleEngine) to the device
+ * @param object
+ * @returns {*}
+ */
 function setRules(object) {
     var a = getActuatorById(object.id);
     if (a.err) {
@@ -319,6 +379,13 @@ function setRules(object) {
     }
 }
 
+/**
+ * Execute given command (with optional params) on device
+ * @param command
+ * @param device
+ * @param params
+ * @param cb
+ */
 function executeCommand(command, device, params, cb){
 
     switch (device.model.commands[command].httpMethod) {
@@ -338,7 +405,7 @@ function executeCommand(command, device, params, cb){
 }
 
 /**
- *
+ * Removed nested scenario from actuator
  * @param id Actuator id
  * @param scenario name
  */
@@ -370,6 +437,13 @@ function removeScenarioFromActuator(id, scenario) {
     }
 }
 
+
+/**
+ * Update actuator (save to database)
+ * @param id
+ * @param actuator
+ * @param cb
+ */
 function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
 
@@ -385,7 +459,7 @@ function updateActuator(id, actuator, cb) {
     function thenCB2(persisted) {
         persisted.merge(actuator);
         console.log("merged");
-        console.log(persisted);
+        //console.log(persisted);
         console.log('Before save');
         persisted.save()
             .then(thenCB1)
@@ -406,6 +480,9 @@ function updateActuator(id, actuator, cb) {
     }
 }
 
+/**
+ * Loads all devices from database on start-up.
+ */
 function loadDevicesFromDatabase() {
     rethinkManager.getAllDevices('sensors', function (err, res) {
         if (err) {

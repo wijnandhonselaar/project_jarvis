@@ -97,7 +97,7 @@ module.exports = (function() {
         if (req.body)
             conflictManager.resolve(req.body, function (r) {
                 res.send(r);
-            });
+            }, true);
     });
 
     /**

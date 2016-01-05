@@ -18,7 +18,7 @@
         rec.getSensorById = getSensorById;
         rec.selectedSensor = null;
         rec.selectedActuator = null;
-        rec.selectedCommand = null;
+        rec.selectedCommand = "start";
         rec.closeModal = closeModal;
         rec.updateFieldList = updateFieldList;
         rec.addToThresholds = addToThresholds;
@@ -72,6 +72,7 @@
             event: null,
             gate: 'OR'
         };
+
 
         function recalculateGroups(groups) {
             console.log("groups\n", groups);

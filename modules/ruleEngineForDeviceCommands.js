@@ -1,4 +1,11 @@
 /* jshint ignore:start */
+
+
+/**
+ * This module is the old ruleEngine when rules were still set on individual device commands (currently omitted)
+ * @type {null}
+ */
+
 var deviceManager = null;
 var comm = require('./interperter/comm');
 var conflictManager = require('./conflictManager');

@@ -3,6 +3,7 @@ module.exports = (function() {
     var route = express.Router();
     var scenarioManager = require('../modules/scenarioManager');
     var logger = require('../modules/logManager');
+    var conflictManager = require('../modules/conflictManager');
 
     // TODO replace thrown errors by error responses.
     route.get('/', function(req, res) {
@@ -17,6 +18,13 @@ module.exports = (function() {
            if(err) throw err;
            res.send({scenario: result});
        });
+    });
+
+    route.post('/:id/resolveconflict', function (req, res) {
+        if (req.body)
+            conflictManager.resolve(req.body, function (r) {
+                res.send(r);
+            }, false);
     });
 
     route.post('/', function(req, res) {
