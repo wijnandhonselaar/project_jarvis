@@ -13,11 +13,11 @@ var scenarios = [];
 function create(name, description, actuators, cb) {
     var scenario = new Scenario(
         {
-        name: name,
-        description: description,
-        actuators: actuators,
-        status: false
-    });
+            name: name,
+            description: description,
+            actuators: actuators,
+            status: false
+        });
     Scenario.save(scenario).then(function (res) {
         cb(null, res);
     }).error(function (err) {
@@ -37,7 +37,7 @@ function get(id, cb) {
 function getAll(cb) {
     scenarios = [];
     Scenario.run().then(function (res) {
-          scenarios = res;
+        scenarios = res;
         cb(null, scenarios);
     }).error(function (err) {
         cb({error: "Not found.", message: err});
@@ -132,7 +132,7 @@ function execute(scenario, scenarioState, cb){
     }
 
     function updateCB(err, data){
-        if(err) {console.error(err); cb(err, data)}
+        if(err) {console.error(err); throw err;}
     }
 }
 
@@ -149,7 +149,7 @@ function start(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); cb(err, data)}
+        if(err) {console.error(err); throw err;}
     }
 }
 
@@ -164,7 +164,7 @@ function stop(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); cb(err, data);}
+        if(err) {console.error(err); throw err;}
     }
 }
 
@@ -207,13 +207,12 @@ function validateRules(event) {
 //}
 
 function getByName(name, cb) {
-        Scenario.filter({name: name}).run().then(function (res) {
-            cb(null, res[0]);
-        }).
-        catch(function (err) {
-            console.error(err);
-            cb(err, null);
-        });
+    Scenario.filter({name: name}).run().then(function (res) {
+        cb(res[0]);
+    }).
+    catch(function (err) {
+        throw err;
+    });
 }
 
 module.exports = {
