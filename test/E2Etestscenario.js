@@ -10,7 +10,7 @@ var expect = chai.expect;
 describe("Scenario E2E Test scenario", function () {
 
     // set up the tests
-    this.timeout(20000);  // prevent mocha from terminating a test to soon,
+    this.timeout(10000);  // prevent mocha from terminating a test to soon,
                           // when browser is slow
     var siteURL = "http://localhost:3221/";
     var browser;
@@ -66,10 +66,10 @@ describe("Scenario E2E Test scenario", function () {
             });
     });
 
-    beforeEach(function (done) {
-        setTimeout(function () {
+    beforeEach(function(done){
+        setTimeout(function() {
             done();
-        }, 500);
+        }, 1000);
     });
 
 
@@ -120,6 +120,7 @@ describe("Scenario E2E Test scenario", function () {
             .setValue('#description', 'E2ETestNewScenariodescription')
             .click('#addDevice')
             .getText('#commandTitle').then(function (value) {
+                console.log(value);
                 expect(value).to.be.equal("Apparaat toevoegen");
                 done();
             })

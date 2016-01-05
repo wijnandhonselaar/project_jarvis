@@ -18,27 +18,6 @@ describe('Device routing', function() {
         })
     });
 
-    before(function(done){
-        r.db('jarvis').table('Actuator').
-        delete().
-        run(connection, function(err, result) {
-            if (err) throw err;
-            //console.log(JSON.stringify(result, null, 2));
-            done();
-        });
-    });
-
-    before(function(done){
-        r.db('jarvis').table('Sensor').
-        delete().
-        run(connection, function(err, result) {
-            if (err) throw err;
-            //console.log(JSON.stringify(result, null, 2));
-            done();
-        });
-    });
-
-
     before(function (done) {
         var device = newDevice(1000015, 'a');
         device.type = 'sensor';
@@ -49,10 +28,10 @@ describe('Device routing', function() {
             if (err) { throw err;}
         });
 
-        device = newDevice(1000016, 'b');
-        device.type = 'actuator';
+        var device2 = newDevice(1000016, 'b');
+        device2.type = 'actuator';
         api.post('http://localhost:3221/test/devices/add')
-        .send({device : device, remote:{address:'192.186.24.2'}})
+        .send({device : device2, remote:{address:'192.186.24.2'}})
         .end(function (err, res) {
             if (err) { throw err;}
             done();
