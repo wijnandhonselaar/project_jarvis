@@ -120,7 +120,7 @@ function emitResolvedConflicts(){
             }
         });
     }
-    io.emit('resolvedConflicts', emitThis);
+    io.emit('resolvedConflictsList', emitThis);
 }
 
 var preemtiveConflictList = {};
