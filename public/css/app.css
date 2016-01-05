@@ -235,6 +235,10 @@ body{
     margin-bottom:0px;
 }
 
+.row.smallGraph{
+    margin-top:0px !important;
+}
+
 .detaildescrip{
     color:#959595;
 }
@@ -300,6 +304,8 @@ body{
 
 .ui-keyboard {
     z-index: 9999;
+    height: 285px !important;
+    top: 200px !important;
 }
 
 input:focus {

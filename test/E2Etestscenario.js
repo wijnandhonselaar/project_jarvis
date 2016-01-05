@@ -65,10 +65,11 @@ describe("Test scenario", function () {
                 done();
             });
     });
-    beforeEach(function (done) {
-        setTimeout(function () {
+
+    beforeEach(function(done){
+        setTimeout(function() {
             done();
-        }, 500);
+        }, 1000);
     });
 
 
@@ -119,6 +120,7 @@ describe("Test scenario", function () {
             .setValue('#description', 'E2ETestNewScenariodescription')
             .click('#addDevice')
             .getText('#commandTitle').then(function (value) {
+                console.log(value);
                 expect(value).to.be.equal("Apparaat toevoegen");
                 done();
             })
