@@ -87,6 +87,9 @@
                     return null;
                 })
                 .catch(function(err) {
+                    if(err === "Name"){
+                        Materialize.toast("Name already exists", 2000);
+                    }
                     console.error("Error creating scenario", err);
                     return err;
                 });

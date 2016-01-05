@@ -66,8 +66,8 @@ describe("Scenario E2E Test scenario", function () {
             });
     });
 
-    beforeEach(function(done){
-        setTimeout(function() {
+    beforeEach(function (done) {
+        setTimeout(function () {
             done();
         }, 1000);
     });
@@ -174,18 +174,31 @@ describe("Scenario E2E Test scenario", function () {
     it("Should open detailpage of the scenario with devices change name", function (done) {
         browser
             .click("#scenarioAmount")
-            .setValue('#name', '1')
-            .setValue('#description', '2')
-            .click('#scenario');
+            .click("#name")
+            .click("#name");
         setTimeout(function () {
-            done();
-        }, 2000);
+            browser
+                .click(".ui-keyboard-1")
+                .click(".ui-keyboard-accept")
+                .click("#description")
+                .click("#description");
+            setTimeout(function () {
+                browser
+                    .click(".ui-keyboard-2")
+                    .click(".ui-keyboard-accept")
+                    .click('#scenario');
+            }, 2000);
+            setTimeout(function () {
+                done();
+            }, 500);
+        }, 2000)
+
     });
 
     it("Should see if overview is changed", function (done) {
         browser
             .getText(".description").then(function (value) {
-                expect(value).to.be.equal("2..."); // true
+                expect(value).to.be.equal("E2ETestNewScenariodescription2..."); // true
                 done();
             })
             .catch(function (exception) {
@@ -199,7 +212,7 @@ describe("Scenario E2E Test scenario", function () {
             .click("#scenarioAmount")
             .click('#rules')
             .getText("#scenarioName").then(function (value) {
-                expect(value).to.be.equal("Scenario: 1"); // true
+                expect(value).to.be.equal("Scenario: E2ETestNewScenario1"); // true
                 done();
             });
 
@@ -218,7 +231,7 @@ describe("Scenario E2E Test scenario", function () {
         browser
             .click("#timer")
             .getText("#Rule").then(function (value) {
-                expect(value).to.be.equal("Tijdklok - 1 start"); // true
+                expect(value).to.be.equal("Tijdklok - E2ETestNewScenario1 start"); // true
                 done();
             });
     });
@@ -238,7 +251,7 @@ describe("Scenario E2E Test scenario", function () {
     it("Should save rule to scenario and see if is correctly set", function (done) {
         browser
             .click("#modalbewaren")
-            .elements("#rulesamount").then(function (result){
+            .elements("#rulesamount").then(function (result) {
                 expect(result.value.length).to.be.equal(1);
                 done();
             })
