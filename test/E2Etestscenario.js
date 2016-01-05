@@ -123,10 +123,6 @@ describe("Scenario E2E Test scenario", function () {
                 expect(value).to.be.equal("Apparaat toevoegen");
                 done();
             })
-            .catch(function (exception) {
-                console.log("EXCEPTION", exception);
-                done(exception);
-            })
     });
 
 
@@ -257,7 +253,7 @@ describe("Scenario E2E Test scenario", function () {
 
     it("Should delete scenario", function (done) {
         browser
-            .click('#scenario')
+            .click('#scenario');
         setTimeout(function () {
             browser
                 .click("#scenarioAmount")
