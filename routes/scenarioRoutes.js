@@ -56,22 +56,24 @@ module.exports = (function () {
         });
     });
 
-    route.put('/name/:id', function (req, res) {
-        if (typeof req.body.scenario === 'string') req.body.scenario = JSON.parse(req.body.scenario);
-        scenarioManager.getByName(req.body.scenario.name, function (scenario) {
-            if (scenario === undefined) {
-                scenarioManager.updateById(req.params.id, req.body.scenario, function (err, result) {
-                    if (err) {
-                        console.error(err);
-                        throw err;
-                    }
-                    res.send({scenario: result});
-                });
-            } else {
-                res.send({err: "name"})
-            }
-        })
-    });
+    //route.put('/name/:id', function (req, res) {
+    //    if (typeof req.body.scenario === 'string') req.body.scenario = JSON.parse(req.body.scenario);
+    //    scenarioManager.getByName(req.body.scenario.name, function (scenario) {
+    //        console.log(req.body.scenario.name);
+    //        console.log(scenario);
+    //        if (scenario === undefined) {
+    //            scenarioManager.updateById(req.params.id, req.body.scenario, function (err, result) {
+    //                if (err) {
+    //                    console.error(err);
+    //                    throw err;
+    //                }
+    //                res.send({scenario: result});
+    //            });
+    //        } else {
+    //            res.send({err: "name"})
+    //        }
+    //    })
+    //});
 
     route.put('/:id', function (req, res) {
         if (typeof req.body.scenario === 'string') req.body.scenario = JSON.parse(req.body.scenario);
