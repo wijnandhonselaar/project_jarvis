@@ -42,7 +42,7 @@
             $scope.$apply();
         }).catch(function(err){
             Materialize.toast("Logdata not found", 3000);
-            console.log(err);
+            console.error(err);
         });
 
         LS.loadLogsDetail($sp.uid, false).then(function(data){
@@ -50,7 +50,7 @@
             $scope.$apply();
         }).catch(function(err){
             Materialize.toast("Logdata not found", 3000);
-            console.log(err);
+            console.error(err);
         });
 
         LS.setOnLogUpdate(function(data){

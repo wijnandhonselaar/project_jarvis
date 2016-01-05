@@ -25,11 +25,6 @@
         sdc.GoToDetail = GoToDetail;
         var swiper = null;
 
-        sdc.log = function(log){
-            console.log("log:\n", log);
-        };
-
-
         var elisteners = [];
         function addListeners() {
             function changeListenerCreator(device) {
@@ -165,7 +160,6 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
-                    console.log("Scenario\n",data.scenario);
                     sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
@@ -176,7 +170,6 @@
                                 data.action = {
                                     command: act.action.command
                                 };
-                                console.log("data\n", data);
                                 sdc.devices.push(data);
                                 $scope.$apply();
                             })
@@ -254,7 +247,6 @@
         }
 
         function selectedAction(key, actuator) {
-            //console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
             for(var i = 0; i < sdc.scenario.actuators.length; i++) {
                 var item = sdc.scenario.actuators[i];
                 if(item.deviceid == actuator.id) {

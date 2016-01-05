@@ -99,14 +99,13 @@
 
             $http.post('http://localhost:3221/devices/' + object.device.model.type + '/' + object.device.id + '/resolveconflict', object).
                 success(function (data) {
-                    console.log('CONFLICT', 'resolved');
                     currentlyResolving.status = false;
                     resolveQueue.splice(0, 1);
 
                     checkQueue();
                 })
                 .error(function (err) {
-                    console.log('CONFLICT', 'error while resolving');
+                    console.error('CONFLICT', 'error while resolving');
                     currentlyResolving.status = false;
                     resolveQueue.splice(0, 1);
                     //$('#conflictmodal').closeModal();
@@ -118,7 +117,6 @@
         function updateRules(id, obj) {
             $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules: obj})
                 .success(function (data) {
-                    console.log("succesfully saved");
                 })
                 .error(function (err) {
                     console.error(err);
@@ -254,7 +252,6 @@
                                 devices.sensor.push(sensor);
                             });
                             // LOGGING
-                            console.log("Got devices data.");
                             resolve();
                         })
                         .error(function (err) {
@@ -273,7 +270,6 @@
                         $http.post('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey, {})
 
                             .success(function (data) {
-                                console.log("succesfull send");
                                 resolve(data);
                             })
                             .error(function (err) {
@@ -284,7 +280,6 @@
                     } else if (command.httpMethod === "GET") {
                         $http.get('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey)
                             .success(function (data) {
-                                console.log("succesfull send");
                                 resolve(data);
                             })
                             .error(function () {
