@@ -236,14 +236,19 @@
         }
 
         function updateName(id, scenarioName){
-            sdc.scenario.name = scenarioName;
             ScenarioService.update(id, sdc.scenario)
                 .then(function(data){
+                    sdc.scenario.name = scenarioName;
                     return data;
                 })
-                .catch(function (err) {
-                    console.error("Error with update ", err);
-                    return err;
+                .catch(function (data) {
+                    console.log(data);
+                    if(data.err === "name"){
+                        Materialize.toast("name already exists", 2000);
+                        sdc.scenarioName = "Give me a name";
+                    }
+                    console.error("Error with update ",data);
+                    return data;
                 });
         }
 
