@@ -119,7 +119,6 @@
                     $http.delete("/scenario/" + scenario.id)
                         .success(function (data) {
                             resolve(data);
-                            Materialize.toast("Deleted Scenario", 4000);
                         })
                         .error(function (err) {
                             reject(err);
