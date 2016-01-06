@@ -28,12 +28,12 @@ var rules = {
         thresholds: []
     }
 };
+
 /**
  *
  * @param device
  * @param remote
  */
-
 function updateManagers(event) {
     //for (var i = 0; i < getActuators().length; i++) {
     //    ruleEngine.apply(getActuators()[i], event);
@@ -41,6 +41,12 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
+/**
+ *
+ * @param device
+ * @param remote
+ * @param deviceType
+ */
 function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function (err, res) {
@@ -94,6 +100,7 @@ function addDevice(device, remote, deviceType) {
         }
     });
 }
+
 /**
  * Broadcasts event from device. it's triggered from the autodiscover module
  * @param msg
@@ -110,6 +117,12 @@ function broadcastEvent(msg) {
     }
 }
 
+/**
+ *
+ * @param device
+ * @param remote
+ * @param deviceType
+ */
 function addToDeviceList(device, remote, deviceType) {
     if (typeof deviceType === 'undefined') {
         switch (device.type) {
@@ -185,6 +198,13 @@ function getActuatorById(id) {
     return {err: "Error, could not find actuator with id: " + id + "."};
 }
 
+/**
+ *
+ * @param devicetype
+ * @param id
+ * @param alias
+ * @param callback
+ */
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
     function updateCB(err, res) {
@@ -245,10 +265,18 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
     }
 }
 
+/**
+ *
+ * @param sensor
+ */
 function initiateStatusPolling(sensor) {
     workerManager.pullData(sensor);
 }
 
+/**
+ *
+ * @param obj
+ */
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
     if (sensor.status !== obj.status) {
@@ -265,7 +293,12 @@ function updateSensorStatusFunction(obj) {
     }
 }
 
-
+/**
+ *
+ * @param command
+ * @param device
+ * @returns {boolean}
+ */
 function checkState(command, device) {
     if (device.status) {
         var state = device.status.state;
@@ -290,6 +323,11 @@ function checkState(command, device) {
     }
 }
 
+/**
+ *
+ * @param id
+ * @param state
+ */
 function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
     actuator.status = state;
@@ -301,11 +339,19 @@ function updateActuatorState(id, state) {
     });
 }
 
-
+/**
+ *
+ * @returns {Array}
+ */
 function getActuators() {
     return devices.actuators;
 }
 
+/**
+ *
+ * @param object
+ * @returns {*}
+ */
 function setRules(object) {
     var a = getActuatorById(object.id);
     if (a.err) {
@@ -317,6 +363,13 @@ function setRules(object) {
     }
 }
 
+/**
+ *
+ * @param command
+ * @param device
+ * @param params
+ * @param cb
+ */
 function executeCommand(command, device, params, cb){
 
     switch (device.model.commands[command].httpMethod) {
@@ -368,6 +421,12 @@ function removeScenarioFromActuator(id, scenario) {
     }
 }
 
+/**
+ *
+ * @param id
+ * @param actuator
+ * @param cb
+ */
 function updateActuator(id, actuator, cb) {
     function thenCB1(res) {
         cb(null, res);
@@ -399,6 +458,9 @@ function updateActuator(id, actuator, cb) {
     }
 }
 
+/**
+ * Gets al the devices from the database. Is called from the init (on startup) function.
+ */
 function loadDevicesFromDatabase() {
     rethinkManager.getAllDevices('sensors', function (err, res) {
         if (err) {
@@ -414,7 +476,6 @@ function loadDevicesFromDatabase() {
         if (err) {
             console.error(err);
         } else {
-
             for (var i = 0; i < res.length; i++) {
 
                 addToDeviceList(res[i], res[i].ip, 'actuators');

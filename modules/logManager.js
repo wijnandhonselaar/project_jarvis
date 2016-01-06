@@ -198,5 +198,5 @@ module.exports = {
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,
-    getStatus: getStatus,
+    getStatus: getStatus
 };
