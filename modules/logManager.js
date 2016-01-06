@@ -63,7 +63,6 @@ function logEvent(device, type, category, message, severity, cb) {
  */
 
 function logData(device, cb) {
-    console.log(device.model);
     var log = new dataLog({
         device: {
             id: device.id,
