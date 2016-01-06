@@ -171,7 +171,7 @@ function execute(scenario, scenarioState, cb){
         }
 
         if (!conflictManager.detect(newcommand, device, scenario)) {
-            deviceManager.executeCommand(newcommand, device, {});
+            deviceManager.executeCommand(newcommand, device, {}, true);
         }
     }
 }

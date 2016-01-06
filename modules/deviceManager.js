@@ -331,16 +331,12 @@ function checkState(command, device) {
 function updateActuatorState(id, state, isScenario) {
     var actuator = getActuatorById(id);
     actuator.status = state;
-    // Only emit when the action is not coming from a scenario
-    if(!isScenario) {
-        console.log('Geen scenario!');
-        io.emit("deviceUpdated", actuator);
-    } else {
-        console.log('Is scenario!');
-    }
+    // Only emit when the action is not originated from a scenario
+    io.emit("deviceUpdated", actuator);
     rethinkManager.setStatus(id, 'actuator', state, function(err, res){
         if(err) {
             console.error('set status to database error:', err);
+            logger.logEvent(getActuatorById(id), 'actuator', state, err.message, logger.severity.error);
         }
     });
 }
@@ -382,14 +378,14 @@ function executeCommand(command, device, params, isScenario, cb){
 
     switch (device.model.commands[command].httpMethod) {
         case 'POST':
-            comm.post(command, device, params, function (state, device) {
-                updateActuatorState(device.id, state, isScenario);
+            comm.post(command, device, params, isScenario, function (state, device) {
+                updateActuatorState(device.id, state);
                 if(cb) cb(state);
             });
             break;
         case 'GET':
-            comm.get(command, device, function (state, device, isScenario) {
-                updateActuatorState(device.id, state, isScenario);
+            comm.get(command, device, function (state, device) {
+                updateActuatorState(device.id, state);
                 if(cb) cb(state);
             });
             break;
