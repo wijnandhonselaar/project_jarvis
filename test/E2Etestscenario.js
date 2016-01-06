@@ -14,7 +14,7 @@ describe("Scenario E2E Test scenario", function () {
                           // when browser is slow
     var siteURL = "http://localhost:3221/";
     var browser;
-
+    require('./globalBefore');
     before(function (done) {
         // load the driver for browser
         browser = webdriverio.remote({
@@ -27,7 +27,9 @@ describe("Scenario E2E Test scenario", function () {
 
     before(function (done) {
         r.connect({host: 'localhost', port: 28015}, function (err, conn) {
-            if (err) throw err;
+            if(err) {
+                done(err);
+            }
             connection = conn;
             done();
         })
@@ -37,7 +39,9 @@ describe("Scenario E2E Test scenario", function () {
         r.db('jarvis').table('Scenario').
             delete().
             run(connection, function (err, result) {
-                if (err) throw err;
+                if(err) {
+                    done(err);
+                }
                 //console.log(JSON.stringify(result, null, 2));
                 done();
             });
@@ -47,7 +51,9 @@ describe("Scenario E2E Test scenario", function () {
         r.db('jarvis').table('Actuator').
             delete().
             run(connection, function (err, result) {
-                if (err) throw err;
+                if(err) {
+                    done(err);
+                }
                 //console.log(JSON.stringify(result, null, 2));
                 done();
             });
@@ -59,15 +65,15 @@ describe("Scenario E2E Test scenario", function () {
         api.post('http://localhost:3221/test/devices/add')
             .send({device: device, remote: {address: '192.186.24.2'}})
             .end(function (err, res) {
-                if (err) {
-                    throw err;
+                if(err) {
+                    done(err);
                 }
                 done();
             });
     });
 
-    beforeEach(function(done){
-        setTimeout(function() {
+    beforeEach(function (done) {
+        setTimeout(function () {
             done();
         }, 1000);
     });
@@ -174,130 +180,135 @@ describe("Scenario E2E Test scenario", function () {
     it("Should open detailpage of the scenario with devices change name", function (done) {
         browser
             .click("#scenarioAmount")
-            .setValue('#name', '1')
-            .setValue('#description', '2')
-            .click('#scenario');
-        setTimeout(function () {
-            done();
-        }, 2000);
-    });
-
-    it("Should see if overview is changed", function (done) {
-        browser
-            .getText(".description").then(function (value) {
-                expect(value).to.be.equal("2..."); // true
-                done();
-            })
-            .catch(function (exception) {
-                console.log("EXCEPTION", exception);
-                done(exception);
-            })
-    });
-
-    it("Should open detailpage of the scenario and go to create a rule", function (done) {
-        browser
-            .click("#scenarioAmount")
-            .click('#rules')
-            .getText("#scenarioName").then(function (value) {
-                expect(value).to.be.equal("Scenario: 1"); // true
-                done();
-            });
-
-    });
-    it("Should select start of a rule ", function (done) {
-        browser
-            .click('//*[@id="selectStartFinish"]/option[@value="start"]')
-            .getValue('#selectStartFinish', function (err, value) {
-                expect(value).to.be.equal("start"); // true
-                done();
-            })
-    });
-
-
-    it("Should open a new rule modal", function (done) {
-        browser
-            .click("#timer")
-            .getText("#Rule").then(function (value) {
-                expect(value).to.be.equal("Tijdklok - 1 start"); // true
-                done();
-            });
-    });
-
-    it("Should add rule to scenario and ready to save", function (done) {
-        browser
-            .setValue('#timerName', 'Timer')
-            .click("#timepicker")
-            .click(".ui-timepicker-am")
-            .click('#Rule')
-            .getValue("#timerName").then(function (value) {
-                expect(value).to.be.equal("Timer"); // true
-                done();
-            });
-
-    });
-    it("Should save rule to scenario and see if is correctly set", function (done) {
-        browser
-            .click("#modalbewaren")
-            .elements("#rulesamount").then(function (result){
-                expect(result.value.length).to.be.equal(1);
-                done();
-            })
-    });
-
-    it("Should save the entire rule to scenario", function (done) {
-        browser
-            .click("#save");
-        setTimeout(function () {
-            done();
-        }, 2000);
-    });
-
-    it("Should delete scenario", function (done) {
-        browser
-            .click('#scenario');
+            .click("#description")
+            .click("#description");
         setTimeout(function () {
             browser
-                .click("#scenarioAmount")
-                .click("#trashcan")
-                .click('#scenario');
-            setTimeout(function () {
-                done();
-            }, 2000);
+                .click(".ui-keyboard-2")
+                .click(".ui-keyboard-accept")
+                .click("#scenario");
         }, 2000);
+        setTimeout(function () {
+            done();
+        }, 500);
+});
+
+it("Should see if overview is changed", function (done) {
+    browser
+        .getText(".description").then(function (value) {
+            expect(value).to.be.equal("E2ETestNewScenariodescrip2tion..."); // true
+            done();
+        })
+        .catch(function (exception) {
+            console.log("EXCEPTION", exception);
+            done(exception);
+        })
+});
+
+it("Should open detailpage of the scenario and go to create a rule", function (done) {
+    browser
+        .click("#scenarioAmount")
+        .click('#rules')
+        .getText("#scenarioName").then(function (value) {
+            expect(value).to.be.equal("Scenario: E2ETestNewScenario1"); // true
+            done();
+        });
+
+});
+it("Should select start of a rule ", function (done) {
+    browser
+        .click('//*[@id="selectStartFinish"]/option[@value="start"]')
+        .getValue('#selectStartFinish', function (err, value) {
+            expect(value).to.be.equal("start"); // true
+            done();
+        })
+});
 
 
-    });
+it("Should open a new rule modal", function (done) {
+    browser
+        .click("#timer")
+        .getText("#Rule").then(function (value) {
+            expect(value).to.be.equal("Tijdklok - E2ETestNewScenario1 start"); // true
+            done();
+        });
+});
 
-    it("Should have deleted the scenario with devices and not be seen in overview", function (done) {
+it("Should add rule to scenario and ready to save", function (done) {
+    browser
+        .setValue('#timerName', 'Timer')
+        .click("#timepicker")
+        .click(".ui-timepicker-am")
+        .click('#Rule')
+        .getValue("#timerName").then(function (value) {
+            expect(value).to.be.equal("Timer"); // true
+            done();
+        });
+
+});
+it("Should save rule to scenario and see if is correctly set", function (done) {
+    browser
+        .click("#modalbewaren")
+        .elements("#rulesamount").then(function (result) {
+            expect(result.value.length).to.be.equal(1);
+            done();
+        })
+});
+
+it("Should save the entire rule to scenario", function (done) {
+    browser
+        .click("#save");
+    setTimeout(function () {
+        done();
+    }, 2000);
+});
+
+it("Should delete scenario", function (done) {
+    browser
+        .click('#scenario');
+    setTimeout(function () {
         browser
-            .elements("#scenarioAmount").then(function (result) {
-                expect(result.value).to.have.length(0);
-                done();
-            })
-            .catch(function (exception) {
-                console.log("EXCEPTION", exception);
-                done(exception);
-            })
-    });
+            .click("#scenarioAmount")
+            .click("#trashcan")
+            .click('#scenario');
+        setTimeout(function () {
+            done();
+        }, 2000);
+    }, 2000);
 
 
-    after(function (done) {
-        r.db('jarvis').table('Actuator').
-            delete().
-            run(connection, function (err, result) {
-                if (err) throw err;
-                //console.log(JSON.stringify(result, null, 2));
-                done();
-            });
-        r.db('jarvis').table('Sensor').
-            delete().
-            run(connection, function (err, result) {
-                if (err) throw err;
-                //console.log(JSON.stringify(result, null, 2));
-                done();
-            });
-        browser.end(done);
-    });
+});
+
+it("Should have deleted the scenario with devices and not be seen in overview", function (done) {
+    browser
+        .elements("#scenarioAmount").then(function (result) {
+            expect(result.value).to.have.length(0);
+            done();
+        })
+        .catch(function (exception) {
+            console.log("EXCEPTION", exception);
+            done(exception);
+        })
+});
+
+
+after(function (done) {
+    r.db('jarvis').table('Actuator').
+        delete().
+        run(connection, function (err, result) {
+            if (err) throw err;
+            //console.log(JSON.stringify(result, null, 2));
+            done();
+        });
+    r.db('jarvis').table('Sensor').
+        delete().
+        run(connection, function (err, result) {
+            if (err) throw err;
+            //console.log(JSON.stringify(result, null, 2));
+            done();
+        });
+    browser.end(done);
+});
 })
 ;
 

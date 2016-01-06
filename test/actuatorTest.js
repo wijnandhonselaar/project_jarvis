@@ -5,6 +5,7 @@ var expect = require('chai').expect;
 var Actuator = require('../models/actuator.js');
 
 describe('Actuator', function () {
+    require('./globalBefore');
     var id = 95987894;
     it('Shouldn\'t save a new actuators, no on command', function (done) {
         // create the new actuators
@@ -71,7 +72,7 @@ describe('Actuator', function () {
 
         // save the new sensors
         Actuator.save(newactuator).then(function(res) {
-
+            done('actuator was saved, shouldn\'t have');
         }).error(function(){
             done();
         });
@@ -156,14 +157,15 @@ describe('Actuator', function () {
     });
 
     it('Should have a savedate', function (done) {
-
         // get the sensors
         Actuator.get(id).then(function(actuator) {
             // check if the savedAt exists (which is done by the model)
             expect(actuator.savedAt).to.exist;
             done();
             // something went wrong
-        }).error(console.log);
+        }).error(function(err){
+            done(err);
+        });
     });
 
     it('Should have a on command', function (done) {
@@ -174,7 +176,9 @@ describe('Actuator', function () {
             expect(actuator.model.commands.on).to.exist;
             done();
             // something went wrong
-        }).error(console.log);
+        }).error(function(err){
+            done(err);
+        });
     });
 
     it('Should have a off command', function (done) {
@@ -185,7 +189,9 @@ describe('Actuator', function () {
             expect(actuator.model.commands.off).to.exist;
             done();
             // something went wrong
-        }).error(console.log);
+        }).error(function(err){
+            done(err);
+        });
     });
 
     it('Should have a status command', function (done) {
@@ -196,7 +202,9 @@ describe('Actuator', function () {
             expect(actuator.model.commands.status).to.exist;
             done();
             // something went wrong
-        }).error(console.log);
+        }).error(function(err){
+            done(err);
+        });
     });
 
     it('Should delete a actuators', function (done) {
@@ -209,6 +217,8 @@ describe('Actuator', function () {
                 done();
             });
             // something went wrong
-        }).error(console.log);
+        }).error(function(err){
+            done(err);
+        });
     });
 });

@@ -59,10 +59,11 @@ function logEvent(device, type, category, message, severity, cb) {
 /**
  * log sensor data
  * @param device
- * @param value
+ * @param cb
  */
 
 function logData(device, cb) {
+    console.log(device.model);
     var log = new dataLog({
         device: {
             id: device.id,
@@ -131,7 +132,6 @@ function getEvents(deviceid, cb) {
 
 /**
  * get all events for all devices
- * @param severity (optional)
  * @param offset skip results
  * @param limit limit the number of results
  * @param cb
@@ -198,5 +198,5 @@ module.exports = {
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,
-    getStatus: getStatus,
+    getStatus: getStatus
 };
