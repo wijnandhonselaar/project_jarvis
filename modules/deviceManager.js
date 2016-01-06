@@ -1,5 +1,6 @@
 "use strict";
 
+
 var devices = {
     actuators: [],
     sensors: []
