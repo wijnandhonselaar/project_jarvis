@@ -14,7 +14,7 @@ describe("Scenario E2E Test scenario", function () {
                           // when browser is slow
     var siteURL = "http://localhost:3221/";
     var browser;
-
+    require('./globalBefore');
     before(function (done) {
         // load the driver for browser
         browser = webdriverio.remote({

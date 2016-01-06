@@ -4,6 +4,7 @@ var Settings             = require('../models/settings');
 
 
 describe('settingManager', function() {
+    require('./globalBefore');
     before(function(done) {
         Settings.get(1).then(function(settings) {
             settings.delete().then(function(result) {

@@ -8,7 +8,7 @@ describe('Actuator overzicht/detail test', function(){
 	this.timeout(10000);
 	var browser;
 	var id = 1000015;
-
+    require('./globalBefore');
 	before(function(done) {
 		browser = webdriverio.remote({
 			desiredCapabilities: {
