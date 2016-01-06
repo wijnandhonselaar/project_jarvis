@@ -1,7 +1,7 @@
 var expect              = require('chai').expect;
 var api                 = require('superagent');
-var thinky              = require('thinky')();
-var r                   = thinky.r;
+//var thinky              = require('thinky')();
+//var r                   = thinky.r;
 var connection          = null;
 
 describe('#Settings', function() {
