@@ -112,24 +112,6 @@ function update(scenario, cb) {
 }
 
 /**
- * Temp functie voor het finish command, mooiste zou zijn als hiervoor een apart tabje in de front-end gemaakt zou worden waar gebruikers kunnen
- * aangeven wat er gebeurt op het moment dat het scenario eindigt
- */
-function invert(scenario){
-    var scenarioCopy = JSON.parse(JSON.stringify(scenario));
-    for(var i = 0; i<scenarioCopy.actuators.length; i++){
-        var ac = scenarioCopy.actuators[i];
-        if(ac.action.command == 'on'){
-            ac.action.command = 'off';
-        } else {
-            ac.action.command = 'on';
-        }
-        //console.log( scenarioCopy.actuators[i]);
-    }
-    return scenarioCopy;
-}
-
-/**
  * Toggle scenario state (active/disabled)
  * @param scenario
  * @param cb
@@ -164,7 +146,6 @@ function execute(scenario, scenarioState, cb){
         start(scenario , cb);
     } else {
         stop(scenario, cb);
-        scenario = invert(scenario);
     }
     for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
         var command = scenario.actuators[deviceLoop].action.command;
