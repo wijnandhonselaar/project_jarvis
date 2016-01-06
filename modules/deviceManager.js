@@ -1,4 +1,3 @@
-/*jslint node: true */
 "use strict";
 
 var devices = {
@@ -28,11 +27,9 @@ var rules = {
         thresholds: []
     }
 };
-
 /**
- *
- * @param device
- * @param remote
+ * Function that's called after each state update (both sensors and actuators)
+ * @param event
  */
 function updateManagers(event) {
     //for (var i = 0; i < getActuators().length; i++) {
@@ -43,6 +40,7 @@ function updateManagers(event) {
 
 /**
  *
+ * Adds device to device array and / or adds it to the database when it does not exist
  * @param device
  * @param remote
  * @param deviceType
@@ -87,7 +85,7 @@ function addDevice(device, remote, deviceType) {
                     console.error(err);
                     logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, logger.severity.notice);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", logger.severity.notice);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden.", logger.severity.notice);
                 }
             });
         } else {
@@ -118,7 +116,7 @@ function broadcastEvent(msg) {
 }
 
 /**
- *
+ * called within addDevice method. This method adds the device to the in-memory list of devices. (array)
  * @param device
  * @param remote
  * @param deviceType
@@ -153,7 +151,7 @@ function addToDeviceList(device, remote, deviceType) {
 }
 
 /**
- *
+ * Omitted method, it's not used anymore.
  * @param ip
  * @returns {*}
  */
@@ -198,8 +196,9 @@ function getActuatorById(id) {
     return {err: "Error, could not find actuator with id: " + id + "."};
 }
 
+
 /**
- *
+ * Exported method. Used to update the alias of a device.
  * @param devicetype
  * @param id
  * @param alias
@@ -232,7 +231,7 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
 }
 
 /**
- *
+ * Updates the sensor update interval. Sets the poll timer to given milliseconds
  * @param id
  * @param clientRequestInterval
  * @returns {*}
@@ -266,7 +265,7 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
 }
 
 /**
- *
+ * starts up the sensorpoll worker (offloaded to child process)
  * @param sensor
  */
 function initiateStatusPolling(sensor) {
@@ -274,7 +273,7 @@ function initiateStatusPolling(sensor) {
 }
 
 /**
- *
+ * Parses the data from the poll child process and reads the sensor status (values) and pushes these to the client
  * @param obj
  */
 function updateSensorStatusFunction(obj) {
@@ -294,7 +293,7 @@ function updateSensorStatusFunction(obj) {
 }
 
 /**
- *
+ * This method checks device state and only toggles if corresponding gate is active.
  * @param command
  * @param device
  * @returns {boolean}
@@ -324,7 +323,7 @@ function checkState(command, device) {
 }
 
 /**
- *
+ * Updates the actuator state and pushes this to the client
  * @param id
  * @param state
  */
@@ -340,15 +339,16 @@ function updateActuatorState(id, state) {
 }
 
 /**
- *
- * @returns {Array}
+ * Returns a list of actuators
+ * @returns {*}
  */
 function getActuators() {
     return devices.actuators;
 }
 
+
 /**
- *
+ * Adds a rule (set from within the ruleEngine) to the device
  * @param object
  * @returns {*}
  */
@@ -364,7 +364,7 @@ function setRules(object) {
 }
 
 /**
- *
+ * Execute given command (with optional params) on device
  * @param command
  * @param device
  * @param params
@@ -389,7 +389,7 @@ function executeCommand(command, device, params, cb){
 }
 
 /**
- *
+ * Removed nested scenario from actuator
  * @param id Actuator id
  * @param scenario name
  */
@@ -421,8 +421,10 @@ function removeScenarioFromActuator(id, scenario) {
     }
 }
 
+
+
 /**
- *
+ * Update actuator (save to database)
  * @param id
  * @param actuator
  * @param cb
@@ -439,6 +441,9 @@ function updateActuator(id, actuator, cb) {
 
     function thenCB2(persisted) {
         persisted.merge(actuator);
+        console.log("merged");
+        //console.log(persisted);
+        console.log('Before save');
         persisted.save()
             .then(thenCB1)
             .catch(catchCB1);
@@ -485,9 +490,9 @@ function loadDevicesFromDatabase() {
 }
 
 //noinspection JSClosureCompilerSyntax
-    /**
-     *
-     * @type {{ init: Function,
+/**
+ *
+ * @type {{ init: Function,
  *          add: addToDeviceList,
  *          getByIP: getDeviceByIPAddress,
  *          getSensor: getSensorById,
@@ -499,7 +504,7 @@ function loadDevicesFromDatabase() {
  *          updateDeviceStatus: updateDeviceStatus,
  *          updateSensorInterval: updateSensorIntervalFunction
 *         }}
-     */
+ */
 module.exports = {
     init: function (socketio, rec, validatorInject) {
         io = socketio;

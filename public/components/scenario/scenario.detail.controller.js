@@ -5,12 +5,11 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope", "$timeout"];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams","$state", "$scope", "$timeout", "socketService", '$http'];
 
-    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout, socketService, $http) {
         var sdc = this;
         sdc.uid = $sp.uid;
-        sdc.updatename = updateName;
         sdc.addActuator = addActuator;
         sdc.select = select;
         sdc.updateDescription = updateDescription;
@@ -23,11 +22,78 @@
         sdc.repeater = [];
         sdc.actuators = [];
         sdc.GoToDetail = GoToDetail;
+        sdc.preemtiveConflictDetection = {};
+        sdc.setConflictingScenarioDevicePriority = setConflictingScenarioDevicePriority;
+        sdc.resolvedConflicts = [];
+        sdc.setClass = setClass;
+        sdc.showConflictList = showConflictList;
         var swiper = null;
+        var modalIsOpen = false;
 
         sdc.log = function(log){
             console.log("log:\n", log);
         };
+
+        $('.modal-trigger').leanModal({
+            dismissible: true, // Modal can be dismissed by clicking outside of the modal
+            ready: function() { modalIsOpen = true; }, // Callback for Modal open
+            complete: function() { modalIsOpen = false; } // Callback for Modal close
+        });
+
+        function showConflictListModal(){
+            $( ".modal-trigger" ).trigger( "click" );
+        }
+
+
+        socketService.socketListener('preemtiveConflictDetection', function(data){
+            sdc.preemtiveConflictDetection = data;
+            $scope.$apply();
+            if(!modalIsOpen) {
+                modalIsOpen = true;
+                showConflictListModal();
+            }
+            //$('#conflictOverviewModal').openModal();
+        });
+
+        socketService.socketListener('resolvedConflictsList', function(data){
+            sdc.resolvedConflicts = data;
+            $scope.$apply();
+            console.log(data);
+        });
+
+        function showConflictList(){
+            $http.post('http://localhost:3221/scenario/'+ sdc.uid +'/tickle', sdc.scenario).success(function(data){
+
+            }).error(function(err){
+
+            });
+        }
+
+        function setClass(scenario, device, toggle){
+            for(var i = 0; i<sdc.resolvedConflicts.length; i++){
+                if(sdc.resolvedConflicts[i].winner == scenario && sdc.resolvedConflicts[i].device.id == device && toggle == 'yes'){
+                   return 'yesActive';
+                } else if(sdc.resolvedConflicts[i].loser == scenario && sdc.resolvedConflicts[i].device.id == device && toggle == 'no') {
+                   return 'noActive';
+                }
+            }
+        }
+
+        function setConflictingScenarioDevicePriority(winner, loser, deviceId){
+            var object = {
+                winner: winner,
+                loser: loser,
+                device: deviceId
+            };
+
+            $http.post('http://localhost:3221/scenario/' + sdc.uid + '/resolveconflict', object).
+                success(function (data) {
+                    console.log('CONFLICT', 'resolved');
+                })
+                .error(function (err) {
+                    console.log('CONFLICT', 'error while resolving');
+                });
+        }
 
 
         var elisteners = [];
@@ -165,7 +231,6 @@
         function getScenario(id) {
             ScenarioService.get(id)
                 .then(function(data){
-                    console.log("Scenario\n",data.scenario);
                     sdc.scenario = data.scenario;
                     sdc.scenarioName = data.scenario.name;
                     sdc.scenarioDescription = data.scenario.description;
@@ -176,7 +241,6 @@
                                 data.action = {
                                     command: act.action.command
                                 };
-                                console.log("data\n", data);
                                 sdc.devices.push(data);
                                 $scope.$apply();
                             })
@@ -195,17 +259,22 @@
                 });
         }
 
-        function updateName(id, scenarioName){
-            sdc.scenario.name = scenarioName;
-            ScenarioService.update(id, sdc.scenario)
-                .then(function(data){
-                    return data;
-                })
-                .catch(function (err) {
-                    console.error("Error with update ", err);
-                    return err;
-                });
-        }
+        //function updateName(id, scenarioName){
+        //    ScenarioService.updateName(id, sdc.scenario)
+        //        .then(function(data){
+        //            sdc.scenario.name = scenarioName;
+        //            return data;
+        //        })
+        //        .catch(function (data) {
+        //            console.log(data);
+        //            if(data.err === "name"){
+        //                Materialize.toast("name already exists", 2000);
+        //                sdc.scenarioName = "Give me a name";
+        //            }
+        //            console.error("Error with update ",data);
+        //            return data;
+        //        });
+        //}
 
         function updateDescription(id, scenarioDescription){
             sdc.scenario.description = scenarioDescription;
@@ -254,7 +323,6 @@
         }
 
         function selectedAction(key, actuator) {
-            //console.log('YOLO IK KOM HIER 100 KEER PER SECONDE. WHAT THE FUUUCCKKKKK!!!!');
             for(var i = 0; i < sdc.scenario.actuators.length; i++) {
                 var item = sdc.scenario.actuators[i];
                 if(item.deviceid == actuator.id) {
@@ -265,6 +333,8 @@
             }
             return false;
         }
+
+
 
         function goToOverview() {
             $state.go("scenarioOverzicht");

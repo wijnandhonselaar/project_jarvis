@@ -13,7 +13,6 @@
         var onLogUpdate = null;
 
 		socket.socketListener("logAdded", function(data){
-            console.log(data);
             logs.push(data);
             if(logs.length >= 50){
                 logs.splice(0,1);
@@ -46,7 +45,15 @@
                                 graphdata = setDataForGraph(data);
                                 resolve(graphdata);
                             }
-                            resolve(data);
+                            else{
+                                if(data.length > 60){
+                                   data.splice(60, data.length - 61);
+                                }
+                                for (var i = 0; i < data.length; i++) {
+                                    data[i].timestamp = convertUnixTime(data[i].timestamp);
+                                }
+                                resolve(data);
+                            }
                         })
                         .error(function (err) {
                             // ERROR
@@ -65,7 +72,8 @@
 	 		getLogs: getLogs,
             setOnLogUpdate: setOnlogUpdate,
             getDatalogById: getDatalogById,
-            loadLogsDetail: loadLogsDetail
+            loadLogsDetail: loadLogsDetail,
+            convertUnixTime: convertUnixTime
         };
 
         //severity as parameter TODO
@@ -77,8 +85,6 @@
                             data.forEach(function (log) {
                                 logs.push(log);
                             });
-                            console.log(logs);
-                            console.log("Got log data.");
                             resolve();
                         })
                         .error(function (err) {

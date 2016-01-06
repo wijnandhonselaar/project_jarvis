@@ -11,7 +11,7 @@
             </div>
             <div class="col m6 nopad" style="margin-top:-10px;">
                 <div class="col m12">
-                    <input id="interval"type="text" edit-dir="" placeholder="Interval" ng-model="sdc.sensor.config.clientRequestInterval" ng-change="sdc.updateInterval(sdc.sensor.config.clientRequestInterval)"/>
+                   Update interval <input style="display:inline-block;" id="interval"type="text" edit-dir="" placeholder="Interval" ng-model="sdc.sensor.config.clientRequestInterval" ng-change="sdc.updateInterval(sdc.sensor.config.clientRequestInterval)"/>
                 </div>
             </div>
             <div class="col m12" style="margin-top: -20px;">
@@ -23,7 +23,7 @@
 
 <div style="clear :both;"></div>
 
-<div class="row" style="margin-top:72px;">
+<div class="row smallGraph" style="margin-top:72px;">
     <div class="col m5 nopad">
         <div class="row">
             <div class="col m12">
@@ -45,7 +45,7 @@
 <div id="graphModal" class="modal modal-fixed-footer" style="width: 800px; max-height:800px; width:750px; height:400px;">
     <div class="modal-content">
         <h4>Grafiek voor {{sdc.sensor.config.alias}}</h4>
-        <div class="row" style="margin-top:15px;">
+        <div class="row smallGraph" style="margin-top:15px;">
             <div class="col m12">
                 <canvas id="line" class="chart chart-line" chart-options="sdc.chartoptions" chart-data="sdc.data"
                   chart-labels="sdc.labels" chart-legend="false" chart-series="sdc.series"
@@ -68,7 +68,7 @@
                     <div class="card" style="padding:7px;"  ng-repeat="log in sdc.logData">
                         <div <div ng-repeat="(key, value) in log.status">
                             <div class="touch valign" style="display: inline-block; width: 85%;">{{key}} : {{value}}</div>
-                            <div class="touch valign" style="display: inline-block; width: 85%;">{{log.timestamp *1000 | date:'dd-MM-yyyy HH:mm:ss Z'}}</div>
+                            <div class="touch valign" style="display: inline-block; width: 85%;">{{log.timestamp}}</div>
                         </div>
                     </div>
                 </div>

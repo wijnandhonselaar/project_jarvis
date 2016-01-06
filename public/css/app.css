@@ -28,6 +28,16 @@ body{
     background-color:#FAFAFA;
 }
 
+.yesActive{
+    background-color: #008000 !important;
+    color:white !important;
+}
+
+.noActive{
+    background-color: #ff0000 !important;
+    color:white !important;
+}
+
 .ptop_50{
     padding-top:50px !important;
 }
@@ -235,6 +245,10 @@ body{
     margin-bottom:0px;
 }
 
+.row.smallGraph{
+    margin-top:0px !important;
+}
+
 .detaildescrip{
     color:#959595;
 }
@@ -300,6 +314,8 @@ body{
 
 .ui-keyboard {
     z-index: 9999;
+    height: 285px !important;
+    top: 200px !important;
 }
 
 input:focus {

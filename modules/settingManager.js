@@ -6,7 +6,7 @@ var thinky = require('../models/thinky.js');
 var Errors = thinky.Errors;
 
 /**
- *
+ * Load settings from database
  * @param cb
  */
 function initSettings(cb) {
@@ -21,7 +21,7 @@ function initSettings(cb) {
 }
 
 /**
- *
+ * Get loglevel from database
  * @param cb
  */
 function getLogLevel(cb) {
@@ -29,7 +29,7 @@ function getLogLevel(cb) {
         cb(null, res.logLevel);
     }).catch(Errors.DocumentNotFound, function(err) {
         initSettings(function(err){
-           if(err) throw err;
+            if(err) cb(err);
 
             getLogLevel(cb);
         });
@@ -39,7 +39,7 @@ function getLogLevel(cb) {
 }
 
 /**
- *
+ * Set loglevel
  * @param level
  * @param cb
  */
@@ -55,7 +55,7 @@ function setLogLevel(level, cb) {
                 });
             }).catch(Errors.DocumentNotFound, function (err) {
                 initSettings(function (err) {
-                    if (err) throw err;
+                    if (err) cb(err);
 
                     getLogLevel(cb);
                 });

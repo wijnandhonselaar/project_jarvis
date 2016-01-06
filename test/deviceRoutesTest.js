@@ -10,6 +10,13 @@ var connection = null;
 describe('Device routing', function() {
 
     require('./globalBefore');
+    before(function(done){
+        r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
+            if (err) throw err;
+            connection = conn;
+            done();
+        })
+    });
 
     before(function (done) {
         var device = newDevice(1000015, 'a');
@@ -35,6 +42,17 @@ describe('Device routing', function() {
                 }
                 done();
             });
+
+        var device2 = newDevice(1000016, 'b');
+        device2.type = 'actuator';
+        api.post('http://localhost:3221/test/devices/add')
+        .send({device : device2, remote:{address:'192.186.24.2'}})
+        .end(function (err, res) {
+            if (err) {
+                done(err);
+            }
+            done();
+        });
     });
 
     beforeEach(function(done){

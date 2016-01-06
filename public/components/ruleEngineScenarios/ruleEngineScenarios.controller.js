@@ -9,7 +9,6 @@
     function ruleEngineScenariosCtrl(DS, $sp, $scope, $timeout, $http, ScenarioService) {
         var rec = this;
         rec.scenario = $sp.data;
-        console.log("scen:\n", rec.scenario);
         rec.sensors = [];
         rec.actuators = [];
         rec.openModal = openModal;
@@ -18,7 +17,7 @@
         rec.getSensorById = getSensorById;
         rec.selectedSensor = null;
         rec.selectedActuator = null;
-        rec.selectedCommand = null;
+        rec.selectedCommand = "start";
         rec.closeModal = closeModal;
         rec.updateFieldList = updateFieldList;
         rec.addToThresholds = addToThresholds;
@@ -73,8 +72,8 @@
             gate: 'OR'
         };
 
+
         function recalculateGroups(groups) {
-            console.log("groups\n", groups);
             var isGroups = true;
             if( !groups ) {
                 rec.currentGroups = [];
@@ -185,9 +184,7 @@
                     return rule.id;
                 });
             });
-            console.log("TEST:\n", andgroups);
             rec.scenario.rules[rec.selectedCommand].andgroups = andgroups;
-            console.log("scenario:\n",rec.scenario.rules);
 
             ScenarioService.update(rec.scenario.id, rec.scenario)
                 .then(function (data) {
@@ -201,7 +198,6 @@
 
         function remove(type, ruleID, modal) {
             var obj = rec.ruleObjects[rec.selectedCommand][type];
-            console.log(obj);
             for (var i = 0; i < obj.length; i++) {
                 if (obj[i].id == ruleID) {
                     obj.splice(i, 1);
@@ -225,7 +221,6 @@
         }
 
         function closeModal(modal) {
-            console.log(modal);
             $('#' + modal).closeModal();
         }
 
@@ -260,7 +255,6 @@
         function getSensorFields(id) {
             for (var i = 0; i < rec.sensors.length; i++) {
                 if (rec.sensors[i].id == id) {
-                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.sensors[i].model.commands.status.returns;
                 }
             }
@@ -269,7 +263,6 @@
         function getActuatorById(id) {
             for (var i = 0; i < rec.actuators.length; i++) {
                 if (rec.actuators[i].id == id) {
-                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.actuators[i];
                 }
             }
@@ -277,7 +270,6 @@
 
         function updateFieldList() {
             DS.getDeviceById(rec.threshold.device, 'sensor').then(function (data) {
-                console.log(data);
                 rec.selectedSensor = data;
                 $scope.$apply();
             }).catch(function (e) {
@@ -287,7 +279,6 @@
 
         function updateEventList() {
             DS.getDeviceById(rec.event.device, 'actuator').then(function (data) {
-                console.log(data);
                 rec.selectedActuator = data;
                 $scope.$apply();
             }).catch(function (e) {
