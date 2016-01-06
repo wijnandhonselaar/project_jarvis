@@ -87,32 +87,7 @@ function apply(scenario, event) {
 
                 if (hasRules && execute) {
                     if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
-                        if (ruleKey === start) {
-                            scenarioManager.start(scenario);
-                        } else {
-                            scenarioManager.stop(scenario);
-                        }
-                        for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
-                            var command = scenario.actuators[deviceLoop].action.command;
-                            var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
-
-                            var newcommand = "";
-                            if( (command == "on" || command == "off") && ruleKey === stop) {
-                                if (command == "on") {
-                                    newcommand = "off";
-                                } else {
-                                    newcommand = "on"
-                                }
-                            } else {
-                                newcommand = command;
-                            }
-
-                            if (checkState(newcommand, device)) {
-                                if (!conflictManager.detect(newcommand, device, scenario)) {
-                                    deviceManager.executeCommand(newcommand, device, {});
-                                }
-                            }
-                        }
+                        scenarioManager.execute(scenario,ruleKey,null);
                     }
                 }
 
@@ -134,30 +109,6 @@ function validateStatement(var1, var2, operator) {
         '!==': var1 !== var2
     };
     return statements[operator];
-}
-
-function checkState(command, device) {
-    if (device.status) {
-        var state = device.status.state;
-        switch (command) {
-            case 'on':
-                if (!state) {
-                    return true;
-                } else if (state) {
-                    return false;
-                }
-                break;
-            case 'off':
-                if (!state) {
-                    return false;
-                } else if (state) {
-                    return true;
-                }
-                break;
-        }
-    } else {
-        return true;
-    }
 }
 
 module.exports = {
