@@ -29,12 +29,14 @@ body{
 }
 
 .yesActive{
-    background-color: #008000 !important;
+    background-color: #F9591A !important;
+    /*background-color: #008000 !important;*/
     color:white !important;
 }
 
 .noActive{
-    background-color: #ff0000 !important;
+    background-color: #F9591A !important;
+    /*background-color: #ff0000 !important;*/
     color:white !important;
 }
 
