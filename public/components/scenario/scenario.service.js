@@ -91,27 +91,27 @@
                 }
             );
         }
-        //
-        //function updateName(id, scenario) {
-        //    return new Promise(
-        //        function (resolve, reject) {
-        //            $http.put("/scenario/name/" + id, {scenario: JSON.stringify(scenario)})
-        //                .success(function (data) {
-        //                    if (data.err) {
-        //                        reject(data);
-        //                    }
-        //                    else {
-        //                        resolve(data);
-        //                        Materialize.toast("Succesful changed", 4000);
-        //                    }
-        //                })
-        //                .error(function (err) {
-        //                    console.error(err);
-        //                    reject(err);
-        //                });
-        //        }
-        //    );
-        //}
+
+        function updateName(id, scenario) {
+            return new Promise(
+                function (resolve, reject) {
+                    $http.put("/scenario/name/" + id, {scenario: JSON.stringify(scenario)})
+                        .success(function (data) {
+                            if (data.err) {
+                                reject(data);
+                            }
+                            else {
+                                resolve(data);
+                                Materialize.toast("Succesful changed", 4000);
+                            }
+                        })
+                        .error(function (err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
+        }
 
         function deleteScenario(scenario) {
             return new Promise(
@@ -200,6 +200,7 @@
             toggleState: toggleState,
             delete: deleteScenario,
             getall: getScenarios,
+            updateName: updateName,
             get: getScenario,
             create: createScenario,
             update: update,

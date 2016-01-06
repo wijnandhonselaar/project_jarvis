@@ -6,7 +6,7 @@
         <p id="scenarioName">Scenario: {{rec.scenario.name}}</p>
     </div>
     <div class="col m2">
-        <select ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
+        <select id="selectStartFinish" ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
             <option value="start" ng-selected="true">Start</option>
             <option value="finish">Finish</option>
         </select>
@@ -277,7 +277,7 @@
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a id="modalbewaren" ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
+                <a id="modalbewaren" ng-click="rec.addToThresholds()"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>

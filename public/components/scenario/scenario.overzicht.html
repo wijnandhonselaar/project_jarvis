@@ -21,8 +21,8 @@
                     <div class="col m8" ng-click="scena.goToDetail(scenario)"
                          style="margin-left:-8px; margin-top:0px;">
                         <div id="scenarioAmount"  class="customCard" style="padding:1px;">
-                            <div id="scenarioName" class="detailcontainer">
-                                {{scenario.name}}<br>
+                            <div class="detailcontainer">
+                                <p id="scenarioName" style="padding:0; margin:0">{{scenario.name}}</p>
                                 <span class="description">{{scenario.description.substring(0, 25)}}...</span>
                             </div>
                         </div>
