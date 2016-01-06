@@ -11,6 +11,10 @@ child.on('message', function(m) {
 });
 
 //sending job to childprocess
+/**
+ * Send data to child process
+ * @param sensor
+ */
 function pullData(sensor){
     child.send(sensor);
     var timeout = setTimeout(pullData, sensor.config.clientRequestInterval, sensor);
@@ -22,7 +26,9 @@ function pullData(sensor){
     intervalArray.push({id: sensor.id, timeout:timeout});
 }
 
+
 //adding interval timers to sensors based on their minimum interval to get status
+
 function addIntervalsToSensors(list){
     for (var i = 0; i < list.length; i++) {
         pullData(list[i]);

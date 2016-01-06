@@ -42,7 +42,7 @@
             $scope.$apply();
         }).catch(function(err){
             Materialize.toast("Logdata not found", 3000);
-            console.log(err);
+            console.error(err);
         });
 
         LS.loadLogsDetail($sp.uid, false).then(function(data){
@@ -50,23 +50,32 @@
             $scope.$apply();
         }).catch(function(err){
             Materialize.toast("Logdata not found", 3000);
-            console.log(err);
+            console.error(err);
         });
 
         LS.setOnLogUpdate(function(data){
             if(data.device.id === sdc.sensor.id) {
+                console.log(sdc.labels.length + " == " + sdc.data[0].length);
                 //history update
-                sdc.logData.push(data);
+                data.timestamp = LS.convertUnixTime(data.timestamp);
+                sdc.logData.unshift(data);
 
                 // graph update
                 for(var k in data.status){
                     sdc.data[0].push(data.status[k]);
                 }
-                sdc.labels.push("");
+
+                console.log(sdc.labels[sdc.labels.length-6]);
+                if(sdc.labels[sdc.labels.length-6] !== ""){
+                    sdc.labels.push(data.timestamp);
+                }else{
+                    sdc.labels.push("");
+                }
 
                 if(sdc.data[0].length > 60){
-                    sdc.data[0].splice(0,3);
-                    sdc.logData.splice(0,3);
+                    sdc.labels.splice(sdc.labels.length-1, 1);
+                    sdc.data[0].splice(0,1);
+                    sdc.logData.splice(0,1);
                 }
                 $scope.$apply();
             }

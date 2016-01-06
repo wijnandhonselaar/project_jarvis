@@ -8,7 +8,7 @@ describe('Actuator overzicht/detail test', function(){
 	this.timeout(10000);
 	var browser;
 	var id = 1000015;
-
+    require('./globalBefore');
 	before(function(done) {
 		browser = webdriverio.remote({
 			desiredCapabilities: {
@@ -22,11 +22,19 @@ describe('Actuator overzicht/detail test', function(){
         api.post('http://localhost:3221/test/devices/add')
         .send({device : device, remote:{address:'192.186.24.1'}})
         .end(function (err, res) {
-            if (err) { throw err;}
+            if(err) {
+                done(err);
+            }
         });
 
 		browser.init(done);
 	});
+
+    beforeEach(function(done){
+        setTimeout(function() {
+            done();
+        }, 500);
+    });
 
 	it("Should find the actuator with the correct name", function(done){
 		browser.
@@ -75,20 +83,9 @@ describe('Actuator overzicht/detail test', function(){
             });
     });
 
-    it("Should execute on command", function(done){
+    it("Should be off", function(done){
         browser.
             url("http://localhost:3221/#/actuators/"+id)
-            .leftClick('#on').then(function(result){})
-            .elements(".green").then( function(result){
-                expect(result.value.length).to.equal(1);
-                done();
-            });
-    });
-
-    it("Should execute off command", function(done){
-        browser.
-            url("http://localhost:3221/#/actuators/"+id)
-            .leftClick('#off').then(function(result){console.log(result)})
             .elements(".red").then( function(result){
                 expect(result.value.length).to.equal(1);
                 done();
@@ -101,15 +98,17 @@ describe('Actuator overzicht/detail test', function(){
             sensor.delete().then(function() {
                 done();
             });
-        }).error();
+        }).error(function(err) {
+            done(err);
+        });
     });
 
 	after(function(done){
         api
         .post("http://localhost:3221/test/devices/delete")
         .end(function(err,res) {
-            if (err) {
-                throw err;
+            if(err) {
+                done(err);
             }
             done();
         });

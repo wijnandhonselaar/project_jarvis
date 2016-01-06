@@ -33,7 +33,6 @@
         function getScenarios() {
             ScenarioService.getall()
                 .then(function(data){
-                    console.log(data);
                     scena.scenarios = data.scenarios;
                     reloadSwiper();
                     return data;
