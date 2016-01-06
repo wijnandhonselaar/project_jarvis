@@ -409,11 +409,11 @@ function executeCommand(command, device, params, cb){
  */
 function removeScenarioFromActuator(id, scenario) {
     function thenCBsmall(res) {
-        if(res.err) throw res.err;
+        if(res.err) logger.logEvent(null, 'scenario', res.err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
     }
     function catchCBsmall(err) {
         console.error('Error bij verwijderen scenario uit config van een actuator.');
-        throw err;
+        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
     }
     function thenCB(actuator) {
         delete actuator.config.scenarios[scenario];
@@ -423,7 +423,7 @@ function removeScenarioFromActuator(id, scenario) {
     }
     function catchCB(err) {
         console.error('Error bij ophalen actuator.');
-        throw err;
+        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
     }
     for(var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
@@ -449,14 +449,12 @@ function updateActuator(id, actuator, cb) {
 
     function catchCB1(err) {
         console.error('Error bij opslaan');
+        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
         cb({error: err, message: 'Could not update actuator.'});
     }
 
     function thenCB2(persisted) {
         persisted.merge(actuator);
-        console.log("merged");
-        //console.log(persisted);
-        console.log('Before save');
         persisted.save()
             .then(thenCB1)
             .catch(catchCB1);
@@ -464,6 +462,7 @@ function updateActuator(id, actuator, cb) {
 
     function catchCB2(err) {
         console.error('Error bij ophalen met id: ' + id);
+        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
         cb({error: err, message: 'Could not update actuator.'});
     }
 

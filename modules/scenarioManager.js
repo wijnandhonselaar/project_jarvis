@@ -178,7 +178,10 @@ function execute(scenario, scenarioState, cb){
     }
 
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {
+            console.error(err);
+            logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+        }
     }
 }
 
