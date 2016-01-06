@@ -5,9 +5,9 @@
         .module('jarvis.scenario')
         .controller('ScenarioDetailctrl', ScenarioDetailctrl);
 
-    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams", "$state", "$scope", "$timeout", "socketService", '$http', '$rootScope'];
+    ScenarioDetailctrl.$inject = ["ScenarioService", "$stateParams", "$state", "$scope", "$timeout", "socketService", '$http'];
 
-    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout, socketService, $http, $rootScope) {
+    function ScenarioDetailctrl(ScenarioService, $sp, $state, $scope, $timeout, socketService, $http) {
 
         var sdc = this;
         sdc.uid = $sp.uid;

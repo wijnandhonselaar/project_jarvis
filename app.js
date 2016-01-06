@@ -50,6 +50,8 @@ app.get('/', function (req, res) {
 });
 
 app.get('/testRule', function(req,res){
-    ruleEngine.apply(deviceManager.getActuator(0));
-    res.send('');
+    res.json(deviceManager.getActuator(0).model);
 });
+
+
+
