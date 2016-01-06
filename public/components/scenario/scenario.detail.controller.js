@@ -13,6 +13,7 @@
         sdc.uid = $sp.uid;
         sdc.addActuator = addActuator;
         sdc.select = select;
+        sdc.updateName = updateName;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
@@ -298,9 +299,9 @@
 
 
         function updateName(id, scenarioName){
+            sdc.scenario.name = scenarioName;
             ScenarioService.updateName(id, sdc.scenario)
                 .then(function(data){
-                    sdc.scenario.name = scenarioName;
                     return data;
                 })
                 .catch(function (data) {
