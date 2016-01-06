@@ -84,9 +84,9 @@ function resolve(resolveObject, callback, startAndExecute) {
                 }
             }
         }
+    } else {
+        resolveObject.device = deviceManager.getActuator(resolveObject.device);
     }
-
-    resolveObject.device = deviceManager.getActuator(resolveObject.device);
 
     var exists = false;
     for(var i = 0; i<resolvedConflicts.length; i++){
