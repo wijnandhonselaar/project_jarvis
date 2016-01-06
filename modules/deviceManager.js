@@ -1,4 +1,3 @@
-/*jslint node: true */
 "use strict";
 
 var devices = {
@@ -29,13 +28,6 @@ var rules = {
     }
 };
 /**
- *
- * @param device
- * @param remote
- */
-
-
-/**
  * Function that's called after each state update (both sensors and actuators)
  * @param event
  */
@@ -46,11 +38,8 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
-setInterval(function(){
-    updateManagers();
-}, 2500);
-
 /**
+ *
  * Adds device to device array and / or adds it to the database when it does not exist
  * @param device
  * @param remote
@@ -109,6 +98,7 @@ function addDevice(device, remote, deviceType) {
         }
     });
 }
+
 /**
  * Broadcasts event from device. it's triggered from the autodiscover module
  * @param msg
@@ -124,7 +114,6 @@ function broadcastEvent(msg) {
         console.error('What the fuck, ik kan mijn apparaat niet vinden');
     }
 }
-
 
 /**
  * called within addDevice method. This method adds the device to the in-memory list of devices. (array)
@@ -303,7 +292,6 @@ function updateSensorStatusFunction(obj) {
     }
 }
 
-
 /**
  * This method checks device state and only toggles if corresponding gate is active.
  * @param command
@@ -334,7 +322,6 @@ function checkState(command, device) {
     }
 }
 
-
 /**
  * Updates the actuator state and pushes this to the client
  * @param id
@@ -357,7 +344,6 @@ function updateActuatorState(id, state, isScenario) {
         }
     });
 }
-
 
 /**
  * Returns a list of actuators
@@ -444,6 +430,7 @@ function removeScenarioFromActuator(id, scenario) {
 }
 
 
+
 /**
  * Update actuator (save to database)
  * @param id
@@ -484,7 +471,7 @@ function updateActuator(id, actuator, cb) {
 }
 
 /**
- * Loads all devices from database on start-up.
+ * Gets al the devices from the database. Is called from the init (on startup) function.
  */
 function loadDevicesFromDatabase() {
     rethinkManager.getAllDevices('sensors', function (err, res) {
@@ -501,7 +488,6 @@ function loadDevicesFromDatabase() {
         if (err) {
             console.error(err);
         } else {
-
             for (var i = 0; i < res.length; i++) {
 
                 addToDeviceList(res[i], res[i].ip, 'actuators');

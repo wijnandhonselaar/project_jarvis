@@ -8,7 +8,7 @@ describe('Sensor overzicht/detail test', function(){
 	this.timeout(10000);
 	var browser;
 	var id = 1000015;
-
+    require('./globalBefore');
 	before(function(done) {
 		browser = webdriverio.remote({
 			desiredCapabilities: {
@@ -22,7 +22,9 @@ describe('Sensor overzicht/detail test', function(){
         api.post('http://localhost:3221/test/devices/add')
         .send({device : device, remote:{address:'192.186.24.1'}})
         .end(function (err, res) {
-            if (err) { throw err;}
+            if(err) {
+                done(err);
+            }
         });
 
 		browser.init(done);
@@ -81,7 +83,9 @@ describe('Sensor overzicht/detail test', function(){
             sensor.delete().then(function() {
                 done();
             });
-        }).error();
+        }).error(function(err){
+            done(err);
+        });
     });
 
 	after(function(done){
@@ -89,7 +93,9 @@ describe('Sensor overzicht/detail test', function(){
         .post("http://localhost:3221/test/devices/delete")
         .end(function(err,res) {
             if (err) {
-                throw err;
+                if(err) {
+                    done(err);
+                }
             }
             done();
         });

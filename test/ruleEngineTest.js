@@ -5,7 +5,7 @@ var deviceManager = require('../modules/deviceManager');
 
 
 describe('RuleEngine tests', function () {
-
+    require('./globalBefore');
     before(function (done) {
         device = {
             "id": 0,

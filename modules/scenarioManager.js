@@ -148,7 +148,7 @@ function toggleState(scenario, cb) {
                 execute(scenario, 'start', function(err, data){
                     if(err) cb(err, data);
                     logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
-                    cb(null, data)
+                    cb(null, data);
                 });
             }
             else {
@@ -178,17 +178,18 @@ function execute(scenario, scenarioState, cb){
     for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
         var command = scenario.actuators[deviceLoop].action.command;
         var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
-        if (deviceManager.checkState(command, device)) {
-            if (!conflictManager.detect(command, device, scenario)) {
-                deviceManager.executeCommand(command, device, {}, true);
+        var newcommand = "";
+        if( (command == "on" || command == "off") && scenarioState === 'finish') {
+            if (command == "on") {
+                newcommand = "off";
+            } else {
+                newcommand = "on"
             }
+        } else {
+            newcommand = command;
         }
-    }
-
-    function updateCB(err, data){
-        if(err) {
-            console.error(err);
-            logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
+        if (!conflictManager.detect(newcommand, device, scenario)) {
+            deviceManager.executeCommand(newcommand, device, {});
         }
     }
 }

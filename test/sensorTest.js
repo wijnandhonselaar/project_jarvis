@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var Sensor = require('../models/sensor.js');
 
 describe('Sensor', function () {
+	require('./globalBefore');
 	var id = 5468;
 	it('Should\'t save a new sensor, no status command', function (done) {
 		// create the new sensor
@@ -65,7 +66,9 @@ describe('Sensor', function () {
 		// save the new sensors
 		Sensor.save(newsensor).then(function(res) {
 			done();
-		}).error(console.log);
+		}).error(function(err){
+			done(err);
+		});
 	});
 
 	it('Should have a savedate', function (done) {
@@ -76,7 +79,9 @@ describe('Sensor', function () {
 			expect(sensor.savedAt).to.exist;
 			done();
 		// something went wrong
-	}).error(console.log);
+	}).error(function(err){
+			done(err);
+		});
 	});
 
 	it('Should delete a sensors', function (done) {
@@ -89,7 +94,9 @@ describe('Sensor', function () {
 				done();
 			});
 		// something went wrong
-	}).error(console.log);
+	}).error(function(err){
+			done(err);
+		});
 	});
 });
 

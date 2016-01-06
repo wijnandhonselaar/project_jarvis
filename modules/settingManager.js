@@ -5,7 +5,6 @@ var Settings = require('../models/settings');
 var thinky = require('../models/thinky.js');
 var Errors = thinky.Errors;
 
-
 /**
  * Load settings from database
  * @param cb
