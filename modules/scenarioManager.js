@@ -188,6 +188,7 @@ function execute(scenario, scenarioState, cb){
         } else {
             newcommand = command;
         }
+
         if (!conflictManager.detect(newcommand, device, scenario)) {
             deviceManager.executeCommand(newcommand, device, {});
         }
