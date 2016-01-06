@@ -79,7 +79,7 @@ function resolve(resolveObject, callback, startAndExecute) {
             if (resolveObject.device.config.scenarios.hasOwnProperty(scenario)) {
                 if (scenario == resolveObject.winner) {
                     scenarioManager.start(resolveObject.winner);
-                    deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, executeCommandCB);
+                    deviceManager.executeCommand(resolveObject.device.config.scenarios[scenario].command, resolveObject.device, {}, false, executeCommandCB);
                     //console.log('execute', resolveObject.device.config.scenarios[scenario].command);
                 }
             }

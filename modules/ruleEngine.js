@@ -119,7 +119,7 @@ function apply(scenario, event) {
 
                             if (checkState(newcommand, device)) {
                                 if (!conflictManager.detect(newcommand, device, scenario)) {
-                                    deviceManager.executeCommand(newcommand, device, {});
+                                    deviceManager.executeCommand(newcommand, device, {}, false);
                                 }
                             }
                         }

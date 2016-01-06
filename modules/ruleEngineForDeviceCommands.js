@@ -86,14 +86,14 @@ function apply(device, event, callback) {
                         case 'POST':
                             comm.post(command, device, {}, function (state) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, state);
-                                deviceManager.updateActuatorState(device.id, state);
+                                deviceManager.updateActuatorState(device.id, state, false);
                                 if (callback) callback(state);
                             });
                             break;
                         case 'GET':
                             comm.get(command, device, function (data) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, data);
-                                deviceManager.updateActuatorState(device.id, state);
+                                deviceManager.updateActuatorState(device.id, state, false);
                                 if (callback) callback(state);
                             });
                             break;

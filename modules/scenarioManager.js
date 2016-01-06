@@ -7,7 +7,7 @@ var comm = require('./interperter/comm');
 var io = null;
 var deviceManager = null;
 var conflictManager = null;
-var Logger = require('./logManager');
+var logger = require('./logManager');
 var scenarios = [];
 
 
@@ -138,16 +138,24 @@ function toggleState(scenario, cb) {
     if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id == scenarios[i].id) {
+            var message = '';
+            if(!scenarios[i].status) {
+                message = 'Scenario: ' + scenario.name + ' is ingeschakeld.';
+            } else {
+                message = 'Scenario: ' + scenario.name + ' is uitgeschakeld.';
+            }
             if (scenarios[i].status === false) {
                 execute(scenario, 'start', function(err, data){
-                    Logger.logScenario(scenarios[i], null);
-                    cb(err, data)
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data)
                 });
             }
             else {
                 execute(scenario, 'finish', function(err, data){
-                    Logger.logScenario(scenarios[i], null);
-                    cb(err, data);
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
                 });
             }
         }
@@ -172,7 +180,7 @@ function execute(scenario, scenarioState, cb){
         var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
         if (deviceManager.checkState(command, device)) {
             if (!conflictManager.detect(command, device, scenario)) {
-                deviceManager.executeCommand(command, device, {});
+                deviceManager.executeCommand(command, device, {}, true);
             }
         }
     }
@@ -180,7 +188,7 @@ function execute(scenario, scenarioState, cb){
     function updateCB(err, data){
         if(err) {
             console.error(err);
-            logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+            logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
         }
     }
 }

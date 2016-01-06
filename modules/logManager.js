@@ -28,18 +28,23 @@ var severity = {
  * @param cb
  */
 function logEvent(device, type, category, message, severity, cb) {
+    if(typeof message != 'string') {
+        throw message;
+    }
     var log = new eventLog({
-        device: {
-            id: device.id,
-            name: device.model.name,
-            alias: device.config.alias
-        },
         type: type,
         category: category,
         message: message,
         severity: severity,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
+    if(device != null) {
+        log.device = {
+            id: device.id,
+            name: device.model.name,
+            alias: device.config.alias
+        };
+    }
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
@@ -99,7 +104,7 @@ function logScenario(scenario, cb) {
     var log = new scenarioLog({
         name: scenario.name,
         status: scenario.status,
-        severity: severity.notice,
+        severity: severity.warning,
         message: message,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });

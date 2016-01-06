@@ -339,11 +339,18 @@ function checkState(command, device) {
  * Updates the actuator state and pushes this to the client
  * @param id
  * @param state
+ * @param isScenario boolean
  */
-function updateActuatorState(id, state) {
+function updateActuatorState(id, state, isScenario) {
     var actuator = getActuatorById(id);
     actuator.status = state;
-    io.emit("deviceUpdated", actuator);
+    // Only emit when the action is not coming from a scenario
+    if(!isScenario) {
+        console.log('Geen scenario!');
+        io.emit("deviceUpdated", actuator);
+    } else {
+        console.log('Is scenario!');
+    }
     rethinkManager.setStatus(id, 'actuator', state, function(err, res){
         if(err) {
             console.error('set status to database error:', err);
@@ -382,20 +389,21 @@ function setRules(object) {
  * @param command
  * @param device
  * @param params
+ * @param isScenario boolean
  * @param cb
  */
-function executeCommand(command, device, params, cb){
+function executeCommand(command, device, params, isScenario, cb){
 
     switch (device.model.commands[command].httpMethod) {
         case 'POST':
             comm.post(command, device, params, function (state, device) {
-                updateActuatorState(device.id, state);
+                updateActuatorState(device.id, state, isScenario);
                 if(cb) cb(state);
             });
             break;
         case 'GET':
-            comm.get(command, device, function (state, device) {
-                updateActuatorState(device.id, state);
+            comm.get(command, device, function (state, device, isScenario) {
+                updateActuatorState(device.id, state, isScenario);
                 if(cb) cb(state);
             });
             break;
@@ -409,11 +417,11 @@ function executeCommand(command, device, params, cb){
  */
 function removeScenarioFromActuator(id, scenario) {
     function thenCBsmall(res) {
-        if(res.err) logger.logEvent(null, 'scenario', res.err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+        if(res.err) logger.logEvent(null, 'scenario', logger.automatic, res.err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
     }
     function catchCBsmall(err) {
         console.error('Error bij verwijderen scenario uit config van een actuator.');
-        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
     }
     function thenCB(actuator) {
         delete actuator.config.scenarios[scenario];
@@ -423,7 +431,7 @@ function removeScenarioFromActuator(id, scenario) {
     }
     function catchCB(err) {
         console.error('Error bij ophalen actuator.');
-        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
     }
     for(var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
@@ -449,7 +457,7 @@ function updateActuator(id, actuator, cb) {
 
     function catchCB1(err) {
         console.error('Error bij opslaan');
-        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
         cb({error: err, message: 'Could not update actuator.'});
     }
 
@@ -462,7 +470,7 @@ function updateActuator(id, actuator, cb) {
 
     function catchCB2(err) {
         console.error('Error bij ophalen met id: ' + id);
-        logger.logEvent(null, 'scenario', err, logger.severity.error, logger.automatic, Math.round((new Date()).getTime() / 1000));
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
         cb({error: err, message: 'Could not update actuator.'});
     }
 
