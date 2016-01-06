@@ -38,6 +38,8 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
+setInterval(updateManagers,20000);
+
 /**
  *
  * Adds device to device array and / or adds it to the database when it does not exist

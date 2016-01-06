@@ -4,6 +4,7 @@
 var thinky = require('thinky')();
 var r = thinky.r;
 var connection = null;
+var api       = require('superagent');
 
 
 before(function(done){
@@ -46,4 +47,16 @@ before(function(done){
         console.log('deleted scenario table');
         done();
     });
+});
+
+before(function(done){
+    api
+        .post("http://localhost:3221/test/devices/delete")
+        .end(function(err,res) {
+            if (err) {
+                done(err);
+            }
+            console.log('deleted devices in app.js');
+            done();
+        });
 });
