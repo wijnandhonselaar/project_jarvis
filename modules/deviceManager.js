@@ -114,6 +114,7 @@ function broadcastEvent(msg) {
         io.emit('deviceEvent', {device: device, event: msg});
     } else {
         console.error('What the fuck, ik kan mijn apparaat niet vinden');
+        logger.logEvent(null, 'actuator', logger.automatic, msg.msg, logger.severity.error);
     }
 }
 
@@ -329,17 +330,24 @@ function checkState(command, device) {
  * Updates the actuator state and pushes this to the client
  * @param id
  * @param state
- * @param isScenario boolean
  */
-function updateActuatorState(id, state, isScenario) {
+function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
+    if(actuator.err) {
+        logger.logEvent(null, 'actuator', logger.automatic, actuator.err, logger.severity.error);
+        return;
+    }
     actuator.status = state;
     // Only emit when the action is not originated from a scenario
     io.emit("deviceUpdated", actuator);
     rethinkManager.setStatus(id, 'actuator', state, function(err, res){
         if(err) {
             console.error('set status to database error:', err);
-            logger.logEvent(getActuatorById(id), 'actuator', state, err.message, logger.severity.error);
+            if(getActuatorById(id).err === undefined) {
+                logger.logEvent(getActuatorById(id), 'actuator', state, err.message, logger.severity.error);
+            } else {
+                logger.logEvent(null, 'actuator', state, getActuatorById(id).err, logger.severity.error);
+            }
         }
     });
 }
