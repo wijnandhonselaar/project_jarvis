@@ -40,7 +40,7 @@ function apply(scenario, event) {
      * @returns {*}
      */
     function checkRule(rule) {
-        if (rule.type) {
+        if (rule && rule.type) {
             hasRules = true;
             switch (rule.type) {
                 case "thresholds":
@@ -83,6 +83,7 @@ function apply(scenario, event) {
                     var andgroup = scenario.rules[ruleKey].andgroups[i];
                     for(var ai = 0; ai < andgroup.length; ai++) {
                         var scenarioRule = getScenarioRuleById(ruleKey,andgroup[ai]);
+                        //console.log("SCENARIO", scenarioRule);
                         if ( !checkRule(scenarioRule) ) {
                             break;
                         }

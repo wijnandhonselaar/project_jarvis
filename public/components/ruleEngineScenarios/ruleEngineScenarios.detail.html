@@ -1,48 +1,42 @@
 <div class="row" style="margin-top:15px; margin-bottom: 0px;">
     <div class="col m1" style="padding-left:3px; padding-top: 5px;">
-             <div class="statusscenario" style="left:15px; top:75px;" ng-class="scenario.status ? 'green' : 'red' "></div>
+        <div class="statusscenario" style="left:15px; top:75px;" ng-class="scenario.status ? 'green' : 'red' "></div>
     </div>
-    <div class="col m8" style="padding-left:11px; margin-left:-3px;">
+    <div class="col m9" style="padding-left:11px; margin-left:-3px;">
         <p id="scenarioName">Scenario: {{rec.scenario.name}}</p>
     </div>
-    <div class="col m1" style="margin-right:-50px">
-        <label ng-if="rec.selectedCommand === null" >Event:</label>
-
-    </div>
     <div class="col m2">
-        <select  id="selectStartFinish" ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="margin-left:50px;display:block;">
+        <select ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
             <option value="start">Start</option>
             <option value="finish">Finish</option>
         </select>
     </div>
 </div>
-
 <div class="row">
     <div class="col m1" style="margin-top:0px; margin-left:-13px; padding-right: 50px; height: 100vh;">
         <div class="row" style="margin-top:5px; margin-bottom: 0px;">
-            <div ng-if="rec.selectedCommand !== null" class="col m12 card touch" style="width:40px; padding-left:7px;" ng-click="rec.openModal('ruleModal')">
+            <div class="col m12 card touch" style="width:40px; padding-left:7px;" ng-click="rec.openModal('ruleModal')">
                 <div style="margin-top:5px; background-image:url('images/icon_condition.png'); width: 25px; height:30px; background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
         <div class="row" style="margin-bottom: 0px;">
-            <div ng-if="rec.selectedCommand !== null" class="col m12 card touch" style="width:40px; padding-left:7px;"
+            <div class="col m12 card touch" style="width:40px; padding-left:7px;"
                  ng-click="rec.openModal('eventModal')">
                 <div style="margin-top:5px; background-image:url('images/icon_event.png'); width: 25px; height:30px;background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
         <div class="row" style="margin-bottom: 0px;">
-            <div ng-if="rec.selectedCommand !== null" class="col m12 card touch" style="width:40px; padding-left:7px;"
+            <div class="col m12 card touch" style="width:40px; padding-left:7px;"
                  ng-click="rec.openModal('timerModal')">
                 <div id="timer" style="margin-top:5px; background-image:url('images/icon_timer.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
         <div class="row" style="margin-bottom: 0px;">
-            <div ng-if="rec.selectedCommand !== null" id="save" class="col m12 card touch" style="width:40px; padding-left:7px; background-color: #00C853;"
+            <div id="save" class="col m12 card touch" style="width:40px; padding-left:7px; background-color: #00C853;"
                  ng-click="rec.saveAll()">
                 <div  style="margin-top:5px; background-image:url('images/icon_save.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
-        
     </div>
     <div class="col m11" style="padding-left:0px; margin-top:5px;">
         <div class="row" style="padding-left: 11px;">
@@ -204,7 +198,7 @@
     <div class="modal-footer">
         <div class="row">
             <div class="col m3">
-                <a ng-if="rec.threshold.name" ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
+                <a ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
                 <div style="width: 10px; height: 5px;"></div>
             </div>
@@ -246,7 +240,7 @@
     <div class="modal-footer">
         <div class="row">
             <div class="col m3">
-                <a ng-if="rec.event.name" ng-click="rec.remove('events', rec.event.id, 'eventModal')"
+                <a ng-click="rec.remove('events', rec.event.id, 'eventModal')"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
 
                 <div style="width: 10px; height: 5px;"></div>
@@ -277,13 +271,13 @@
     <div class="modal-footer">
         <div class="row">
             <div class="col m3">
-                <a ng-if="rec.timer.time" ng-click="rec.remove('timers', rec.timer.id, 'timerModal')"
+                <a ng-click="rec.remove('timers', rec.timer.id, 'timerModal')"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
 
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a id="modalbewaren" ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
+                <a id="modalbewaren" ng-click="rec.addToThresholds()"
                    ng-if="rec.timer.time!==null && rec.timer.name !== null" class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
