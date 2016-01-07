@@ -3,12 +3,24 @@ var api = require('superagent');
 var Sensor = require('../models/sensor');
 var Actuator = require('../models/actuator');
 var thinky = require('thinky')();
-
+var thinky = require('thinky')();
+var r = thinky.r;
 
 describe('Device routing', function () {
 
     require('./globalBefore');
 
+    before(function(done){
+        r.db('jarvis').table('Actuator').
+        delete().
+        run(connection, function(err, result) {
+            if(err) {
+                done(err);
+            }
+            console.log('deleted actuator table');
+            done();
+        });
+    });
 
     before(function (done) {
         var device = newDevice(1000015, 'a');
@@ -101,7 +113,6 @@ describe('Device routing', function () {
                 .put('http://localhost:3221/devices/actuators/1000016/alias')
                 .send({alias: 'nieuw'})
                 .end(function (err, res) {
-                    console.log('hallooo actuator update alias end');
                     if (err) {
                         console.error(err);
                     }

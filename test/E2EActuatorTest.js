@@ -15,7 +15,7 @@ describe('Actuator overzicht/detail test', function(){
 				browserName: 'chrome'
 			}
 		});
-		
+
 		var device = newDevice(id, 'a');
         device.type = 'actuator';
 
@@ -44,7 +44,7 @@ describe('Actuator overzicht/detail test', function(){
 			})
 			.getText('#actuator').then(function(result){
 				expect(result[0]).to.equal("a")
-				done();	
+				done();
 			});
 	});
 
@@ -112,6 +112,18 @@ describe('Actuator overzicht/detail test', function(){
             }
             done();
         });
+    });
+
+    after(function(done){
+        api
+            .post("http://localhost:3221/test/devices/delete")
+            .end(function(err,res) {
+                if (err) {
+                    done(err);
+                }
+                console.log('deleted devices in app.js');
+                done();
+            });
     });
 
 	after(function(done){

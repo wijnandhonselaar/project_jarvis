@@ -15,7 +15,7 @@ describe('Sensor overzicht/detail test', function(){
 				browserName: 'chrome'
 			}
 		});
-		
+
 		var device = newDevice(id, 'a');
         device.type = 'sensor';
 
@@ -35,7 +35,7 @@ describe('Sensor overzicht/detail test', function(){
             done();
         }, 500);
     });
-    
+
 	it("Should find the sensor with the correct name", function(done){
 		browser.
 			url("http://localhost:3221/#/sensors")
@@ -46,7 +46,7 @@ describe('Sensor overzicht/detail test', function(){
 			.getText('#sensor').then(function(result){
 				console.log(result);
 				expect(result[0]).to.equal("a")
-				done();	
+				done();
 			});
 	});
 
