@@ -3,19 +3,23 @@ var api = require('superagent');
 var Sensor = require('../models/sensor');
 var Actuator = require('../models/actuator');
 var thinky = require('thinky')();
+var thinky = require('thinky')();
 var r = thinky.r;
-var connection = null;
-
 
 describe('Device routing', function () {
 
     require('./globalBefore');
-    before(function (done) {
-        r.connect({host: 'localhost', port: 28015}, function (err, conn) {
-            if (err) throw err;
-            connection = conn;
-            done();
-        })
+
+    before(function(done){
+        api
+            .post("http://localhost:3221/test/devices/delete")
+            .end(function(err,res) {
+                if (err) {
+                    done(err);
+                }
+                console.log('deleted devices in app.js');
+                done();
+            });
     });
 
     before(function (done) {
@@ -33,7 +37,7 @@ describe('Device routing', function () {
     });
 
     before(function (done) {
-        var device2 = newDevice(1000016, 'b');
+        var device2 = newDevice(15789654, 'b');
         device2.type = 'actuator';
         api.post('http://localhost:3221/test/devices/add')
             .send({device: device2, remote: {address: '192.186.24.2'}})
@@ -41,11 +45,10 @@ describe('Device routing', function () {
                 if (err) {
                     console.error(err);
                 }
+                console.log('actuator added!');
                 done();
             });
     });
-
-
 
     beforeEach(function (done) {
         setTimeout(function () {
@@ -95,7 +98,7 @@ describe('Device routing', function () {
                     if (err) {
                         console.error(err);
                     }
-                    expect(res.body.actuators[0].id).to.be.equal(1000016);
+                    expect(res.body.actuators[0].id).to.be.equal(15789654);
                     expect(res.body.actuators.length).to.be.equal(1);
                     done();
                 });
@@ -103,6 +106,19 @@ describe('Device routing', function () {
     });
 
     describe('#Change an alias', function () {
+        it('should change the alias of a actuator', function (done) {
+            api
+                .put('http://localhost:3221/devices/actuators/15789654/alias')
+                .send({alias: 'nieuw'})
+                .end(function (err, res) {
+                    if (err) {
+                        console.error(err);
+                    }
+                    expect(JSON.parse(res.text).success).to.be.equal("Success, alias for 15789654 was successfully updated.");
+                    done();
+                });
+        });
+
         it('should change the alias of a sensor', function (done) {
             api
                 .put('http://localhost:3221/devices/sensors/1000015/alias')
@@ -116,18 +132,7 @@ describe('Device routing', function () {
                 });
         });
 
-        it('should change the alias of a actuator', function (done) {
-            api
-                .put('http://localhost:3221/devices/actuators/1000016/alias')
-                .send({alias: 'nieuw'})
-                .end(function (err, res) {
-                    if (err) {
-                        console.error(err);
-                    }
-                    expect(JSON.parse(res.text).success).to.be.equal("Success, alias for 1000016 was successfully updated.");
-                    done();
-                });
-        });
+
     });
 
     describe('#Change an clientIntervalTimer', function () {
@@ -148,25 +153,25 @@ describe('Device routing', function () {
     });
 
     after(function (done) {
-        var id = 1000015;
-        Sensor.get(id).then(function (sensor) {
-            sensor.delete().then(function () {
-                done();
-            });
-        }).error(function (err) {
-            console.error(err);
-        });
+       var id = 1000015;
+       Sensor.get(id).then(function (sensor) {
+           sensor.delete().then(function () {
+               done();
+           });
+       }).error(function (err) {
+           console.error(err);
+       });
     });
 
     after(function (done) {
-        var id = 1000016;
-        Actuator.get(id).then(function (actuator) {
-            actuator.delete().then(function () {
-                done();
-            }).error(function (err) {
-                console.error(err);
-            });
-        });
+       var id = 15789654;
+       Actuator.get(id).then(function (actuator) {
+           actuator.delete().then(function () {
+               done();
+           }).error(function (err) {
+               console.error(err);
+           });
+       });
     });
 
     after(function (done) {

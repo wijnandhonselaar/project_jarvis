@@ -81,7 +81,6 @@ module.exports = (function () {
                 console.error(err);
                 throw err;
             }else{
-                console.log(result);
                 res.send(result);
             }
         });

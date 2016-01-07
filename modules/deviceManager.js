@@ -211,6 +211,7 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
     function updateCB(err, res) {
         if(err) {
+            throw err;
             logger.logEvent(res, devicetype, logger.manual ,"Alias voor " + res.model.name + " niet aangepast.", logger.severity.warning);
             callback( {err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
         } else {

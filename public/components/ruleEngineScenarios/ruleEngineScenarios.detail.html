@@ -283,7 +283,7 @@
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a id="modalbewaren" ng-click="rec.addToThresholds()"
+                <a id="modalbewaren" ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
                    ng-if="rec.timer.time!==null && rec.timer.name !== null" class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>

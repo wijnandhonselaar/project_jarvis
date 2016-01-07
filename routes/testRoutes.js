@@ -25,7 +25,6 @@ router.post('/devices/add', function(req, res){
 });
 
 router.post('/devices/delete', function(req, res){
-	console.log("hier");
     deviceManager.removeAll();
     res.send('done');
 });
