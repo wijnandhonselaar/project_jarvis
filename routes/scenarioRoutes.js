@@ -78,6 +78,7 @@ module.exports = (function () {
     route.put('/:id', function (req, res) {
         if (typeof req.body.scenario === 'string') req.body.scenario = JSON.parse(req.body.scenario);
         scenarioManager.updateById(req.params.id, req.body.scenario, function (err, result) {
+            res.json(result);
             if (err) {
                 console.error(err);
                 throw err;
