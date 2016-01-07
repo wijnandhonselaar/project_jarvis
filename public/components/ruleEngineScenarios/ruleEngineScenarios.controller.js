@@ -213,6 +213,9 @@
                         if(group.hasOwnProperty(ruleIndex)) {
                             if(group[ruleIndex] && group[ruleIndex].id == ruleID) {
                                 rec.currentGroups[groupIndex].splice(ruleIndex,1);
+                                if(rec.currentGroups[groupIndex].length === 0) {
+                                    rec.currentGroups.splice(groupIndex,1);
+                                }
                             }
                         }
                     }
@@ -409,6 +412,7 @@
             rec.actuators = JSON.parse(JSON.stringify(DS.getActuators()));
             rec.sensors = JSON.parse(JSON.stringify(DS.getSensors()));
             rec.ruleObjects = rec.scenario.rules;
+            rec.selectedCommand = "start";
             rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups);
             //$scope.$watch('rec.scenario.rules', function (newVal, oldVal) {
             //    ScenarioService.update(rec.scenario.id, rec.scenario)

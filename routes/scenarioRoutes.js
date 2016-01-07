@@ -83,7 +83,6 @@ module.exports = (function () {
             }else{
                 res.send(result);
             }
-            res.json(result);
         });
     });
 
