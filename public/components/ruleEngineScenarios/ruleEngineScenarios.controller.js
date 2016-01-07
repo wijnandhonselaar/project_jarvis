@@ -17,7 +17,7 @@
         rec.getSensorById = getSensorById;
         rec.selectedSensor = null;
         rec.selectedActuator = null;
-        rec.selectedCommand = "start";
+        rec.selectedCommand = null;
         rec.closeModal = closeModal;
         rec.updateFieldList = updateFieldList;
         rec.addToThresholds = addToThresholds;
