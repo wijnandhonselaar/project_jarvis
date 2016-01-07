@@ -20,6 +20,7 @@ var severity = {
 
 /**
  * log event data
+ * Not all event logs contain devices, so device can be null
  * @param device
  * @param type
  * @param category

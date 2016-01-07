@@ -70,9 +70,12 @@ function getAll(cb) {
  */
 function updateById(id, scenario, cb) {
     Scenario.get(id).then(function (old) {
+        var prevState = old.status;
         old.merge(scenario);
         old.save().then(function (res) {
-            if(conflictManager) conflictManager.preEmptiveDetect(scenario);
+            if(prevState === scenario.status) { // Only show when editing the scenario
+                if(conflictManager) conflictManager.preEmptiveDetect(scenario);
+            }
             cb(null, res);
         }).catch(function (err) {
             console.error(err);
@@ -120,23 +123,17 @@ function toggleState(scenario, cb) {
     if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id == scenarios[i].id) {
-            var message = '';
-            if(!scenarios[i].status) {
-                message = 'Scenario: ' + scenario.name + ' is ingeschakeld.';
-            } else {
-                message = 'Scenario: ' + scenario.name + ' is uitgeschakeld.';
-            }
             if (scenarios[i].status === false) {
                 execute(scenario, 'start', function(err, data){
                     if(err) cb(err, data);
-                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is ingeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
                     cb(null, data);
                 });
             }
             else {
                 execute(scenario, 'finish', function(err, data){
                     if(err) cb(err, data);
-                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is uitgeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
                     cb(null, data);
                 });
             }
