@@ -4,7 +4,7 @@ Jarvis is een domotica systeem op basis van een Node.js server, waarbij door mid
 
 ![ScreenShot](https://github.com/HANICA/project_jarvis/blob/development/screenshot.png)
 
-## Installatie
+# Installatie
 
 # Inleiding
 Voor het project Jarvis is een Raspberry Pi met een 7” touchscreen gebruikt. In deze handleiding is te vinden hoe deze geinstalleerd moet worden. Voor deze handleiding zijn bepaalde onderdelen vereist.
@@ -13,7 +13,8 @@ Voor het project Jarvis is een Raspberry Pi met een 7” touchscreen gebruikt. I
 -        32gb geheugen kaart (Bij kleinere is uitgebreide installatie verplicht!)
 -        Wifi adapter (indien geen UTP-kabel)
 -        Computer met SD-poort
--        
+
+
 # Eenvoudige installatie
 De installatie van de Raspberry Pi is ook mogelijk met een voor geprogrammeerde image van Raspbian. Deze is ontwikkeld door projectgroep Jarvis.
 
