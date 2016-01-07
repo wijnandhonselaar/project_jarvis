@@ -10,8 +10,8 @@ var type = thinky.type;
  */
 var Log = thinky.createModel("eventLog", {
     device: {
-        id: type.number().required(),
-        name: type.string().required(),
+        id: type.number(),
+        name: type.string(),
         alias: type.string()
     },
     type: type.string().required(),

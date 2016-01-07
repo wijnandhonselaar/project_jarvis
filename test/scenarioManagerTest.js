@@ -3,15 +3,14 @@ var api                 = require('superagent');
 var Scenario            = require('../models/scenario');
 var ScenarioManager     = require('../modules/scenarioManager');
 var id                  = null;
+var deviceManager = require('../modules/deviceManager');
 
 describe('Scenario Manager', function() {
     require('./globalBefore');
-    before(function(done) {
-        //Scenario.deleteAll(function(err,res){ });
-        done();
-    });
 
     describe('#New scenario', function() {
+        this.timeout(5000);
+
         it('should save new scenario.', function(done) {
             ScenarioManager.new('Bedtijd', 'Zet alle lampen uit.', [{deviceid: 1, action: {command: 'on'}}], function(err,res) {
                 if(err) {

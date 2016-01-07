@@ -84,16 +84,16 @@ function apply(device, event, callback) {
                     //if (!conflictManager.detect(command, device, scenario)) {
                     switch (device.model.commands[command].httpMethod) {
                         case 'POST':
-                            comm.post(command, device, {}, function (state) {
+                            comm.post(command, device, {}, false, function (state) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, state);
-                                deviceManager.updateActuatorState(device.id, state);
+                                deviceManager.updateActuatorState(device.id, state, false);
                                 if (callback) callback(state);
                             });
                             break;
                         case 'GET':
                             comm.get(command, device, function (data) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, data);
-                                deviceManager.updateActuatorState(device.id, state);
+                                deviceManager.updateActuatorState(device.id, state, false);
                                 if (callback) callback(state);
                             });
                             break;

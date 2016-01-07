@@ -7,7 +7,7 @@ var comm = require('./interperter/comm');
 var io = null;
 var deviceManager = null;
 var conflictManager = null;
-var Logger = require('./logManager');
+var logger = require('./logManager');
 var scenarios = [];
 
 
@@ -27,7 +27,7 @@ function create(name, description, actuators, cb) {
             status: false
         });
     Scenario.save(scenario).then(function (res) {
-        conflictManager.preEmptiveDetect(scenario);
+        if (conflictManager) conflictManager.preEmptiveDetect(scenario);
         cb(null, res);
     }).error(function (err) {
         console.log(err);
@@ -70,9 +70,12 @@ function getAll(cb) {
  */
 function updateById(id, scenario, cb) {
     Scenario.get(id).then(function (old) {
+        var prevState = old.status;
         old.merge(scenario);
         old.save().then(function (res) {
-            conflictManager.preEmptiveDetect(scenario);
+            if(prevState === scenario.status) { // Only show when editing the scenario
+                if(conflictManager) conflictManager.preEmptiveDetect(scenario);
+            }
             cb(null, res);
         }).catch(function (err) {
             console.error(err);
@@ -122,13 +125,16 @@ function toggleState(scenario, cb) {
         if (scenario.id == scenarios[i].id) {
             if (scenarios[i].status === false) {
                 execute(scenario, 'start', function(err, data){
-                    Logger.logScenario(scenarios[i], null);
-                    cb(err, data);
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is ingeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
                 });
             }
             else {
                 execute(scenario, 'finish', function(err, data){
-                    cb(err, data);
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is uitgeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
                 });
             }
         }
@@ -150,7 +156,6 @@ function execute(scenario, scenarioState, cb){
     for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
         var command = scenario.actuators[deviceLoop].action.command;
         var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
-
         var newcommand = "";
         if( (command == "on" || command == "off") && scenarioState === 'finish') {
             if (command == "on") {
@@ -163,7 +168,7 @@ function execute(scenario, scenarioState, cb){
         }
 
         if (!conflictManager.detect(newcommand, device, scenario)) {
-            deviceManager.executeCommand(newcommand, device, {});
+            deviceManager.executeCommand(newcommand, device, {}, true);
         }
     }
 }
@@ -186,7 +191,7 @@ function start(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -207,7 +212,7 @@ function stop(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -264,7 +269,8 @@ function getByName(name, cb) {
         cb(res[0]);
     }).
     catch(function (err) {
-        cb({}.err = err);
+        console.error('Cannot get scenario with name: ' + name);
+        console.error(err);
     });
 }
 

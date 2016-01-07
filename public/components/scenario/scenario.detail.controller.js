@@ -13,6 +13,7 @@
         sdc.uid = $sp.uid;
         sdc.addActuator = addActuator;
         sdc.select = select;
+        sdc.updateName = updateName;
         sdc.updateDescription = updateDescription;
         sdc.delete = deleteScenario;
         sdc.removeActuator = removeActuator;
@@ -29,6 +30,7 @@
         sdc.setClass = setClass;
         sdc.showConflictList = showConflictList;
         sdc.getOppositeCommand = getOppositeCommand;
+        sdc.toggleState = toggleState;
         var swiper = null;
         var modalIsOpen = ScenarioService.modalIsOpen;
 
@@ -87,13 +89,11 @@
                 modalIsOpen = true;
                 showConflictListModal();
             }
-            //$('#conflictOverviewModal').openModal();
         });
 
         socketService.socketListener('resolvedConflictsList', function (data) {
             sdc.resolvedConflicts = data;
             $scope.$apply();
-            //console.log(data);
         });
 
         function showConflictList() {
@@ -300,9 +300,9 @@
 
 
         function updateName(id, scenarioName){
+            sdc.scenario.name = scenarioName;
             ScenarioService.updateName(id, sdc.scenario)
                 .then(function(data){
-                    sdc.scenario.name = scenarioName;
                     return data;
                 })
                 .catch(function (data) {
@@ -372,6 +372,22 @@
                 }
             }
             return false;
+        }
+
+        function toggleState(){
+            ScenarioService.toggleState(sdc.scenario)
+                .then(function(data){
+                    if(data.id === sdc.scenario.id){
+                        sdc.scenario.status = data.status;
+                        //$scope.$apply();
+                        //showConflictList();
+                    }
+                    return data;
+                })
+                .catch(function(err){
+                    console.error("error", err);
+                    return err;
+                });
         }
 
 
