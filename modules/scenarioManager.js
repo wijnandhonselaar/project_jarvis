@@ -27,7 +27,7 @@ function create(name, description, actuators, cb) {
             status: false
         });
     Scenario.save(scenario).then(function (res) {
-        conflictManager.preEmptiveDetect(scenario);
+        if (conflictManager) conflictManager.preEmptiveDetect(scenario);
         cb(null, res);
     }).error(function (err) {
         console.log(err);
@@ -72,7 +72,7 @@ function updateById(id, scenario, cb) {
     Scenario.get(id).then(function (old) {
         old.merge(scenario);
         old.save().then(function (res) {
-            conflictManager.preEmptiveDetect(scenario);
+            if(conflictManager) conflictManager.preEmptiveDetect(scenario);
             cb(null, res);
         }).catch(function (err) {
             console.error(err);

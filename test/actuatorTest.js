@@ -153,7 +153,9 @@ describe('Actuator', function () {
         // save the new sensors
         Actuator.save(newactuator).then(function(res) {
             done();
-        }).error(console.log);
+        }).error(function(err) {
+            console.error(err);
+        });
     });
 
     it('Should have a savedate', function (done) {
