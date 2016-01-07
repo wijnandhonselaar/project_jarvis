@@ -4,7 +4,7 @@ Jarvis is een domotica systeem op basis van een Node.js server, waarbij door mid
 
 ![ScreenShot](https://github.com/HANICA/project_jarvis/blob/development/screenshot.png)
 
-# Installatie
+# Installatie Raspberry Pi
 
 # Inleiding
 Voor het project Jarvis is een Raspberry Pi met een 7” touchscreen gebruikt. In deze handleiding is te vinden hoe deze geinstalleerd moet worden. Voor deze handleiding zijn bepaalde onderdelen vereist.
@@ -75,7 +75,7 @@ export CXXFLAGS="-mfpu=neon-vfpv4 -mcpu=native -march=native -mfloat-abi=hard" |
 sudo make install
 ```
 
-4.  	Als de installatie is gelukt kan rethinkdb gestart worden door het commando ‘rethinkdb’.
+5.  	Als de installatie is gelukt kan rethinkdb gestart worden door het commando ‘rethinkdb’.
 
 # Stap 3
 In stap 3 moet het programma van Github afgehaald worden en op de raspberry gezet worden om te kunnen gebruiken
