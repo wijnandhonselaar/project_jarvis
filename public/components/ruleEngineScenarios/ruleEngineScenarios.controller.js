@@ -17,7 +17,7 @@
         rec.getSensorById = getSensorById;
         rec.selectedSensor = null;
         rec.selectedActuator = null;
-        rec.selectedCommand = "start";
+        rec.selectedCommand = null;
         rec.closeModal = closeModal;
         rec.updateFieldList = updateFieldList;
         rec.addToThresholds = addToThresholds;
@@ -30,6 +30,7 @@
         rec.recalculateGroups = recalculateGroups;
         rec.getRuleIcon = getRuleIcon;
         rec.saveAll = saveAll;
+        rec.back = back;
 
         if (!rec.scenario.rules) {
             rec.scenario.rules = {
@@ -379,6 +380,16 @@
             reset();
             $timeout(draggable, 500);
         }
+
+        function back() {
+            //$state.go( 'state-whatever', { previousState : { name : $scope.previousState, params : $scope.previousStateParams } }, {} );
+        }
+
+        //$scope.$on('$stateChangeSuccess', function (ev, to, toParams, from, fromParams) {
+        //    $scope.previousState = from.name;
+        //    $scope.previousStateParams = fromParams;
+        //    $scope.currentState = to.name;
+        //});
 
         $timeout(function () {
             $('#timepicker').timepicker({'step': 15, timeFormat: 'H:i'});
