@@ -280,10 +280,11 @@
         }
 
         function sendCommand(id, command, commandkey, type, values) {
+            values = values || {};
             return new Promise(
                 function (resolve, reject) {
                     if (command.httpMethod === "POST") {
-                        $http.post('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey, {})
+                        $http.post('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey, values)
 
                             .success(function (data) {
                                 resolve(data);

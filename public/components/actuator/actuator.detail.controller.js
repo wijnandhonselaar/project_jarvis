@@ -117,7 +117,7 @@
         function sendcommand(id, command, commandkey, type, values) {
             DS.sendCommand(id, command, commandkey, type, values)
                 .then(function (data) {
-                    Materialize.toast("Command successfull excecuted", 4000);
+                    Materialize.toast("Command successfully executed", 4000);
                 })
                 .catch(function (err) {
                     Materialize.toast("Command error", 4000);
