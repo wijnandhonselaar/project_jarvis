@@ -41,14 +41,14 @@ Selecteer de juiste Drive waarin de SD kaart zit, zodat de image op de juiste SD
 Selecteer ‘Write’ en wacht tot het voltooid is. Doe nu doe SD kaart in de Raspberry.
 
 # Stap 2
-1.  	Installatie van NodeJS op de Raspberry.
+1.Installatie van NodeJS op de Raspberry.
 
 Open de console en voer de volgende commando’s uit.
 ```
 wget http://node-arm.herokuapp.com/node_latest_armhf.deb
 sudo dpkg -i node_latest_armhf.deb
 ```
-2.  Installatie van Rethinkdb op de Raspberry. Tijdens deze installatie kunnen er veel problemen voordoen, voornamelijk met het geheugen. Begin met het vergroten van de SWAP file. Dit kan gedaan worden door de volgende commando’s uit te voeren.
+2.Installatie van Rethinkdb op de Raspberry. Tijdens deze installatie kunnen er veel problemen voordoen, voornamelijk met het geheugen. Begin met het vergroten van de SWAP file. Dit kan gedaan worden door de volgende commando’s uit te voeren.
 ```
 sudo nano /etc/dphys-swapfile
 De standard waarde van Raspbian is:
@@ -56,14 +56,14 @@ CONF_SWAPSIZE=100
 Deze moet veranderd worden in:
 CONF_SWAPSIZE=1024
 ```
-3.  	Na dat je de veranderingen hebt opgeslagen dient de service die de swapfile managet opnieuw opgestart te worden. Dat gebeurt met de volgende commando’s:
+3.Na dat je de veranderingen hebt opgeslagen dient de service die de swapfile managet opnieuw opgestart te worden. Dat gebeurt met de volgende commando’s:
 
 ```
 sudo /etc/init.d/dphys-swapfile stop
 sudo /etc/init.d/dphys-swapfile start
 ```
 
-4.  	Vanaf dit punt kan de installatie beginnen voor rethinkdb. Voer de volgende commando’s in volgorde uit. PAS OP! De opdracht ‘export CXXFLAGS’ kan meer dan 8 uur duren. De Raspberry mag niet worden afgesloten als deze begonnen is! Mocht deze toch uitgaan kan het zijn dat de installatie fout gaat en helemaal opnieuw begonnen moet worden.
+4.Vanaf dit punt kan de installatie beginnen voor rethinkdb. Voer de volgende commando’s in volgorde uit. PAS OP! De opdracht ‘export CXXFLAGS’ kan meer dan 8 uur duren. De Raspberry mag niet worden afgesloten als deze begonnen is! Mocht deze toch uitgaan kan het zijn dat de installatie fout gaat en helemaal opnieuw begonnen moet worden.
 
 ```
 wget http://download.rethinkdb.com/dist/rethinkdb-latest.tgz
@@ -102,4 +102,15 @@ Voeg vervolgens de volgende comments toe aan het bestand.
 @xset s noblank
 @chromium --kiosk --incognito localhost:3221
 ```
-Daarna is de klaar!
+Daarna is de installatie klaar!
+
+# Development installatie
+
+Deze installatie is nodig voor de ontwikkelaars die verder gaan werken aan het Jarvis domotica project.
+
+```
+run "npm install grunt-cli -g" 
+run "npm install bower -g" 
+run "bower install" in de public map van het project 
+run "grunt development” in de root map van het project 
+```
