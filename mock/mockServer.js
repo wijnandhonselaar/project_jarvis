@@ -1,4 +1,3 @@
-/* jshint ignore:start */
 var express = require("express");
 var app = express();
 var server = require('http').Server(app);
@@ -19,5 +18,5 @@ app.use(bodyParser.urlencoded({
 
 app.use("/", deviceRoutes);
 
-device.init();
 
+device.init();

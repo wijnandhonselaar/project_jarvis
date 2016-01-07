@@ -3,20 +3,31 @@
 
 var Scenario = require('../models/scenario');
 var ruleEngine = require('./ruleEngine');
-var devicemanager = require('./deviceManager');
 var comm = require('./interperter/comm');
 var io = null;
+var deviceManager = null;
+var conflictManager = null;
+var logger = require('./logManager');
 var scenarios = [];
 
+
+/**
+ * Create new scenario
+ * @param name
+ * @param description
+ * @param actuators
+ * @param cb
+ */
 function create(name, description, actuators, cb) {
     var scenario = new Scenario(
         {
-        name: name,
-        description: description,
-        actuators: actuators,
-        status: false
-    });
+            name: name,
+            description: description,
+            actuators: actuators,
+            status: false
+        });
     Scenario.save(scenario).then(function (res) {
+        conflictManager.preEmptiveDetect(scenario);
         cb(null, res);
     }).error(function (err) {
         console.log(err);
@@ -24,6 +35,11 @@ function create(name, description, actuators, cb) {
     });
 }
 
+/**
+ * Get scenario by id
+ * @param id
+ * @param cb
+ */
 function get(id, cb) {
     Scenario.get(id).then(function (res) {
         cb(null, res);
@@ -32,20 +48,31 @@ function get(id, cb) {
     });
 }
 
+/**
+ * Get all scenarios
+ * @param cb
+ */
 function getAll(cb) {
     scenarios = [];
     Scenario.run().then(function (res) {
-          scenarios = res;
+        scenarios = res;
         cb(null, scenarios);
     }).error(function (err) {
         cb({error: "Not found.", message: err});
     });
 }
 
+/**
+ * Update scenario by ID
+ * @param id
+ * @param scenario
+ * @param cb
+ */
 function updateById(id, scenario, cb) {
     Scenario.get(id).then(function (old) {
         old.merge(scenario);
         old.save().then(function (res) {
+            conflictManager.preEmptiveDetect(scenario);
             cb(null, res);
         }).catch(function (err) {
             console.error(err);
@@ -57,6 +84,11 @@ function updateById(id, scenario, cb) {
     });
 }
 
+/**
+ * Delete scenario by id
+ * @param id
+ * @param cb
+ */
 function deleteById(id, cb) {
     Scenario.get(id).delete().run(function (res) {
         cb(null, res);
@@ -66,6 +98,11 @@ function deleteById(id, cb) {
 }
 
 
+/**
+ * Update scenario by reference
+ * @param scenario
+ * @param cb
+ */
 function update(scenario, cb) {
     scenario.save().then(function (res) {
         cb(null, res);
@@ -74,44 +111,99 @@ function update(scenario, cb) {
     });
 }
 
+/**
+ * Toggle scenario state (active/disabled)
+ * @param scenario
+ * @param cb
+ */
 function toggleState(scenario, cb) {
     if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
-        if (scenario.id === scenarios[i].id) {
+        if (scenario.id == scenarios[i].id) {
+            var message = '';
+            if(!scenarios[i].status) {
+                message = 'Scenario: ' + scenario.name + ' is ingeschakeld.';
+            } else {
+                message = 'Scenario: ' + scenario.name + ' is uitgeschakeld.';
+            }
             if (scenarios[i].status === false) {
-                scenarios[i].status = true;
-                cb(null, scenarios[i]);
+                execute(scenario, 'start', function(err, data){
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
+                });
             }
             else {
-                scenarios[i].status = false;
-                cb(null, scenarios[i]);
+                execute(scenario, 'finish', function(err, data){
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
+                });
             }
-            updateById(scenarios[i].id, scenarios[i],updateCB);
         }
-    }
-
-    function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
-        //console.log(data);
     }
 }
 
+/**
+ * Execute scenario
+ * @param scenario
+ * @param scenarioState
+ * @param cb
+ */
+function execute(scenario, scenarioState, cb){
+    if(scenarioState == 'start') {
+        start(scenario , cb);
+    } else {
+        stop(scenario, cb);
+    }
+    for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
+        var command = scenario.actuators[deviceLoop].action.command;
+        var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
+        var newcommand = "";
+        if( (command == "on" || command == "off") && scenarioState === 'finish') {
+            if (command == "on") {
+                newcommand = "off";
+            } else {
+                newcommand = "on"
+            }
+        } else {
+            newcommand = command;
+        }
+
+        if (!conflictManager.detect(newcommand, device, scenario)) {
+            deviceManager.executeCommand(newcommand, device, {}, true);
+        }
+    }
+}
+
+/**
+ * Start scenario
+ * @param scenario
+ * @param cb
+ */
 function start(scenario, cb){
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id === scenarios[i].id) {
             if (scenarios[i].status === false) {
                 scenarios[i].status = true;
-                if(cb) cb(null, scenarios[i]);
+                if(cb) {
+                    cb(null, scenarios[i]);
+                }
             }
             updateById(scenarios[i].id, scenarios[i],updateCB);
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
-        //console.log(data);
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
+
+/**
+ * Stop Scenario
+ * @param scenario
+ * @param cb
+ */
 function stop(scenario, cb){
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id === scenarios[i].id) {
@@ -119,15 +211,18 @@ function stop(scenario, cb){
                 scenarios[i].status = false;
                 if(cb) cb(null, scenarios[i]);
             }
-            updateById(scenarios[i].id, scenarios[i],updateCB);
+            updateById(scenarios[i].id, scenarios[i], updateCB);
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
-        //console.log(data);
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
+/**
+ * Validate rules set on scenarios
+ * @param event
+ */
 function validateRules(event) {
     for (var i = 0; i < scenarios.length; i++) {
         ruleEngine.apply(scenarios[i], event);
@@ -166,19 +261,28 @@ function validateRules(event) {
 //    }
 //}
 
+
+/**
+ * Get scenario by name
+ * @param name
+ * @param cb
+ */
 function getByName(name, cb) {
-        Scenario.filter({name: name}).run().then(function (res) {
-            cb(res[0]);
-        }).
-        catch(function (err) {
-            throw err;
-        });
+    Scenario.filter({name: name}).run().then(function (res) {
+        cb(res[0]);
+    }).
+    catch(function (err) {
+        console.error('Cannot get scenario with name: ' + name);
+        console.error(err);
+    });
 }
 
 module.exports = {
-    init: function (socketio) {
+    init: function (socketio, cnflictmanager, dviceManager) {
         getAll(function(){});
         if (socketio) io = socketio;
+        if(cnflictmanager) conflictManager = cnflictmanager;
+        if(dviceManager) deviceManager = dviceManager;
     },
     validate: validateRules,
     toggleState: toggleState,
@@ -190,5 +294,7 @@ module.exports = {
     updateById: updateById,
     getByName: getByName,
     start:start,
-    stop:stop
+    stop:stop,
+    execute:execute,
+    scenarios:scenarios
 };

@@ -28,11 +28,9 @@ var rules = {
     }
 };
 /**
- *
- * @param device
- * @param remote
+ * Function that's called after each state update (both sensors and actuators)
+ * @param event
  */
-
 function updateManagers(event) {
     //for (var i = 0; i < getActuators().length; i++) {
     //    ruleEngine.apply(getActuators()[i], event);
@@ -40,6 +38,15 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
+setInterval(updateManagers,20000);
+
+/**
+ *
+ * Adds device to device array and / or adds it to the database when it does not exist
+ * @param device
+ * @param remote
+ * @param deviceType
+ */
 function addDevice(device, remote, deviceType) {
     // lets see if its known in the database
     rethinkManager.getDevice(device.id, deviceType, function (err, res) {
@@ -77,10 +84,10 @@ function addDevice(device, remote, deviceType) {
                 }
             }, device.type, function (err, res) {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                     logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, logger.severity.notice);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", logger.severity.notice);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden.", logger.severity.notice);
                 }
             });
         } else {
@@ -93,6 +100,7 @@ function addDevice(device, remote, deviceType) {
         }
     });
 }
+
 /**
  * Broadcasts event from device. it's triggered from the autodiscover module
  * @param msg
@@ -105,10 +113,17 @@ function broadcastEvent(msg) {
         logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
         io.emit('deviceEvent', {device: device, event: msg});
     } else {
-        console.log('What the fuck, ik kan mijn apparaat niet vinden');
+        console.error('What the fuck, ik kan mijn apparaat niet vinden');
+        logger.logEvent(null, 'actuator', logger.automatic, msg.msg, logger.severity.error);
     }
 }
 
+/**
+ * called within addDevice method. This method adds the device to the in-memory list of devices. (array)
+ * @param device
+ * @param remote
+ * @param deviceType
+ */
 function addToDeviceList(device, remote, deviceType) {
     if (typeof deviceType === 'undefined') {
         switch (device.type) {
@@ -139,7 +154,7 @@ function addToDeviceList(device, remote, deviceType) {
 }
 
 /**
- *
+ * Omitted method, it's not used anymore.
  * @param ip
  * @returns {*}
  */
@@ -184,6 +199,14 @@ function getActuatorById(id) {
     return {err: "Error, could not find actuator with id: " + id + "."};
 }
 
+
+/**
+ * Exported method. Used to update the alias of a device.
+ * @param devicetype
+ * @param id
+ * @param alias
+ * @param callback
+ */
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
     function updateCB(err, res) {
@@ -211,7 +234,7 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
 }
 
 /**
- *
+ * Updates the sensor update interval. Sets the poll timer to given milliseconds
  * @param id
  * @param clientRequestInterval
  * @returns {*}
@@ -244,10 +267,18 @@ function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
     }
 }
 
+/**
+ * starts up the sensorpoll worker (offloaded to child process)
+ * @param sensor
+ */
 function initiateStatusPolling(sensor) {
     workerManager.pullData(sensor);
 }
 
+/**
+ * Parses the data from the poll child process and reads the sensor status (values) and pushes these to the client
+ * @param obj
+ */
 function updateSensorStatusFunction(obj) {
     var sensor = getSensorById(obj.id);
     if (sensor.status !== obj.status) {
@@ -258,46 +289,106 @@ function updateSensorStatusFunction(obj) {
         io.emit("deviceUpdated", sensor);
         rethinkManager.setStatus(obj.id, 'sensor', obj.status, function (err, res) {
             if (err) {
-                console.log('set status to database error:', err);
+                console.error('set status to database error:', err);
             }
         });
     }
 }
 
+/**
+ * This method checks device state and only toggles if corresponding gate is active.
+ * @param command
+ * @param device
+ * @returns {boolean}
+ */
+function checkState(command, device) {
+    if (device.status) {
+        var state = device.status.state;
+        switch (command) {
+            case 'on':
+                if (!state) {
+                    return true;
+                } else if (state) {
+                    return false;
+                }
+                break;
+            case 'off':
+                if (!state) {
+                    return false;
+                } else if (state) {
+                    return true;
+                }
+                break
+        }
+    } else {
+        return true;
+    }
+}
+
+/**
+ * Updates the actuator state and pushes this to the client
+ * @param id
+ * @param state
+ */
 function updateActuatorState(id, state) {
     var actuator = getActuatorById(id);
+    if(actuator.err) {
+        logger.logEvent(null, 'actuator', logger.automatic, actuator.err, logger.severity.error);
+        return;
+    }
     actuator.status = state;
+    // Only emit when the action is not originated from a scenario
     io.emit("deviceUpdated", actuator);
     rethinkManager.setStatus(id, 'actuator', state, function(err, res){
         if(err) {
-            console.log('set status to database error:', err);
+            console.error('set status to database error:', err);
+            if(getActuatorById(id).err === undefined) {
+                logger.logEvent(getActuatorById(id), 'actuator', state, err.message, logger.severity.error);
+            } else {
+                logger.logEvent(null, 'actuator', state, getActuatorById(id).err, logger.severity.error);
+            }
         }
     });
 }
 
-
+/**
+ * Returns a list of actuators
+ * @returns {*}
+ */
 function getActuators() {
     return devices.actuators;
 }
 
+
+/**
+ * Adds a rule (set from within the ruleEngine) to the device
+ * @param object
+ * @returns {*}
+ */
 function setRules(object) {
     var a = getActuatorById(object.id);
     if (a.err) {
         console.error(a.err);
         return {err: 'Couldn\'t find actuator by id'};
     } else {
-        //console.log('set new rules');
         a.config.rules = object.rules;
-        //console.log(a.config);
         return {success: 'set'};
     }
 }
 
-function executeCommand(command, device, params, cb){
+/**
+ * Execute given command (with optional params) on device
+ * @param command
+ * @param device
+ * @param params
+ * @param isScenario boolean
+ * @param cb
+ */
+function executeCommand(command, device, params, isScenario, cb){
 
     switch (device.model.commands[command].httpMethod) {
         case 'POST':
-            comm.post(command, device, params, function (state, device) {
+            comm.post(command, device, params, isScenario, function (state, device) {
                 updateActuatorState(device.id, state);
                 if(cb) cb(state);
             });
@@ -312,27 +403,27 @@ function executeCommand(command, device, params, cb){
 }
 
 /**
- *
+ * Removed nested scenario from actuator
  * @param id Actuator id
  * @param scenario name
  */
 function removeScenarioFromActuator(id, scenario) {
     function thenCBsmall(res) {
-        if(res.err) throw err;
+        if(res.err) logger.logEvent(null, 'scenario', logger.automatic, res.err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
     }
     function catchCBsmall(err) {
-        console.log('Error bij verwijderen scenario uit config van een actuator.');
-        throw err;
+        console.error('Error bij verwijderen scenario uit config van een actuator.');
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
     }
     function thenCB(actuator) {
         delete actuator.config.scenarios[scenario];
         actuator.save()
             .then(thenCBsmall)
-            .catch(catchCBsmall)
+            .catch(catchCBsmall);
     }
     function catchCB(err) {
-        console.log('Error bij ophalen actuator.');
-        throw err;
+        console.error('Error bij ophalen actuator.');
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
     }
     for(var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
@@ -344,30 +435,35 @@ function removeScenarioFromActuator(id, scenario) {
     }
 }
 
-function updateActuator(id, actuator, cb) {
-    console.log('Update actuator');
 
+
+/**
+ * Update actuator (save to database)
+ * @param id
+ * @param actuator
+ * @param cb
+ */
+function updateActuator(id, actuator, cb) {
     function thenCB1(res) {
         cb(null, res);
     }
 
     function catchCB1(err) {
-        console.log('Error bij opslaan');
+        console.error('Error bij opslaan');
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
         cb({error: err, message: 'Could not update actuator.'});
     }
 
     function thenCB2(persisted) {
         persisted.merge(actuator);
-        console.log("merged");
-        console.log(persisted);
-        console.log('Before save');
         persisted.save()
             .then(thenCB1)
             .catch(catchCB1);
     }
 
     function catchCB2(err) {
-        console.log('Error bij ophalen met id: ' + id);
+        console.error('Error bij ophalen met id: ' + id);
+        logger.logEvent(null, 'scenario', logger.automatic, err.message, logger.severity.error, Math.round((new Date()).getTime() / 1000));
         cb({error: err, message: 'Could not update actuator.'});
     }
 
@@ -380,12 +476,14 @@ function updateActuator(id, actuator, cb) {
     }
 }
 
+/**
+ * Gets al the devices from the database. Is called from the init (on startup) function.
+ */
 function loadDevicesFromDatabase() {
     rethinkManager.getAllDevices('sensors', function (err, res) {
         if (err) {
-            console.log(err);
+            console.error(err);
         } else {
-            //console.log(res);
             for (var i = 0; i < res.length; i++) {
                 addToDeviceList(res[i], res[i].ip, 'sensors');
             }
@@ -394,9 +492,8 @@ function loadDevicesFromDatabase() {
 
     rethinkManager.getAllDevices('actuators', function (err, res) {
         if (err) {
-            console.log(err);
+            console.error(err);
         } else {
-
             for (var i = 0; i < res.length; i++) {
 
                 addToDeviceList(res[i], res[i].ip, 'actuators');
@@ -406,9 +503,9 @@ function loadDevicesFromDatabase() {
 }
 
 //noinspection JSClosureCompilerSyntax
-    /**
-     *
-     * @type {{ init: Function,
+/**
+ *
+ * @type {{ init: Function,
  *          add: addToDeviceList,
  *          getByIP: getDeviceByIPAddress,
  *          getSensor: getSensorById,
@@ -420,7 +517,7 @@ function loadDevicesFromDatabase() {
  *          updateDeviceStatus: updateDeviceStatus,
  *          updateSensorInterval: updateSensorIntervalFunction
 *         }}
-     */
+ */
 module.exports = {
     init: function (socketio, rec, validatorInject) {
         io = socketio;
@@ -451,6 +548,7 @@ module.exports = {
     setRules: setRules,
     updateActuator: updateActuator,
     executeCommand:executeCommand,
+    checkState:checkState,
     removeScenarioFromActuator: removeScenarioFromActuator
 };
 

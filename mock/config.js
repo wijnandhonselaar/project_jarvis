@@ -1,30 +1,29 @@
 var PORT = 80;
 var UDPPORT = 3221;
 
-var broadcastTime = 100;
+var broadcastTime = 500;
 var broadcastAddress = "0.0.0.0";
 //var broadcastAddress = "255.255.255.255";
 
 var actuatoren = {
-	 lampen 		: 5,
-	 rolluiken 		: 5,
-	 ramen 			: 5,
-	 verwarmingen 	: 5,
-	 tvs 			: 5,
-	 deursloten 	: 5
-}
+	 lampen 		: 3,
+	 rolluiken 		: 2,
+	 ramen 			: 2,
+	 verwarmingen 	: 3,
+	 tvs 			: 1,
+	 deursloten 	: 2
+};
 
 var sensoren  = {
- lichtsensoren			:5,
- temperatuursensoren	:5,
- vochtsensoren			:5
-}
+	 lichtsensoren			:5,
+	 temperatuursensoren	:5,
+	 vochtsensoren			:5
+};
 
 
 //DONT EDIT BELOW
 var numberOfActuators = 0;
 for (var key in actuatoren) {
-	console.log(key);
   if (actuatoren.hasOwnProperty(key)) {
 	numberOfActuators += actuatoren[key];
   }
@@ -46,5 +45,4 @@ module.exports = {
     broadcastTime : broadcastTime,
     broadcastAddress : broadcastAddress
 };
-
 

@@ -4,6 +4,9 @@ var dgram = require('dgram');
 var broadcastInterval = setInterval(broadcastUDPPacket, config.broadcastTime);
 var index = 0;
 
+/**
+ *
+ */
 function broadcastUDPPacket() {
     var broadcastObject = {
         type: 'SOK',

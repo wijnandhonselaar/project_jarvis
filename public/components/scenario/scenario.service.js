@@ -15,7 +15,7 @@
                 function (resolve, reject) {
                     $http.post("/scenario", {name: name, description: description, actuators: actuarorString})
                         .success(function (data) {
-                            if (data.err) return reject(new Error(data.err));
+                            if (data.err) return reject(data.err);
                             resolve(data);
                         })
                         .error(function (err) {
@@ -25,7 +25,6 @@
                 }
             );
         }
-
 
 
         function getScenario(id) {
@@ -57,14 +56,14 @@
         }
 
 
-        function toggleState(scenario){
+        function toggleState(scenario) {
             return new Promise(
-                function(resolve,reject){
+                function (resolve, reject) {
                     $http.put("/scenario/toggle", {scenario: JSON.stringify(scenario)})
-                        .success(function(data){
+                        .success(function (data) {
                             resolve(data);
                         })
-                        .error(function(err){
+                        .error(function (err) {
                             console.error(err);
                             reject(err);
                         });
@@ -77,8 +76,13 @@
                 function (resolve, reject) {
                     $http.put("/scenario/" + id, {scenario: JSON.stringify(scenario)})
                         .success(function (data) {
-                            resolve(data);
-                            Materialize.toast("Succesful changed", 4000);
+                            if (data.err) {
+                                reject(data);
+                            }
+                            else {
+                                resolve(data);
+                                Materialize.toast("Succesful changed", 4000);
+                            }
                         })
                         .error(function (err) {
                             console.error(err);
@@ -88,18 +92,38 @@
             );
         }
 
-        function deleteScenario(scenario){
+        function updateName(id, scenario) {
             return new Promise(
-                function(resolve, reject){
-                  $http.delete("/scenario/"+scenario.id)
-                      .success(function(data){
-                          resolve(data);
-                          Materialize.toast("Deleted Scenario", 4000);
-                      })
-                      .error(function(err){
-                          reject(err);
-                          console.error(err);
-                      });
+                function (resolve, reject) {
+                    $http.put("/scenario/name/" + id, {scenario: JSON.stringify(scenario)})
+                        .success(function (data) {
+                            if (data.err) {
+                                reject(data);
+                            }
+                            else {
+                                resolve(data);
+                                Materialize.toast("Succesful changed", 4000);
+                            }
+                        })
+                        .error(function (err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                }
+            );
+        }
+
+        function deleteScenario(scenario) {
+            return new Promise(
+                function (resolve, reject) {
+                    $http.delete("/scenario/" + scenario.id)
+                        .success(function (data) {
+                            resolve(data);
+                        })
+                        .error(function (err) {
+                            reject(err);
+                            console.error(err);
+                        });
                 }
             );
         }
@@ -123,9 +147,12 @@
         function getActuatorByID(id) {
             return new Promise(
                 function (resolve, reject) {
-                    $http.get('/devices/actuators/'+id)
+                    $http.get('/devices/actuators/' + id)
                         .success(function (data) {
-                            if(data.err) {console.error(data.err); throw new Error(data.err);}
+                            if (data.err) {
+                                console.error(data.err);
+                                throw new Error(data.err);
+                            }
                             resolve(data);
                         })
                         .error(function (err) {
@@ -137,9 +164,9 @@
         }
 
         function updateActuator(actuator) {
-            $http.put("/devices/actuators/"+actuator.id, {actuator: actuator})
-                .success(function(data) {
-                    if(data.error) console.error(data.error);
+            $http.put("/devices/actuators/" + actuator.id, {actuator: actuator})
+                .success(function (data) {
+                    if (data.error) console.error(data.error);
                 })
                 .error(function (err) {
                     console.error(err);
@@ -148,7 +175,6 @@
         }
 
         function isAllowedCommand(commandname) {
-            console.log('Dingen yolo hier ook 100 keer per seconde? WHAT THE FUCCCKKKK!!');
             return (commandname.toLowerCase() === 'on' || commandname.toLowerCase() === 'off');
 
         }
@@ -160,8 +186,8 @@
          */
         function removeScenarioFromActuator(id, scenario) {
             $http.put('/devices/actuators/removescenario/' + id, {scenario: scenario})
-                .success(function(res) {
-                    if(res.err) console.error(res.err);
+                .success(function (res) {
+                    if (res.err) console.error(res.err);
                 })
                 .error(function (err) {
                     console.error(err);
@@ -173,6 +199,7 @@
             toggleState: toggleState,
             delete: deleteScenario,
             getall: getScenarios,
+            updateName: updateName,
             get: getScenario,
             create: createScenario,
             update: update,

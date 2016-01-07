@@ -4,6 +4,7 @@
 var io = null;
 var eventLog = require('../models/eventLog');
 var dataLog = require('../models/dataLog');
+var scenarioLog = require('../models/scenarioLog');
 var settings = require('../modules/settingManager');
 var thinky = require('../models/thinky.js');
 var r = thinky.r;
@@ -27,18 +28,23 @@ var severity = {
  * @param cb
  */
 function logEvent(device, type, category, message, severity, cb) {
+    if(typeof message != 'string') {
+        throw message;
+    }
     var log = new eventLog({
-        device: {
-            id: device.id,
-            name: device.model.name,
-            alias: device.config.alias
-        },
         type: type,
         category: category,
         message: message,
         severity: severity,
         timestamp: Math.round((new Date()).getTime() / 1000)
     });
+    if(device != null) {
+        log.device = {
+            id: device.id,
+            name: device.model.name,
+            alias: device.config.alias
+        };
+    }
 
     eventLog.save(log).then(function(res) {
         io.emit('logAdded', log);
@@ -58,7 +64,7 @@ function logEvent(device, type, category, message, severity, cb) {
 /**
  * log sensor data
  * @param device
- * @param value
+ * @param cb
  */
 
 function logData(device, cb) {
@@ -84,6 +90,38 @@ function logData(device, cb) {
     });
 }
 /**
+ * log scenario event
+ * @param scenario
+ * @param cb
+ */
+function logScenario(scenario, cb) {
+    var message = '';
+    if(scenario.status) {
+        message = 'Scenario: ' + scenario.name + ' is ingeschakeld.';
+    } else {
+        message = 'Scenario: ' + scenario.name + ' is uitgeschakeld.';
+    }
+    var log = new scenarioLog({
+        name: scenario.name,
+        status: scenario.status,
+        severity: severity.warning,
+        message: message,
+        timestamp: Math.round((new Date()).getTime() / 1000)
+    });
+    scenarioLog.save(log).then(function (res) {
+        io.emit('logAdded', log);
+        if(typeof cb === "function") {
+            cb(null, res);
+        }
+    }).error(function(err) {
+        console.error(err);
+        if(typeof cb === "function") {
+            cb(err);
+        }
+    });
+}
+
+/**
  * get events for 1 device
  * @param deviceid
  * @param cb
@@ -98,7 +136,6 @@ function getEvents(deviceid, cb) {
 
 /**
  * get all events for all devices
- * @param severity (optional)
  * @param offset skip results
  * @param limit limit the number of results
  * @param cb
@@ -161,6 +198,7 @@ module.exports = {
     automatic: automatic,
     logEvent: logEvent,
     logData: logData,
+    logScenario: logScenario,
     getEvents: getEvents,
     getAllEvents: getAllEvents,
     getData: getData,

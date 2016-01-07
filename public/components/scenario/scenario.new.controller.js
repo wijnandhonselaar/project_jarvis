@@ -76,7 +76,6 @@
         function create () {
             snc.devices.forEach(function(device) {
                 var action = $('#'+device.id + ' option:selected').data("value");
-                console.log(action);
                 snc.scenario.actuators.push({deviceid: action.deviceid, action: {command: action.command, parameters: []}, priority: 100});
             });
             ScenarioService.create(snc.scenario.name, snc.scenario.description, snc.scenario.actuators)
@@ -88,6 +87,9 @@
                     return null;
                 })
                 .catch(function(err) {
+                    if(err === "name"){
+                        Materialize.toast("Name already exists", 2000);
+                    }
                     console.error("Error creating scenario", err);
                     return err;
                 });
@@ -105,7 +107,6 @@
                         command: scenarioActuator.action.command,
                         parameters: scenarioActuator.action.parameters
                     };
-                    console.log(actuator);
                     ScenarioService.updateActuator(actuator);
                 }
             }

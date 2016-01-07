@@ -4,13 +4,13 @@
             <div ng-click="scena.toggleState(scenario)"  class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
                 <div class="statusscenario" ng-class="scenario.status ? 'green' : 'red' "></div>
             </div>
-            <div ng-click="sdc.GoToDetail(sdc.scenario)" class="card text-center touch waves-light" style="padding:5px; margin-top:-14px;">
+            <div id="rules" ng-click="sdc.GoToDetail(sdc.scenario)" class="card text-center touch waves-light" style="padding:5px; margin-top:-14px;">
                 <img src="images/icon_condition.png" width="25px;">
             </div>
         </div>
-        <div class="col m9">
+        <div class="col m8">
             <input type="text" edit-dir id="name" placeholder="Naam" ng-model="sdc.scenarioName"
-            ng-change="sdc.updatename(sdc.uid, sdc.scenarioName)"/>
+                   ng-change="sdc.updateName(sdc.uid, sdc.scenarioName)"/>
 
             <input type="text" edit-dir placeholder="Omschrijving..." id="description" ng-model="sdc.scenarioDescription"
             ng-change="sdc.updateDescription(sdc.uid, sdc.scenarioDescription)"
@@ -19,6 +19,12 @@
         <div class="col m1" style="margin-left:-5px;">
             <div class="card touch" ng-click="sdc.addActuator()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
                 <img src="/images/icon_adddevice.png" width="100%;">
+            </div>
+        </div>
+
+        <div class="col m1" style="margin-left:-5px;">
+            <div id="conflicts" class="card touch" ng-click="sdc.showConflictList()" style="width: 40px; height: 40px; padding:5px; text-align:center;">
+                <img src="/images/conflict_icon.png" width="100%;">
             </div>
         </div>
 
@@ -40,20 +46,27 @@
             <img src="{{actuator.model.image}}" width="100%">
         </div>
         <div class="col m3">
-            <span class="col m3">{{actuator.config.alias}}</span>
+            <span>{{actuator.config.alias | limitTo:30}}...</span>
         </div>
         <div class="col m5">
-            <select id="{{actuator.id}}"
-                    ng-model="selected"
-                    ng-change="sdc.updateActuator(actuator.id)"
-                    style="display: block;">
+            <select style="display:block;" id="selectChange{{actuator.id}}">
                 <option ng-repeat="(key, command) in actuator.model.commands"
-                        ng-if="sdc.isAllowedCommand(key)"
-                        ng-selected="sdc.selectedAction(key, actuator)"
+                        ng-if="key == 'on' || key == 'off'"
+                        ng-selected="actuator.action.command == key"
                         value="{{key}}">
                     {{command.name}}
                 </option>
             </select>
+            <!--<select id="{{actuator.id}}"-->
+                    <!--ng-model="sdc.devices[$index].action.command"-->
+                    <!--ng-change="sdc.updateActuator(actuator.id)"-->
+                    <!--style="display: block;">-->
+                <!--<option ng-repeat="(key, command) in actuator.model.commands"-->
+                        <!--ng-if="key == 'on' || key == 'off'"-->
+                        <!--ng-value="{{key}}">-->
+                    <!--{{command.name}}-->
+                <!--</option>-->
+            <!--</select>-->
         </div>
         <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="sdc.removeActuator(actuator.id)">
             <div style="text-align: center; margin-top: 3px; padding-top:8px; color:white;" >X</div>
@@ -97,6 +110,33 @@
                 <div style="left:285px; width: 12%; position: absolute; bottom:30px;">
                     <div class="swiper-pagination">
                     </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<a class="modal-trigger" style="display:none;" href="#conflictOverviewModal">Modal</a>
+
+<div id="conflictOverviewModal" class="modal">
+    <div class="modal-content">
+        <div class="row" ng-if="value.length > 0" ng-repeat="(key, value) in sdc.preemtiveConflictDetection[sdc.scenario.name]">
+            <div class="col m5" style="padding-bottom:5px;">
+                <b>Conflict met: {{key}}</b>
+            </div>
+            <div class="col m3">
+                <i>{{key}}</i>
+            </div>
+            <div class="col m3">
+                <i><b>{{sdc.scenario.name}}</b></i>
+            </div>
+            <div class="col m12" style="padding-top:3px; padding-bottom: 3px; margin-bottom: 8px; margin-top:3px; height: 30px;" ng-repeat="actuator in value">
+                <div class="row">
+                    <div class="col m5">{{actuator.deviceAlias}}</div>
+                    <!--<div class="col m1">{{actuator.action.command}}</div>-->
+                    <div class="col m3"><div ng-class="sdc.setClass(key, actuator.deviceid, 'yes')" ng-click="sdc.setConflictingScenarioDevicePriority(key, sdc.scenario.name, actuator.deviceid)" style="padding:5px; border-radius:10px; color:black; text-align:center; cursor:pointer; background-color:#CCCCCC;">{{actuator.action.command}}</div></div>
+                    <div class="col m3"><div ng-class="sdc.setClass(key, actuator.deviceid, 'no')" ng-click="sdc.setConflictingScenarioDevicePriority(sdc.scenario.name, key, actuator.deviceid)" style="padding:5px; border-radius:10px; text-align:center; color:black; cursor:pointer; background-color:#CCCCCC;">{{sdc.getOppositeCommand(actuator.action.command)}}</div></div>
                 </div>
 
             </div>

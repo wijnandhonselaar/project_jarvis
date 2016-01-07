@@ -3,6 +3,7 @@ var eventLog = require('../models/eventLog.js');
 var dataLog = require('../models/dataLog.js');
 
 describe('eventLog', function () {
+    require('./globalBefore');
     before(function(done) {
         eventLog.delete();
         done();
@@ -14,7 +15,7 @@ describe('eventLog', function () {
         });
         // save the new sensor
         eventLog.save(log).then(function(res) {
-            //done('saved with no status object');
+            done('saved with no status object');
         }).error(function(){
             done();
         });
@@ -26,6 +27,7 @@ describe('eventLog', function () {
         });
         // save the new log
         eventLog.save(log).then(function(res) {
+            done('saved with no device');
         }).error(function(){
             done();
         });
@@ -38,6 +40,7 @@ describe('eventLog', function () {
         });
         // save the new log
         eventLog.save(log).then(function(res) {
+            done('saved with no severity');
         }).error(function(){
             done();
         });
@@ -51,6 +54,7 @@ describe('eventLog', function () {
         });
         // save the new log
         eventLog.save(log).then(function(res) {
+            done('saved with no type');
         }).error(function(){
             done();
         });
@@ -73,7 +77,7 @@ describe('eventLog', function () {
         eventLog.save(log).then(function(res) {
             done();
         }).error(function(err){
-            console.log(err);
+            done(err);
         });
     });
     after(function(done) {

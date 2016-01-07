@@ -3,11 +3,11 @@
              <div class="statusscenario" style="left:15px; top:75px;" ng-class="scenario.status ? 'green' : 'red' "></div>
     </div>
     <div class="col m9" style="padding-left:11px; margin-left:-3px;">
-        <p>Scenario: {{rec.scenario.name}}</p>
+        <p id="scenarioName">Scenario: {{rec.scenario.name}}</p>
     </div>
     <div class="col m2">
-        <select ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
-            <option value="start">Start</option>
+        <select id="selectStartFinish" ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
+            <option value="start" ng-selected="true">Start</option>
             <option value="finish">Finish</option>
         </select>
     </div>
@@ -22,19 +22,19 @@
         <div class="row" style="margin-bottom: 0px;">
             <div class="col m12 card touch" style="width:40px; padding-left:7px;"
                  ng-click="rec.openModal('eventModal')">
-                <div style="margin-top:5px; background-image:url('https://cdn3.iconfinder.com/data/icons/time/100/alarm_bell_1-512.png'); width: 25px; height:30px;background-repeat:no-repeat; background-size:contain;"></div>
+                <div style="margin-top:5px; background-image:url('images/icon_event.png'); width: 25px; height:30px;background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
         <div class="row" style="margin-bottom: 0px;">
             <div class="col m12 card touch" style="width:40px; padding-left:7px;"
                  ng-click="rec.openModal('timerModal')">
-                <div style="margin-top:5px; background-image:url('http://simpleicon.com/wp-content/uploads/clock-time-1.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
+                <div id="timer" style="margin-top:5px; background-image:url('images/icon_timer.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
         <div class="row" style="margin-bottom: 0px;">
-            <div class="col m12 card touch" style="width:40px; padding-left:7px; background-color: #00C853;"
+            <div id="save" class="col m12 card touch" style="width:40px; padding-left:7px; background-color: #00C853;"
                  ng-click="rec.saveAll()">
-                <div style="margin-top:5px; background-image:url('https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/save.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
+                <div  style="margin-top:5px; background-image:url('images/icon_save.png'); width: 25px; height:30px;  background-repeat:no-repeat; background-size:contain;"></div>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@
                             <div class="row">
 
                                 <div ng-click="rec.showDetail(rule)" ng-repeat="rule in rec.currentGroups[$index]" class="col m12 recgrouprule" data-groupindex="{{$parent.$index}}" data-ownindex="{{$index}}">
-                                    <div class="touch card" style="padding:5px; height: 25px;">
+                                    <div id="rulesamount" class="touch card" style="padding:5px; height: 25px;">
                                         {{rule.name}}
                                         <div style="position: absolute; right:0px; width: 25px; height: 26px; padding-top:2px; margin-top:-27px; text-align: center; background-color: #F84E19">
                                             <img ng-src="{{rec.getRuleIcon(rule)}}" class="invert" width="80%">
@@ -198,12 +198,12 @@
     <div class="modal-footer">
         <div class="row">
             <div class="col m3">
-                <a ng-if="rec.rule.name" ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
+                <a ng-if="rec.threshold.name" ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a ng-click="rec.closeModal('ruleModal'); rec.addToThresholds()"
+                <a ng-if="rec.threshold.name!==null && rec.threshold.device !== null && rec.threshold.operator!==null && rec.threshold.value !==null" ng-click="rec.closeModal('ruleModal'); rec.addToThresholds()"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
@@ -246,7 +246,7 @@
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
+                <a ng-if="rec.event.name!==null&&rec.event.device!==null && rec.event.event!==null" ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
@@ -255,7 +255,7 @@
 
 <div id="timerModal" class="modal modal-fixed-footer" style="height: 200px;">
     <div class="modal-content">
-        <h4>Tijdklok - {{rec.scenario.name}} {{rec.selectedCommand}}</h4>
+        <h4 id="Rule">Tijdklok - {{rec.scenario.name}} {{rec.selectedCommand}}</h4>
 
         <div class="row">
             <div class="input-field col m6">
@@ -277,8 +277,8 @@
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
-                   class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
+                <a id="modalbewaren" ng-click="rec.addToThresholds()"
+                   ng-if="rec.timer.time!==null && rec.timer.name !== null" class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
     </div>

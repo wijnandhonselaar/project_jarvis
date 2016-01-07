@@ -1,5 +1,4 @@
 local dobbie = {}
-local json = require "cjson"
 globalmethods = require 'globalmethods'
 dobbie.headersHaveBeenSent = false
 dobbie.fileTransfer = {

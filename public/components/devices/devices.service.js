@@ -43,41 +43,64 @@
         var resolveQueue = [];
         var resolve2 = $('#resolve2');
         var resolve1 = $('#resolve1');
+        var modalIsOpen = false;
         socket.socketListener("resolveConflict", function (data) {
             if(resolveQueue.indexOf(data) === -1){
                 resolveQueue.push(data);
+                console.log('pushing data');
             }
             checkQueue();
         });
 
+        /**
+         * Check queue. if one is active add to the end of the queue otherwise trigger resolveModal
+         */
         function checkQueue() {
             if (resolveQueue.length !== 0) {
                 currentlyResolving.data = resolveQueue[0];
                 triggerResolve();
+            } else if(modalIsOpen){
+                $('#conflictmodal').closeModal();
+                modalIsOpen = false;
             }
         }
 
+        /**
+         * Shows resolve modal. Gives user the option to select one of the conflicts
+         */
         function triggerResolve() {
             if (!currentlyResolving.status) {
                 var conflictPopUp = $('#conflictmodal');
-                conflictPopUp.openModal();
-                resolve1.html('Scenario: ' + currentlyResolving.data.executed.scenario + '<br>' + currentlyResolving.data.executed.device.config.alias + ': ' + currentlyResolving.data.executed.command);
+                if(!modalIsOpen){
+                    conflictPopUp.openModal();
+                    modalIsOpen = true;
+                }
+                $('#executingScenario').text(currentlyResolving.data.executed.scenario);
+                resolve1.html('<b>' + currentlyResolving.data.executed.scenario + '</b><br><i>' + currentlyResolving.data.executed.device.config.alias + ' '  + currentlyResolving.data.executed.device.model.commands[currentlyResolving.data.executed.command].name + '</i>');
+                $('#resolve1img').attr('src', currentlyResolving.data.executed.device.model.image);
                 resolve1.data('scenario', currentlyResolving.data.executed.scenario);
-                resolve2.html('Scenario: ' + currentlyResolving.data.conflicting.scenario + '<br>' + currentlyResolving.data.conflicting.device.config.alias + ': ' + currentlyResolving.data.conflicting.command);
+                resolve2.html('<b>' + currentlyResolving.data.conflicting.scenario + '</b><br><i>' + currentlyResolving.data.conflicting.device.config.alias + ' ' + currentlyResolving.data.conflicting.device.model.commands[currentlyResolving.data.conflicting.command].name + '</i>');
+                $('#resolve2img').attr('src', currentlyResolving.data.conflicting.device.model.image);
                 resolve2.data('scenario', currentlyResolving.data.conflicting.scenario);
                 currentlyResolving.status = true;
                 currentlyResolving.device = currentlyResolving.data.executed.device;
             }
         }
 
-        resolve1.click(function () {
-            resolveConflict($(this).data('scenario'), resolve2.data('scenario'));
+        $('#resolve1click').click(function () {
+            resolveConflict($(resolve1).data('scenario'), resolve2.data('scenario'));
         });
 
-        resolve2.click(function () {
-            resolveConflict($(this).data('scenario'), resolve1.data('scenario'));
+        $('#resolve2click').click(function () {
+            resolveConflict($(resolve2).data('scenario'), resolve1.data('scenario'));
         });
 
+
+        /**
+         * Resolve the conflict by sending the choice to the server
+         * @param winningScenario
+         * @param losingScenario
+         */
         function resolveConflict(winningScenario, losingScenario) {
 
             var object = {
@@ -88,26 +111,28 @@
 
             $http.post('http://localhost:3221/devices/' + object.device.model.type + '/' + object.device.id + '/resolveconflict', object).
                 success(function (data) {
-                    console.log('CONFLICT', 'resolved');
                     currentlyResolving.status = false;
                     resolveQueue.splice(0, 1);
-                    $('#conflictmodal').closeModal();
                     checkQueue();
                 })
                 .error(function (err) {
-                    console.log('CONFLICT', 'error while resolving');
+                    console.error('CONFLICT', 'error while resolving');
                     currentlyResolving.status = false;
                     resolveQueue.splice(0, 1);
-                    $('#conflictmodal').closeModal();
+                    //$('#conflictmodal').closeModal();
                     checkQueue();
                 });
         }
 
 
+        /**
+         * Update device rules
+         * @param id
+         * @param obj
+         */
         function updateRules(id, obj) {
             $http.post('http://localhost:3221/devices/actuators/' + id + '/rules', {rules: obj})
                 .success(function (data) {
-                    console.log("succesfully saved");
                 })
                 .error(function (err) {
                     console.error(err);
@@ -243,7 +268,6 @@
                                 devices.sensor.push(sensor);
                             });
                             // LOGGING
-                            console.log("Got devices data.");
                             resolve();
                         })
                         .error(function (err) {
@@ -262,7 +286,6 @@
                         $http.post('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey, {})
 
                             .success(function (data) {
-                                console.log("succesfull send");
                                 resolve(data);
                             })
                             .error(function (err) {
@@ -273,7 +296,6 @@
                     } else if (command.httpMethod === "GET") {
                         $http.get('http://localhost:3221/devices/' + type + '/' + id + '/commands/' + commandkey)
                             .success(function (data) {
-                                console.log("succesfull send");
                                 resolve(data);
                             })
                             .error(function () {

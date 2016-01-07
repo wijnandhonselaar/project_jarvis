@@ -4,6 +4,7 @@ var expect = require('chai').expect,
     rethinkManager = require('../modules/rethinkManager');
 
 describe('Sensor', function () {
+    require('./globalBefore');
     var id = 321123;
 
     after(function(done) {
@@ -49,7 +50,7 @@ describe('Sensor', function () {
             if(err) {
                 done();
             } else {
-                done('was succesful');
+                done('saved a sensor without status ');
             }
         });
     });
@@ -59,7 +60,7 @@ describe('Sensor', function () {
             if(err) {
                 done();
             } else {
-                done('was succesful');
+                done('got the sensor while it shouldnt been saved');
             }
         });
     });
@@ -95,7 +96,6 @@ describe('Sensor', function () {
         }
         rethinkManager.saveDevice(sensor, 'sensor' ,function(err, res){
             if(err) {
-                console.log(err);
                 done(err);
             } else {
                 done();
@@ -320,7 +320,7 @@ describe('Actuator', function () {
             if(err) {
                 done();
             } else {
-                done('was succesful');
+                done('got the actuator while it shouldn\'t have been saved');
             }
         });
     });
@@ -404,6 +404,8 @@ describe('Actuator', function () {
             }
         });
     });
+
+
     it('Should save another actuator', function(done) {
         var actuator = {
             id: id+1,

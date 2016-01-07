@@ -1,4 +1,11 @@
 /* jshint ignore:start */
+
+
+/**
+ * This module is the old ruleEngine when rules were still set on individual device commands (currently omitted)
+ * @type {null}
+ */
+
 var deviceManager = null;
 var comm = require('./interperter/comm');
 var conflictManager = require('./conflictManager');
@@ -18,7 +25,7 @@ function apply(device, event, callback) {
                     var rule = device.config.rules[command].thresholds[i];
                     var s = deviceManager.getSensor(parseInt(rule.device));
                     if (s.err) {
-                        console.log(s.err);
+                        console.error(s.err);
                     } else if (s.status) {
                         switch (rule.gate) {
                             case 'AND':
@@ -60,16 +67,12 @@ function apply(device, event, callback) {
                 hasRules = true;
                 for (var c = 0; c < device.config.rules[command].events.length; c++) {
                     var eobj = device.config.rules[command].events[c];
-                    if (eobj.device == event.id) {
-                        console.log('TESSSTTT');
-                    }
                     switch (eobj.gate) {
                         case 'AND':
                             andGate = (device.id == eobj.device && event.key == eobj.event).toString();
                             break;
                         case 'OR':
                             statementString += ' || ' + (parseInt(eobj.device) == parseInt(event.id) && event.key == eobj.event).toString();
-                            //console.log('resolve', parseInt(device.id) === parseInt(eobj.device));
                             break;
                     }
                 }
@@ -77,21 +80,20 @@ function apply(device, event, callback) {
 
             if (hasRules) {
                 statementString = andGate + ' ' + statementString;
-                //if (event) console.log(statementString);
                 if (eval(statementString) && checkState(command, device)) {
                     //if (!conflictManager.detect(command, device, scenario)) {
                     switch (device.model.commands[command].httpMethod) {
                         case 'POST':
-                            comm.post(command, device, {}, function (state) {
+                            comm.post(command, device, {}, false, function (state) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, state);
-                                deviceManager.updateActuatorState(device.id, state);
+                                deviceManager.updateActuatorState(device.id, state, false);
                                 if (callback) callback(state);
                             });
                             break;
                         case 'GET':
                             comm.get(command, device, function (data) {
                                 //deviceManager.updateDeviceStatus(device.model.type, device.id, data);
-                                deviceManager.updateActuatorState(device.id, state);
+                                deviceManager.updateActuatorState(device.id, state, false);
                                 if (callback) callback(state);
                             });
                             break;
