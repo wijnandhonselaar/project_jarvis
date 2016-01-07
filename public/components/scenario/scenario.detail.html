@@ -1,8 +1,8 @@
 <div class="col m12" style="margin-top:15px; padding:0px;">
     <div class="row" style="padding:0px; ">
         <div class="col m2">
-            <div ng-click="scena.toggleState(scenario)"  class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
-                <div class="statusscenario" ng-class="scenario.status ? 'green' : 'red' "></div>
+            <div ng-click="sdc.toggleState()"  class="card touch waves-light text-center" style="height: 75px; padding-top:8px;">
+                <div class="statusscenario" ng-class="sdc.scenario.status ? 'green' : 'red' "></div>
             </div>
             <div id="rules" ng-click="sdc.GoToDetail(sdc.scenario)" class="card text-center touch waves-light" style="padding:5px; margin-top:-14px;">
                 <img src="images/icon_condition.png" width="25px;">
@@ -57,16 +57,6 @@
                     {{command.name}}
                 </option>
             </select>
-            <!--<select id="{{actuator.id}}"-->
-                    <!--ng-model="sdc.devices[$index].action.command"-->
-                    <!--ng-change="sdc.updateActuator(actuator.id)"-->
-                    <!--style="display: block;">-->
-                <!--<option ng-repeat="(key, command) in actuator.model.commands"-->
-                        <!--ng-if="key == 'on' || key == 'off'"-->
-                        <!--ng-value="{{key}}">-->
-                    <!--{{command.name}}-->
-                <!--</option>-->
-            <!--</select>-->
         </div>
         <div class="customCard col m1 offset-m2" style="padding:1px; background-color:#F84E19" ng-click="sdc.removeActuator(actuator.id)">
             <div style="text-align: center; margin-top: 3px; padding-top:8px; color:white;" >X</div>
