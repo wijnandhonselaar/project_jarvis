@@ -79,7 +79,7 @@ function apply(scenario, event) {
         for (var ruleKey in scenario.rules) {
             if (scenario.rules.hasOwnProperty(ruleKey) && scenario.rules[ruleKey].andgroups) {
                 var execute = false;
-                for(var i = 0; i < scenario.rules[ruleKey].andgroups.length; i++){
+                for(var i = 0; i < scenario.rules[ruleKey].andgroups.length && !execute; i++){
                     var andgroup = scenario.rules[ruleKey].andgroups[i];
                     for(var ai = 0; ai < andgroup.length; ai++) {
                         var scenarioRule = getScenarioRuleById(ruleKey,andgroup[ai]);
@@ -89,9 +89,6 @@ function apply(scenario, event) {
                         if(ai+1 == andgroup.length) {
                             execute = true;
                         }
-                    }
-                    if(execute === true) {
-                        break;
                     }
                 }
 

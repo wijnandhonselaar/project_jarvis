@@ -73,8 +73,8 @@ module.exports = (function() {
 
     route.post('/:devicetype/:id/commands/:command', function (req, res) {
         var device = deviceManager.getActuator(parseInt(req.params.id));
-        comm.post(req.params.command, device, req.body, function (response) {
-            deviceManager.updateActuatorState(device.id, response);
+        comm.post(req.params.command, device, req.body, false, function (response) {
+            deviceManager.updateActuatorState(device.id, response, false);
             res.send(JSON.stringify(response));
         });
     });

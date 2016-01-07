@@ -4,7 +4,7 @@ var validator = require('./validator');
 var superAgent = require('superagent');
 var logger = require('../logManager');
 
-var postMethod = function(command, deviceObject, paramList, callback){
+var postMethod = function(command, deviceObject, paramList, isScenario, callback){
     validator.validate(command, deviceObject, paramList, function(data){
         var everythingIsValidated = true;
         for (var property in data) {
@@ -19,7 +19,7 @@ var postMethod = function(command, deviceObject, paramList, callback){
                 if(err) {
                     console.error(err);
                 } else {
-                    logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd.", 4);
+                    if(!isScenario) logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd.", 4);
                     callback(res.body, deviceObject);
                 }
             });

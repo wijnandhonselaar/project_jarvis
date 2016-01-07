@@ -7,7 +7,7 @@ var comm = require('./interperter/comm');
 var io = null;
 var deviceManager = null;
 var conflictManager = null;
-var Logger = require('./logManager');
+var logger = require('./logManager');
 var scenarios = [];
 
 
@@ -112,24 +112,6 @@ function update(scenario, cb) {
 }
 
 /**
- * Temp functie voor het finish command, mooiste zou zijn als hiervoor een apart tabje in de front-end gemaakt zou worden waar gebruikers kunnen
- * aangeven wat er gebeurt op het moment dat het scenario eindigt
- */
-function invert(scenario){
-    var scenarioCopy = JSON.parse(JSON.stringify(scenario));
-    for(var i = 0; i<scenarioCopy.actuators.length; i++){
-        var ac = scenarioCopy.actuators[i];
-        if(ac.action.command == 'on'){
-            ac.action.command = 'off';
-        } else {
-            ac.action.command = 'on';
-        }
-        //console.log( scenarioCopy.actuators[i]);
-    }
-    return scenarioCopy;
-}
-
-/**
  * Toggle scenario state (active/disabled)
  * @param scenario
  * @param cb
@@ -138,15 +120,24 @@ function toggleState(scenario, cb) {
     if(typeof scenario === 'string') scenario = JSON.parse(scenario);
     for (var i = 0; i < scenarios.length; i++) {
         if (scenario.id == scenarios[i].id) {
+            var message = '';
+            if(!scenarios[i].status) {
+                message = 'Scenario: ' + scenario.name + ' is ingeschakeld.';
+            } else {
+                message = 'Scenario: ' + scenario.name + ' is uitgeschakeld.';
+            }
             if (scenarios[i].status === false) {
                 execute(scenario, 'start', function(err, data){
-                    Logger.logScenario(scenarios[i], null);
-                    cb(err, data);
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
                 });
             }
             else {
                 execute(scenario, 'finish', function(err, data){
-                    cb(err, data);
+                    if(err) cb(err, data);
+                    logger.logEvent(null, 'scenario', logger.manual, message, logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+                    cb(null, data);
                 });
             }
         }
@@ -164,12 +155,10 @@ function execute(scenario, scenarioState, cb){
         start(scenario , cb);
     } else {
         stop(scenario, cb);
-        scenario = invert(scenario);
     }
     for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
         var command = scenario.actuators[deviceLoop].action.command;
         var device = deviceManager.getActuator(scenario.actuators[deviceLoop].deviceid);
-
         var newcommand = "";
         if( (command == "on" || command == "off") && scenarioState === 'finish') {
             if (command == "on") {
@@ -182,7 +171,7 @@ function execute(scenario, scenarioState, cb){
         }
 
         if (!conflictManager.detect(newcommand, device, scenario)) {
-            deviceManager.executeCommand(newcommand, device, {});
+            deviceManager.executeCommand(newcommand, device, {}, true);
         }
     }
 }
@@ -205,7 +194,7 @@ function start(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -226,7 +215,7 @@ function stop(scenario, cb){
         }
     }
     function updateCB(err, data){
-        if(err) {console.error(err); throw err;}
+        if(err) {console.error(err); cb(err, data);}
     }
 }
 
@@ -283,7 +272,8 @@ function getByName(name, cb) {
         cb(res[0]);
     }).
     catch(function (err) {
-        cb({}.err = err);
+        console.error('Cannot get scenario with name: ' + name);
+        console.error(err);
     });
 }
 

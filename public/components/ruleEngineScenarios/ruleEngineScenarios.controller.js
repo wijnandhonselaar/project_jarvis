@@ -387,7 +387,6 @@
                     ChangeRuleInType(rec.timer);
                 }
             }
-
             reset();
             $timeout(draggable, 500);
         }

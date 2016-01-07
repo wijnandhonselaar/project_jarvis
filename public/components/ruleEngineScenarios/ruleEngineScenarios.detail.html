@@ -198,12 +198,12 @@
     <div class="modal-footer">
         <div class="row">
             <div class="col m3">
-                <a ng-if="rec.rule.name" ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
+                <a ng-if="rec.threshold.name" ng-click="rec.remove('thresholds', rec.threshold.id, 'ruleModal')"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Verwijderen</a>
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a ng-click="rec.closeModal('ruleModal'); rec.addToThresholds()"
+                <a ng-if="rec.threshold.name!==null && rec.threshold.device !== null && rec.threshold.operator!==null && rec.threshold.value !==null" ng-click="rec.closeModal('ruleModal'); rec.addToThresholds()"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
@@ -246,7 +246,7 @@
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
+                <a ng-if="rec.event.name!==null&&rec.event.device!==null && rec.event.event!==null" ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
                    class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
@@ -277,8 +277,8 @@
                 <div style="width: 10px; height: 5px;"></div>
             </div>
             <div class="col m3 offset-m6">
-                <a id="modalbewaren" ng-click="rec.closeModal('timerModal'); rec.addToThresholds()"
-                   class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
+                <a id="modalbewaren" ng-click="rec.addToThresholds()"
+                   ng-if="rec.timer.time!==null && rec.timer.name !== null" class="modal-action modal-close waves-effect waves-green btn-flat ">Bewaren</a>
             </div>
         </div>
     </div>
