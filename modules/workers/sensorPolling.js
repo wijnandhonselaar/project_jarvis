@@ -1,3 +1,5 @@
+/*jslint node: true */
+"use strict";
 var request = require('superagent');
 
 //A message is send from main app to this worker.

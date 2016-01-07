@@ -7,7 +7,7 @@
     <link href="css/dist.css" rel="stylesheet" type="text/css">
 </head>
 
-<body class="white">
+<body class="white recbody">
 
     <header>
         <div ui-view="headerView"></div>
@@ -33,16 +33,16 @@
 
     <div id="conflictmodal" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <p>Oeps! er is een conflict gevonden. Welk scenario wil je dat ik uitvoer?</p>
+            <p>Oeps! er is een conflict gevonden. Welke actie wil je dat ik uitvoer?</p>
             <div class="row">
                 <div class="col m6">
                     <div class="card touch" style="padding:10px; text-align:center;">
-                        Ik wil deze uitvoeren #1
+                        <span data-scenario="" id="resolve1"> </span>
                     </div>
                 </div>
                 <div class="col m6">
                     <div class="card touch" style="padding:10px; text-align:center;">
-                        Maar ik conflicteer met deze
+                        <span data-scenario="" id="resolve2"> </span>
                     </div>
                 </div>
             </div>

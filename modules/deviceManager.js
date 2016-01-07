@@ -1,13 +1,17 @@
+"use strict";
+
 var devices = {
     actuators: [],
     sensors: []
 };
 var io = null;
 var ruleEngine = null;
+var validator = null;
 var scenarioManager = require('./scenarioManager');
 var rethinkManager = require('./rethinkManager');
 var logger = require('./logManager');
 var Actuator = require('../models/actuator');
+var comm = require('./interperter/comm');
 
 var rules = {
     on: {
@@ -30,10 +34,10 @@ var rules = {
  */
 
 function updateManagers(event) {
-    for (var i = 0; i < getActuators().length; i++) {
-        ruleEngine.apply(getActuators()[i], event);
-    }
-    //scenarioManager.validate(event);
+    //for (var i = 0; i < getActuators().length; i++) {
+    //    ruleEngine.apply(getActuators()[i], event);
+    //}
+    scenarioManager.validate(event);
 }
 
 function addDevice(device, remote, deviceType) {
@@ -74,9 +78,9 @@ function addDevice(device, remote, deviceType) {
             }, device.type, function (err, res) {
                 if (err) {
                     console.log(err);
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, 2, null);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,deviceObj.config.alias + " gevonden. Maar er was een error " + err, logger.severity.notice);
                 } else {
-                    logger.logEvent(deviceObj, deviceObj.model.type, "Automatisch" ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", 4, null);
+                    logger.logEvent(deviceObj, deviceObj.model.type, logger.automatic ,"Nieuwe " + deviceObj.model.type + " : " + deviceObj.config.alias + " gevonden.", logger.severity.notice);
                 }
             });
         } else {
@@ -84,7 +88,7 @@ function addDevice(device, remote, deviceType) {
             devices[deviceType].push(deviceObj);
             if (device.type === 'sensor' || deviceType === 'sensors') {
                 initiateStatusPolling(deviceObj);
-            };
+            }
             io.emit("deviceAdded", deviceObj);
         }
     });
@@ -99,7 +103,7 @@ function broadcastEvent(msg) {
     if (device) {
         updateManagers(msg);
         logger.logEvent(device, device.model.type, "Automatisch", msg.msg, msg.severity);
-        io.emit('deviceEvent', {device: device, event: msg})
+        io.emit('deviceEvent', {device: device, event: msg});
     } else {
         console.log('What the fuck, ik kan mijn apparaat niet vinden');
     }
@@ -141,7 +145,7 @@ function addToDeviceList(device, remote, deviceType) {
  */
 function getDeviceByIPAddress(ip) {
     for (var property in devices) {
-        if (object.hasOwnProperty(property)) {
+        if (devices.hasOwnProperty(property)) {
             for (var i = 0; i < devices[property].length; i++) {
                 if (devices[property][i].ip == ip) {
                     return devices[property][i];
@@ -182,25 +186,27 @@ function getActuatorById(id) {
 
 function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
+    function updateCB(err, res) {
+        if(err) {
+            logger.logEvent(res, devicetype, logger.manual ,"Alias voor " + res.model.name + " niet aangepast.", logger.severity.warning);
+            callback( {err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
+        } else {
+            logger.logEvent(res, devicetype, logger.manual ,"Nieuwe alias voor " + res.model.name + " ingesteld.", logger.severity.notice);
+            io.emit("deviceUpdated", device);
+            callback( {success: "Success, alias for "+ id + " was successfully updated."});
+        }
+    }
     for (var i = 0; i < devices[devicetype].length; i++) {
         if (devices[devicetype][i].id === id) {
             devices[devicetype][i].config.alias = alias;
             found = true;
+            var device = devices[devicetype][i];
             // save to the database!
-            rethinkManager.updateAlias(id, devicetype, alias, function (err, res) {
-                if (err) {
-                    logger.logEvent(res, devicetype, "Handmatig", "Alias voor " + res.model.name + " niet aangepast.", 3);
-                    callback({err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
-                } else {
-                    logger.logEvent(res, devicetype, "Handmatig", "Nieuwe alias voor " + res.model.name + " ingesteld.", 4);
-                    io.emit("deviceUpdated", devices[devicetype][i]);
-                    callback({success: "Success, alias for " + id + " was successfully updated."});
-                }
-            });
+            rethinkManager.updateAlias(id, devicetype, alias, updateCB);
         }
     }
     if(found === false){
-        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."})
+        callback({err: "Error, could nog find " + devicetype + " with id: " + id + "to update alias."});
     }
 }
 
@@ -212,26 +218,29 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
  */
 function updateSensorIntervalFunction(id, clientRequestInterval, callback) {
     var found = false;
+
+    function updateCB(err, res) {
+        if(err) {
+            logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
+            callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
+        } else {
+            io.emit("deviceUpdated", sensor);
+            logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
+            callback({success: "Success, interval for "+ id + " was successfully updated."});
+        }
+    }
+
     for (var i = 0; i < devices.sensors.length; i++) {
         if (devices.sensors[i].id === id) {
             found = true;
             devices.sensors[i].config.clientRequestInterval = clientRequestInterval;
             var sensor = devices.sensors[i];
             initiateStatusPolling(sensor);
-            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, function(err, res) {
-                if(err) {
-                     logger.logEvent(res, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " niet aangepast.", 3);
-                     callback({err: "Error, could not find sensors with id: " + id + " to update request interval."});
-                } else {
-                    io.emit("deviceUpdated", sensor);
-                    logger.logEvent(sensor, sensor.model.type, "Handmatig" ,"Sensorinterval voor " + sensor.model.name + " ingesteld.", 4);
-                    callback({success: "Success, interval for "+ id + " was successfully updated."});
-                }
-            });
+            rethinkManager.updateClientRequestInterval(id, clientRequestInterval, updateCB);
         }
-    };
+    }
     if(found === false){
-        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."})
+        callback({err: "Error, could nog find sensor with id: " + id + "to update interval."});
     }
 }
 
@@ -275,39 +284,98 @@ function setRules(object) {
     var a = getActuatorById(object.id);
     if (a.err) {
         console.error(a.err);
-        return {err: 'Couldn\'t find actuator by id'}
+        return {err: 'Couldn\'t find actuator by id'};
     } else {
         //console.log('set new rules');
         a.config.rules = object.rules;
         //console.log(a.config);
-        return {success: 'set'}
+        return {success: 'set'};
+    }
+}
+
+function executeCommand(command, device, params, cb){
+
+    switch (device.model.commands[command].httpMethod) {
+        case 'POST':
+            comm.post(command, device, params, function (state, device) {
+                updateActuatorState(device.id, state);
+                if(cb) cb(state);
+            });
+            break;
+        case 'GET':
+            comm.get(command, device, function (state, device) {
+                updateActuatorState(device.id, state);
+                if(cb) cb(state);
+            });
+            break;
+    }
+}
+
+/**
+ *
+ * @param id Actuator id
+ * @param scenario name
+ */
+function removeScenarioFromActuator(id, scenario) {
+    function thenCBsmall(res) {
+        if(res.err) throw err;
+    }
+    function catchCBsmall(err) {
+        console.log('Error bij verwijderen scenario uit config van een actuator.');
+        throw err;
+    }
+    function thenCB(actuator) {
+        delete actuator.config.scenarios[scenario];
+        actuator.save()
+            .then(thenCBsmall)
+            .catch(catchCBsmall)
+    }
+    function catchCB(err) {
+        console.log('Error bij ophalen actuator.');
+        throw err;
+    }
+    for(var i = 0; i < devices.actuators.length; i++) {
+        if (devices.actuators[i].id == id) {
+            delete devices.actuators[i].config.scenarios[scenario];
+            Actuator.get(parseInt(id))
+                .then(thenCB)
+                .catch(catchCB);
+        }
     }
 }
 
 function updateActuator(id, actuator, cb) {
     console.log('Update actuator');
+
+    function thenCB1(res) {
+        cb(null, res);
+    }
+
+    function catchCB1(err) {
+        console.log('Error bij opslaan');
+        cb({error: err, message: 'Could not update actuator.'});
+    }
+
+    function thenCB2(persisted) {
+        persisted.merge(actuator);
+        console.log("merged");
+        console.log(persisted);
+        console.log('Before save');
+        persisted.save()
+            .then(thenCB1)
+            .catch(catchCB1);
+    }
+
+    function catchCB2(err) {
+        console.log('Error bij ophalen met id: ' + id);
+        cb({error: err, message: 'Could not update actuator.'});
+    }
+
     for (var i = 0; i < devices.actuators.length; i++) {
         if (devices.actuators[i].id == id) {
             devices.actuators[i] = actuator;
-            console.log('Before get');
             Actuator.get(parseInt(id))
-                .then(function (persisted) {
-                    persisted.merge(actuator);
-                    console.log("merged");
-                    console.log(persisted);
-                    console.log('Before save');
-                    persisted.save()
-                        .then(function (res) {
-                            cb(null, res);
-                        })
-                        .catch(function (err) {
-                            console.log('Error bij opslaan');
-                            cb({error: err, message: 'Could not update actuator.'});
-                        });
-                }).catch(function (err) {
-                console.log('Error bij ophalen met id: ' + id);
-                cb({error: err, message: 'Could not update actuator.'});
-            });
+                .then(thenCB2).catch(catchCB2);
         }
     }
 }
@@ -354,8 +422,9 @@ function loadDevicesFromDatabase() {
 *         }}
      */
 module.exports = {
-    init: function (socketio, rec) {
+    init: function (socketio, rec, validatorInject) {
         io = socketio;
+        validator = validatorInject;
         ruleEngine = rec;
         loadDevicesFromDatabase();
     },
@@ -380,7 +449,9 @@ module.exports = {
     updateSensorStatus: updateSensorStatusFunction,
     updateActuatorState: updateActuatorState,
     setRules: setRules,
-    updateActuator: updateActuator
+    updateActuator: updateActuator,
+    executeCommand:executeCommand,
+    removeScenarioFromActuator: removeScenarioFromActuator
 };
 
 //circular dependency (export must be first)

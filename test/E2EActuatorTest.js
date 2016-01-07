@@ -1,10 +1,10 @@
 var webdriverio =require('webdriverio');
 var expect = require('chai').expect;
-var Sensor = require('../models/sensor.js');
+var Sensor = require('../models/actuator.js');
 var api = require('superagent');
 
 
-describe('Sensor overzicht/detail test', function(){
+describe('Actuator overzicht/detail test', function(){
 	this.timeout(10000);
 	var browser;
 	var id = 1000015;
@@ -17,7 +17,7 @@ describe('Sensor overzicht/detail test', function(){
 		});
 		
 		var device = newDevice(id, 'a');
-        device.type = 'sensor';
+        device.type = 'actuator';
 
         api.post('http://localhost:3221/test/devices/add')
         .send({device : device, remote:{address:'192.186.24.1'}})
@@ -28,15 +28,13 @@ describe('Sensor overzicht/detail test', function(){
 		browser.init(done);
 	});
 
-	it("Should find the sensor with the correct name", function(done){
+	it("Should find the actuator with the correct name", function(done){
 		browser.
-			url("http://localhost:3221/#/sensors")
-			.elements("#sensor").then( function(result){
-				console.log(result);
+			url("http://localhost:3221/#/actuators")
+			.elements("#actuator").then( function(result){
 				expect(result.value.length).to.equal(1);
 			})
-			.getText('#sensor').then(function(result){
-				console.log(result);
+			.getText('#actuator').then(function(result){
 				expect(result[0]).to.equal("a")
 				done();	
 			});
@@ -44,10 +42,10 @@ describe('Sensor overzicht/detail test', function(){
 
 	it("Should have a description", function(done){
 		browser.
-			url("http://localhost:3221/#/sensors")
-			.leftClick('#sensor').then(function(result){})
+			url("http://localhost:3221/#/actuators")
+			.leftClick('#actuator').then(function(result){})
 			.getUrl().then(function(url){
-				expect(url).to.equal("http://localhost:3221/#/sensors/"+id);
+				expect(url).to.equal("http://localhost:3221/#/actuators/"+id);
 			})
 			.getText(".description").then( function(result){
 				expect(result).to.be.a("string");
@@ -58,16 +56,44 @@ describe('Sensor overzicht/detail test', function(){
 
 	it("Should be able to change alias", function(done){
 		browser.
-			url("http://localhost:3221/#/sensors/"+id)
-			.setValue('#alias', 't')
-			.url("http://localhost:3221/#/sensors")
-			.getText("#sensor").then( function(result){
-				console.log(result);
+			url("http://localhost:3221/#/actuators/"+id)
+			.setValue('#aliasAct', 't')
+			.url("http://localhost:3221/#/actuators")
+			.getText("#actuator").then( function(result){
 				expect(result).to.be.a("string");
 				expect(result[0]).to.be.equal("t")
 				done();
 			});
 	});
+
+    it("Should have commands", function(done){
+        browser.
+            url("http://localhost:3221/#/actuators/"+id)
+            .elements(".actuatorCommand").then( function(result){
+               expect(result.value.length).to.equal(2);
+                done();
+            });
+    });
+
+    it("Should execute on command", function(done){
+        browser.
+            url("http://localhost:3221/#/actuators/"+id)
+            .leftClick('#on').then(function(result){})
+            .elements(".green").then( function(result){
+                expect(result.value.length).to.equal(1);
+                done();
+            });
+    });
+
+    it("Should execute off command", function(done){
+        browser.
+            url("http://localhost:3221/#/actuators/"+id)
+            .leftClick('#off').then(function(result){console.log(result)})
+            .elements(".red").then( function(result){
+                expect(result.value.length).to.equal(1);
+                done();
+            });
+    });
 
 	after(function (done) {
         var id= 1000015;
@@ -103,7 +129,7 @@ function newDevice(id, name ) {
             savedAt: 1651981981,
             commands: {
                 status:{
-                    name: 'c',
+                    name: 'status',
                     parameters:{},
                     requestInterval: 5000,
                     returns: {
@@ -114,7 +140,7 @@ function newDevice(id, name ) {
                     description: "geeft de temperatuur"
                 },
                 on:{
-                    name: 'c',
+                    name: 'on',
                     parameters:{},
                     requestInterval: 5000,
                     returns: {
@@ -125,7 +151,7 @@ function newDevice(id, name ) {
                     description: "geeft de temperatuur"
                 },
                 off:{
-                    name: 'c',
+                    name: 'off',
                     parameters:{},
                     requestInterval: 5000,
                     returns: {

@@ -24,6 +24,7 @@
             }
         });
 
+
         socket.socketListener("deviceUpdated", function (data) {
             devices[data.model.type].forEach(function (device) {
                 if (device.id == data.id) {
@@ -38,30 +39,69 @@
         });
 
 
-
-        socket.socketListener('resolveConflict', function (data) {
-            var conflictPopUp = $('#conflictmodal');
-            conflictPopUp.openModal();
+        var currentlyResolving = {status: false, device: null, data: null};
+        var resolveQueue = [];
+        var resolve2 = $('#resolve2');
+        var resolve1 = $('#resolve1');
+        socket.socketListener("resolveConflict", function (data) {
+            if(resolveQueue.indexOf(data) === -1){
+                resolveQueue.push(data);
+            }
+            checkQueue();
         });
 
-        function resolveConflict() {
-
-            var object = {
-                winner: 'clickedScenario',
-                loser: '',
-                device: 1337
-            };
-
-            $http.post('http://localhost:3221/devices/' + object.device + '/resolveconflict', object).
-                success(function (data) {
-                    console.log('CONFLICT', 'resolved');
-                })
-                .error(function (err){
-                    console.log('CONFLICT', 'error while resolving');
-                });
+        function checkQueue() {
+            if (resolveQueue.length !== 0) {
+                currentlyResolving.data = resolveQueue[0];
+                triggerResolve();
+            }
         }
 
+        function triggerResolve() {
+            if (!currentlyResolving.status) {
+                var conflictPopUp = $('#conflictmodal');
+                conflictPopUp.openModal();
+                resolve1.html('Scenario: ' + currentlyResolving.data.executed.scenario + '<br>' + currentlyResolving.data.executed.device.config.alias + ': ' + currentlyResolving.data.executed.command);
+                resolve1.data('scenario', currentlyResolving.data.executed.scenario);
+                resolve2.html('Scenario: ' + currentlyResolving.data.conflicting.scenario + '<br>' + currentlyResolving.data.conflicting.device.config.alias + ': ' + currentlyResolving.data.conflicting.command);
+                resolve2.data('scenario', currentlyResolving.data.conflicting.scenario);
+                currentlyResolving.status = true;
+                currentlyResolving.device = currentlyResolving.data.executed.device;
+            }
+        }
 
+        resolve1.click(function () {
+            resolveConflict($(this).data('scenario'), resolve2.data('scenario'));
+        });
+
+        resolve2.click(function () {
+            resolveConflict($(this).data('scenario'), resolve1.data('scenario'));
+        });
+
+        function resolveConflict(winningScenario, losingScenario) {
+
+            var object = {
+                winner: winningScenario,
+                loser: losingScenario,
+                device: currentlyResolving.device
+            };
+
+            $http.post('http://localhost:3221/devices/' + object.device.model.type + '/' + object.device.id + '/resolveconflict', object).
+                success(function (data) {
+                    console.log('CONFLICT', 'resolved');
+                    currentlyResolving.status = false;
+                    resolveQueue.splice(0, 1);
+                    $('#conflictmodal').closeModal();
+                    checkQueue();
+                })
+                .error(function (err) {
+                    console.log('CONFLICT', 'error while resolving');
+                    currentlyResolving.status = false;
+                    resolveQueue.splice(0, 1);
+                    $('#conflictmodal').closeModal();
+                    checkQueue();
+                });
+        }
 
 
         function updateRules(id, obj) {

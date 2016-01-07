@@ -20,8 +20,8 @@
                     </div>
                     <div class="col m8" ng-click="scena.goToDetail(scenario)"
                          style="margin-left:-8px; margin-top:0px;">
-                        <div class="customCard" style="padding:1px;">
-                            <div class="detailcontainer">
+                        <div id="scenarioAmount"  class="customCard" style="padding:1px;">
+                            <div id="scenarioName" class="detailcontainer">
                                 {{scenario.name}}<br>
                                 <span class="description">{{scenario.description.substring(0, 25)}}...</span>
                             </div>
@@ -36,7 +36,7 @@
 <div class="col m6 offset-m6" ng-click="scena.goToNew()" style="text-align:center">
     <div class="col m12" style="margin-left:-8px; margin-top:0px; margin-right:-10px;">
         <div class="customCard" style="padding:1px; background-color:lightgrey">
-            <p style="margin-top:10px;">Nieuw Scenario</p>
+            <p id="newscenario" style="margin-top:10px;">Nieuw Scenario</p>
         </div>
     </div>
 </div>
