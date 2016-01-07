@@ -143,8 +143,10 @@
             sdc.devices.forEach(function (device) {
                 if (elisteners.indexOf(device.id) == -1) {
                     var el = document.getElementById("selectChange" + device.id);
-                    el.addEventListener("change", changeListenerCreator(device));
-                    elisteners.push(device.id);
+                    if(el) {
+                        el.addEventListener("change", changeListenerCreator(device));
+                        elisteners.push(device.id);
+                    }
                 }
             });
         }

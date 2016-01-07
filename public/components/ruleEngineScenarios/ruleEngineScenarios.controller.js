@@ -197,11 +197,24 @@
         }
 
         function remove(type, ruleID, modal) {
+            console.log(rec.currentGroups);
             var obj = rec.ruleObjects[rec.selectedCommand][type];
             for (var i = 0; i < obj.length; i++) {
                 if (obj[i].id == ruleID) {
                     obj.splice(i, 1);
                     closeModal(modal);
+                }
+            }
+            for (var groupIndex in rec.currentGroups) {
+                if( rec.currentGroups.hasOwnProperty(groupIndex) ) {
+                    var group = rec.currentGroups[groupIndex];
+                    for(var ruleIndex in group) {
+                        if(group.hasOwnProperty(ruleIndex)) {
+                            if(group[ruleIndex] && group[ruleIndex].id == ruleID) {
+                                rec.currentGroups[groupIndex].splice(ruleIndex,1);
+                            }
+                        }
+                    }
                 }
             }
             reset();
@@ -386,6 +399,7 @@
             rec.actuators = JSON.parse(JSON.stringify(DS.getActuators()));
             rec.sensors = JSON.parse(JSON.stringify(DS.getSensors()));
             rec.ruleObjects = rec.scenario.rules;
+            rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups);
             //$scope.$watch('rec.scenario.rules', function (newVal, oldVal) {
             //    ScenarioService.update(rec.scenario.id, rec.scenario)
             //        .then(function (data) {

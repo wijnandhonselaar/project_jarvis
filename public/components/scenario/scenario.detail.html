@@ -42,7 +42,7 @@
     <div class="row" style="padding-top:5px; height: 57px; margin-bottom: 8px; margin-top:8px; border-bottom:1px solid #EEEEEE"
          ng-repeat="actuator in sdc.devices track by $index">
         <div class="col m1">
-            <img src="{{actuator.model.image}}" width="100%">
+            <img ng-src="{{actuator.model.image}}" width="100%">
         </div>
         <div class="col m3">
             <span>{{actuator.config.alias | limitTo:30}}...</span>

@@ -82,6 +82,7 @@ module.exports = (function () {
                 console.error(err);
                 throw err;
             }
+            res.json(result);
         });
     });
 
