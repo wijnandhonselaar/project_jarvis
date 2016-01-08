@@ -95,7 +95,9 @@ function apply(scenario, event) {
 
                 if (hasRules && execute) {
                     if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
-                        scenarioManager.execute(scenario,ruleKey,null);
+                        scenarioManager.execute(scenario,ruleKey, function(){
+                            console.log('Rule triggered: '+scenario.name+' '+ruleKey);
+                        });
                     }
                 }
 

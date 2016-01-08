@@ -386,7 +386,7 @@ function setRules(object) {
  * @param cb
  */
 function executeCommand(command, device, params, isScenario, cb){
-
+    console.log('exeucting', command+ ' - '+ device.id);
     switch (device.model.commands[command].httpMethod) {
         case 'POST':
             comm.post(command, device, params, isScenario, function (state, device) {
