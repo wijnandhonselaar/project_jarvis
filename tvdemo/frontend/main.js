@@ -22,3 +22,24 @@ ReactDOM.render(
     <LikeButton />,
     document.getElementById('container')
 );
+
+var videoPlayer = React.createClass({
+    getInitialState: function() {
+        return {
+            channel: 1
+        };
+    },
+    switchChannel: function(newChan) {
+        this.setState({
+            channel: newChan
+        });
+    },
+    getSource: function(){
+        return "channel" + this.channel + ".mp4";
+    },
+    render: function() {
+        return (
+            <video src={this.getSource}></video>
+        );
+    }
+});
