@@ -1,32 +1,12 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var io = require('socket.io-browserify');
+var ding = io.connect('http://localhost:1337');
 
-var LikeButton = React.createClass({
-    getInitialState: function() {
-        return {liked: false};
-    },
-    handleClick: function(event) {
-        this.setState({liked: !this.state.liked});
-    },
-    render: function() {
-        var text = this.state.liked ? 'like' : 'haven\'t liked';
-        return (
-            <p onClick={this.handleClick}>
-                You {text} this. Click to toggle.
-            </p>
-        );
-    }
-});
-
-ReactDOM.render(
-    <LikeButton />,
-    document.getElementById('container')
-);
-
-var videoPlayer = React.createClass({
+var VideoPlayer = React.createClass({
     getInitialState: function() {
         return {
-            channel: 1
+            channel: 2
         };
     },
     switchChannel: function(newChan) {
@@ -34,12 +14,46 @@ var videoPlayer = React.createClass({
             channel: newChan
         });
     },
-    getSource: function(){
-        return "channel" + this.channel + ".mp4";
-    },
     render: function() {
+        var src = "channel" + this.state.channel + ".mp4";
+
+        setTimeout(function(){
+            document.getElementById("video").play();
+        }, 500);
+
         return (
-            <video src={this.getSource}></video>
+            <video src={src} id="video"></video>
         );
     }
 });
+
+var Television = React.createClass({
+    getInitialState: function() {
+        return {
+            on: true
+        };
+    },
+    toggleState: function() {
+        this.setState({
+            on: !this.state.on
+        });
+    },
+    render: function() {
+
+        var self = this;
+        ding.on('test', function () {
+            alert("TEST");
+        });
+
+        return (
+            <div>
+                { this.state.on ? <VideoPlayer /> : null }
+            </div>
+        );
+    }
+});
+
+ReactDOM.render(
+    <Television />,
+    document.getElementById('container')
+);

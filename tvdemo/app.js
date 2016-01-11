@@ -5,6 +5,8 @@ var io = require('socket.io')(server);
 
 server.listen(1337);
 
+//io.emit("Test", {test: true});
+
 app.use(express.static('frontend'));
 
 app.get('/', function (req, res) {
