@@ -6,7 +6,7 @@
         <p id="scenarioName">Scenario: {{rec.scenario.name}}</p>
     </div>
     <div class="col m2">
-        <select ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;">
+        <select ng-model="rec.selectedCommand" ng-change="rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups)" style="display:block;" id="selectStartFinish">
             <option value="start">Start</option>
             <option value="finish">Finish</option>
         </select>
