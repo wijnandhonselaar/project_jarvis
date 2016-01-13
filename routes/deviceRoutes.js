@@ -30,7 +30,7 @@ module.exports = (function() {
             device = deviceManager.getSensor(parseInt(req.params.id));
         }
 
-        var response = comm.get(req.params.command, device, function () {
+        comm.get(req.params.command, device, function (response) {
             res.send(JSON.stringify(response));
         });
     });
@@ -74,6 +74,7 @@ module.exports = (function() {
     route.post('/:devicetype/:id/commands/:command', function (req, res) {
         var device = deviceManager.getActuator(parseInt(req.params.id));
         comm.post(req.params.command, device, req.body, false, function (response) {
+            console.log(response);
             deviceManager.updateActuatorState(device.id, response, false);
             res.send(JSON.stringify(response));
         });

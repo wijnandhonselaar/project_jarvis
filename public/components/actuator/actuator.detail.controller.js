@@ -8,6 +8,9 @@
     ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope", '$timeout', '$state'];
 
     function ActuatorDetailCtrl(DS, $sp, $scope, $timeout, $state) {
+
+        console.log(JSON.parse('{"status":{"state":false}}'));
+
         var adc = this;
         adc.showCommand = showCommand;
         adc.sendcommand = sendcommand;
@@ -41,6 +44,7 @@
         });
 
         $timeout(function () {
+            console.log(adc.actuator.model);
             $('.tooltipped').tooltip({delay: 50});
         });
 

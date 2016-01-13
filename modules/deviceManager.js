@@ -38,7 +38,7 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
-setInterval(updateManagers,20000);
+setInterval(updateManagers, 5000);
 
 /**
  *

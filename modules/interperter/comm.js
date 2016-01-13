@@ -20,6 +20,9 @@ var postMethod = function(command, deviceObject, paramList, isScenario, callback
                     console.error(err);
                 } else {
                     if(!isScenario) logger.logEvent(deviceObject, deviceObject.model.type, "undefined" ,deviceObject.model.name + " heeft commando: "+command+" uitgevoerd.", 4);
+                    if(res.text){
+                        res.body = JSON.parse(res.text);
+                    }
                     callback(res.body, deviceObject);
                 }
             });

@@ -127,13 +127,13 @@ function toggleState(scenario, cb) {
                 execute(scenario, 'start', function (err, data) {
                     if (err) cb(err, data);
                     cb(null, data);
-                });
+                }, true);
             }
             else {
                 execute(scenario, 'finish', function (err, data) {
                     if (err) cb(err, data);
                     cb(null, data);
-                });
+                }, true);
             }
         }
     }
@@ -145,12 +145,12 @@ function toggleState(scenario, cb) {
  * @param scenarioState
  * @param cb
  */
-function execute(scenario, scenarioState, cb) {
+function execute(scenario, scenarioState, cb, doLog) {
     if (scenarioState == 'start') {
-        logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is ingeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+        if(doLog) logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is ingeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
         start(scenario, cb);
     } else {
-        logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is uitgeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
+        if(doLog) logger.logEvent(null, 'scenario', logger.manual, 'Scenario: ' + scenario.name + ' is uitgeschakeld.', logger.severity.warning, Math.round((new Date()).getTime() / 1000));
         stop(scenario, cb);
     }
     for (var deviceLoop = 0; deviceLoop < scenario.actuators.length; deviceLoop++) {
@@ -235,9 +235,9 @@ function stop(scenario, cb) {
         });
 
         for(var i = 0; i<scenarioList.length; i++){
-            execute(scenarioList[i],'start', function(){
+            execute(scenarioList[i],'start', function() {
                 console.log('yey');
-            })
+            }, false)
         }
     }, 250);
 
