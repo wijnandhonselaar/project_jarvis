@@ -45,50 +45,6 @@ function detect(command, device, executingScenario) {
     }
 
     return false;
-
-}
-
-
-function checkIfExists(scenarioArray, scenario, device){
-    var exists = false;
-    for(var a = 0; a<resolvedConflicts.length; a++){
-        for(var i = 0; i<scenarioArray.length; i++){
-            if (resolvedConflicts[a].winner == scenario.name && resolvedConflicts[a].loser == scenarioArray[i].name && resolvedConflicts[a].device.id == device.id) {
-                exists = true;
-            } else if(resolvedConflicts[a].winner == scenarioArray[i].name && resolvedConflicts[a].loser == scenario.name && resolvedConflicts[a].device.id == device.id) {
-                exists = true;
-            }
-        }
-    }
-    console.log(scenario.name, exists);
-    return exists;
-}
-
-function checkIfDeviceHasScenario(scenario, device){
-    if(device.config.scenarios[scenario.name]) return true;
-}
-
-function checkIfWinningScenariosAreActive(winner, loser, callback){
-    var allowed = true;
-    var total = 0;
-
-    function f() {
-        total++;
-        if(total == resolvedConflicts.length) {
-            callback(allowed);
-        }
-    }
-
-    for(var i = 0; i<resolvedConflicts.length; i++){
-        if(resolvedConflicts[i].loser == scenario){
-            scenarioManager.getByName(resolvedConflicts[i].winner, function(d){
-                if(d.status){
-                    allowed = false;
-                    f();
-                }
-            })
-        }
-    }
 }
 
 
@@ -116,46 +72,6 @@ function checkAgainstResolvedConflicts(device, scenario, scenarioState, newcomma
     });
 }
 
-
-
-//function checkAgainstResolvedConflicts(device, scenario, scenarioState, newcommand, device, callback){
-//    if(scenarioState == 'start' && resolvedConflicts.length > 0) {
-//        scenarioManager.getAll(function (err, scenariosArray) {
-//            if(checkIfExists(scenariosArray, scenario, device)) {
-//                for (var a = 0; a < scenariosArray.length; a++) {
-//                    //if (!scenariosArray[a].status) return callback(true, newcommand, device);
-//                        for (var i = 0; i < resolvedConflicts.length; i++) {
-//                            if (resolvedConflicts[i].winner == scenario.name && resolvedConflicts[i].loser == scenariosArray[a].name && resolvedConflicts[i].device.id == device.id) {
-//                                console.log('ik ben de winnaar' + scenario.name);
-//                                callback(true, newcommand, device);
-//                            } else if (resolvedConflicts[i].winner == scenariosArray[a].name && resolvedConflicts[i].loser == scenario.name && checkIfDeviceHasScenario(scenario, device)) {
-//                                console.log('ik ben de verliezer ' + scenario.name);
-//                                checkIfWinningScenariosAreActive(scenario, scenariosArray[a].name, function (allowed) {
-//                                    callback(allowed, newcommand, device);
-//                                });
-//
-//                                //scenarioManager.getByName(resolvedConflicts[i].winner, function(d){
-//                                //    if(!d.status){
-//                                //        console.log('maar de ' + d.name + ' staat niet aan duuss....')
-//                                //        callback(true, newcommand, device);
-//                                //    } else {
-//                                //        callback(false, newcommand, device);
-//                                //    }
-//                                //})
-//
-//                            } else {
-//                                callback(false, newcommand, device);
-//                            }
-//                        }
-//                }
-//            } else {
-//                callback(true, newcommand, device);
-//            }
-//        })
-//    } else {
-//        callback(true, newcommand, device);
-//    }
-//};
 
 
 /**
