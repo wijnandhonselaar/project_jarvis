@@ -76,7 +76,6 @@ function saveDevice(newDevice, type, fn) {
         fn({Error: "type is unknown"});
         return false;
     }
-
     type.save(newDevice).then(function(res) {
         fn(null, res);
     }).error(function(err){

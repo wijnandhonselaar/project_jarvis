@@ -30,6 +30,7 @@
         sdc.setClass = setClass;
         sdc.showConflictList = showConflictList;
         sdc.getOppositeCommand = getOppositeCommand;
+        sdc.toggleState = toggleState;
         var swiper = null;
         var modalIsOpen = ScenarioService.modalIsOpen;
 
@@ -88,13 +89,11 @@
                 modalIsOpen = true;
                 showConflictListModal();
             }
-            //$('#conflictOverviewModal').openModal();
         });
 
         socketService.socketListener('resolvedConflictsList', function (data) {
             sdc.resolvedConflicts = data;
             $scope.$apply();
-            //console.log(data);
         });
 
         function showConflictList() {
@@ -144,8 +143,10 @@
             sdc.devices.forEach(function (device) {
                 if (elisteners.indexOf(device.id) == -1) {
                     var el = document.getElementById("selectChange" + device.id);
-                    el.addEventListener("change", changeListenerCreator(device));
-                    elisteners.push(device.id);
+                    if(el) {
+                        el.addEventListener("change", changeListenerCreator(device));
+                        elisteners.push(device.id);
+                    }
                 }
             });
         }
@@ -371,6 +372,22 @@
                 }
             }
             return false;
+        }
+
+        function toggleState(){
+            ScenarioService.toggleState(sdc.scenario)
+                .then(function(data){
+                    if(data.id === sdc.scenario.id){
+                        sdc.scenario.status = data.status;
+                        //$scope.$apply();
+                        //showConflictList();
+                    }
+                    return data;
+                })
+                .catch(function(err){
+                    console.error("error", err);
+                    return err;
+                });
         }
 
 

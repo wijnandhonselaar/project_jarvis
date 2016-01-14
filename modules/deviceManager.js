@@ -38,7 +38,7 @@ function updateManagers(event) {
     scenarioManager.validate(event);
 }
 
-setInterval(updateManagers,20000);
+setInterval(updateManagers, 5000);
 
 /**
  *
@@ -211,6 +211,7 @@ function updateDeviceAliasFunction(devicetype, id, alias, callback) {
     var found = false;
     function updateCB(err, res) {
         if(err) {
+            throw err;
             logger.logEvent(res, devicetype, logger.manual ,"Alias voor " + res.model.name + " niet aangepast.", logger.severity.warning);
             callback( {err: "Error, could not update " + devicetype + " with id: " + id + " to update alias."});
         } else {
@@ -385,7 +386,7 @@ function setRules(object) {
  * @param cb
  */
 function executeCommand(command, device, params, isScenario, cb){
-
+    console.log('exeucting', command+ ' - '+ device.id);
     switch (device.model.commands[command].httpMethod) {
         case 'POST':
             comm.post(command, device, params, isScenario, function (state, device) {

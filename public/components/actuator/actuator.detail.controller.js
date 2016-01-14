@@ -8,6 +8,9 @@
     ActuatorDetailCtrl.$inject = ["DevicesService", "$stateParams", "$scope", '$timeout', '$state'];
 
     function ActuatorDetailCtrl(DS, $sp, $scope, $timeout, $state) {
+
+        console.log(JSON.parse('{"status":{"state":false}}'));
+
         var adc = this;
         adc.showCommand = showCommand;
         adc.sendcommand = sendcommand;
@@ -41,6 +44,7 @@
         });
 
         $timeout(function () {
+            console.log(adc.actuator.model);
             $('.tooltipped').tooltip({delay: 50});
         });
 
@@ -117,7 +121,7 @@
         function sendcommand(id, command, commandkey, type, values) {
             DS.sendCommand(id, command, commandkey, type, values)
                 .then(function (data) {
-                    Materialize.toast("Command successfull excecuted", 4000);
+                    Materialize.toast("Command successfully executed", 4000);
                 })
                 .catch(function (err) {
                     Materialize.toast("Command error", 4000);

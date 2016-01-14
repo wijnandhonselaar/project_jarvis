@@ -39,8 +39,8 @@ function apply(scenario, event) {
      * @param rule
      * @returns {*}
      */
-    function checkRule(rule) {
-        if (rule.type) {
+    function checkRule(rule, event) {
+        if (rule && rule.type) {
             hasRules = true;
             switch (rule.type) {
                 case "thresholds":
@@ -67,7 +67,7 @@ function apply(scenario, event) {
                     return resolve;
                 case 'events':
                     if (event) {
-                        return (parseInt(eobj.device) == parseInt(event.id) && event.key == eobj.event);
+                        return (parseInt(rule.device) == parseInt(event.id) && event.key == rule.event);
                     } else {
                         return false;
                     }
@@ -83,7 +83,8 @@ function apply(scenario, event) {
                     var andgroup = scenario.rules[ruleKey].andgroups[i];
                     for(var ai = 0; ai < andgroup.length; ai++) {
                         var scenarioRule = getScenarioRuleById(ruleKey,andgroup[ai]);
-                        if ( !checkRule(scenarioRule) ) {
+                        //console.log("SCENARIO", scenarioRule);
+                        if ( !checkRule(scenarioRule, event) ) {
                             break;
                         }
                         if(ai+1 == andgroup.length) {
@@ -94,7 +95,9 @@ function apply(scenario, event) {
 
                 if (hasRules && execute) {
                     if ((!scenario.status && ruleKey === start) || (scenario.status && ruleKey === stop)) {
-                        scenarioManager.execute(scenario,ruleKey,null);
+                        scenarioManager.execute(scenario,ruleKey, function(){
+                            console.log('Rule triggered: '+scenario.name+' '+ruleKey);
+                        }, true);
                     }
                 }
 

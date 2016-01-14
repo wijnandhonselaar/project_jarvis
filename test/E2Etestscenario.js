@@ -60,7 +60,7 @@ describe("Scenario E2E Test scenario", function () {
     });
 
     before(function (done) {
-        device = newDevice(1000016, 'b');
+        device = newDevice(1000017, 'b');
         device.type = 'actuator';
         api.post('http://localhost:3221/test/devices/add')
             .send({device: device, remote: {address: '192.186.24.2'}})
@@ -148,7 +148,7 @@ describe("Scenario E2E Test scenario", function () {
 
     it("should click a device option and save it to the scenario", function (done) {
         browser
-            .getValue('#1000016', function (err, value) {
+            .getValue('#1000017', function (err, value) {
                 expect(value).to.be.equal("on");
                 done();
             })
@@ -293,25 +293,17 @@ describe("Scenario E2E Test scenario", function () {
             })
     });
 
+     after(function (done) {
+           var id = 1000017;
+           Actuator.get(id).then(function (actuator) {
+               actuator.delete().then(function () {
+                   done();
+               }).error(function (err) {
+                   console.error(err);
+               });
+           });
+        });
 
-    after(function (done) {
-        r.db('jarvis').table('Actuator').
-            delete().
-            run(connection, function (err, result) {
-                if (err) throw err;
-                //console.log(JSON.stringify(result, null, 2));
-                done();
-            });
-    });
-    after(function (done) {
-        r.db('jarvis').table('Sensor').
-            delete().
-            run(connection, function (err, result) {
-                if (err) throw err;
-                //console.log(JSON.stringify(result, null, 2));
-                done();
-            });
-    });
     after(function(done){
         setTimeout(function () {
             browser.end(done);

@@ -37,6 +37,7 @@ function detect(command, device, executingScenario) {
 
     for (var scenario in device.config.scenarios) {
         if (device.config.scenarios.hasOwnProperty(scenario)) {
+
             if(scenario != executingScenario.name) {
                 scenarioManager.getByName(scenario, getByNameCallback);
             }
@@ -44,8 +45,34 @@ function detect(command, device, executingScenario) {
     }
 
     return false;
-
 }
+
+
+function checkAgainstResolvedConflicts(device, scenario, scenarioState, newcommand, callback){
+    scenarioManager.getAll(function (err, scenariosArray) {
+
+        var allowed = true;
+
+        var scenarioList = scenariosArray.filter(function(d){
+            return d.status && d.name != scenario.name;
+        });
+        if(scenarioList.length == 0) return callback(true,newcommand, device);
+
+        for(var i = 0; i<scenarioList.length; i++){
+            for (var b = 0; b < resolvedConflicts.length; b++) {
+                if (resolvedConflicts[b].winner == scenarioList[i].name && resolvedConflicts[b].loser == scenario.name && resolvedConflicts[b].device.id == device.id) {
+                    allowed = false;
+                    break;
+                }
+            }
+        }
+
+        callback(allowed, newcommand, device);
+
+    });
+}
+
+
 
 /**
  * Called by detect, presents the to be resolved conflict to the client by a socket.emit
@@ -61,6 +88,7 @@ function presentResolve(deviceObj, executingCommand, conflictingCommand, executi
         conflicting: {scenario: conflictingScenario.name, command: conflictingCommand, device: deviceObj}
     });
 }
+
 
 
 /**
@@ -177,6 +205,7 @@ module.exports = {
         if (dm) deviceManager = dm;
     },
     preEmptiveDetect: preEmptiveDetect,
+    checkAgainstResolvedConflicts:checkAgainstResolvedConflicts,
     resolve: resolve,
     detect: detect
 };
