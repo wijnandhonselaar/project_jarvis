@@ -26,7 +26,7 @@
 <div class="row" style="margin-top:-15px;">
     <div class="col m4 nopad">
         <div class="row">
-            <div class="col m12">
+            <div class="col m12" style="height: 170px; overflow-y:scroll;">
                 <div class="command nopad valign-wrapper card" ng-repeat="(key, command) in adc.actuator.model.commands" ng-if="command.name != 'status'">
                     <div class="actuatorCommand" id='{{key}}' ng-click="adc.showCommand(adc.actuator.model.id, command, key, 'actuator');" class="touch valign" style="display: inline-block; padding-left:5px; width: 85%;">{{command.name}}</div>
                     <div data-position="top" data-delay="50" data-tooltip="{{command.description}}" class="tooltipped text-center" style="display: inline-block; width:15%; background-color:#F84E19; color:white; font-size:24px;">i</div>
