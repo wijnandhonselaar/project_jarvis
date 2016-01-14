@@ -1,28 +1,11 @@
 var expect              = require('chai').expect;
 var api                 = require('superagent');
-var thinky              = require('thinky')();
-var r                   = thinky.r;
+//var thinky              = require('thinky')();
+//var r                   = thinky.r;
 var connection          = null;
 
 describe('#Settings', function() {
-
-    before(function(done){
-        r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
-            if (err) throw err;
-            connection = conn;
-            done();
-        })
-    });
-
-    before(function(done){
-        r.db('jarvis').table('settings').
-        delete().
-        run(connection, function(err, result) {
-            if (err) throw err;
-            done();
-        });
-    });
-
+    require('./globalBefore');
 
     it('should receive the default log level', function (done) {
         api

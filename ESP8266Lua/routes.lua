@@ -21,12 +21,12 @@ local routes = {
             gpio.mode(pins.powerPin, gpio.OUTPUT)
             gpio.write(pins.powerPin, gpio.HIGH)
             dobbie.setEventTimer()
-            return "true"
+            return '{"state":true}'
         end,
         off = function(conn, postParams)
             gpio.mode(pins.powerPin, gpio.OUTPUT)
             gpio.write(pins.powerPin, gpio.LOW)
-            return "true"
+            return '{"state":false}'
         end
     }
 }

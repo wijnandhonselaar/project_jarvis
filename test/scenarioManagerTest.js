@@ -3,17 +3,19 @@ var api                 = require('superagent');
 var Scenario            = require('../models/scenario');
 var ScenarioManager     = require('../modules/scenarioManager');
 var id                  = null;
+var deviceManager = require('../modules/deviceManager');
 
 describe('Scenario Manager', function() {
-    before(function(done) {
-        //Scenario.deleteAll(function(err,res){ });
-        done();
-    });
+    require('./globalBefore');
 
     describe('#New scenario', function() {
+        this.timeout(5000);
+
         it('should save new scenario.', function(done) {
             ScenarioManager.new('Bedtijd', 'Zet alle lampen uit.', [{deviceid: 1, action: {command: 'on'}}], function(err,res) {
-                if(err) throw err;
+                if(err) {
+                    done(err);
+                }
                 expect(res.id).to.not.equal(null);
                 expect(res.id).to.not.equal(undefined);
                 id = res.id;
@@ -25,7 +27,9 @@ describe('Scenario Manager', function() {
     describe('#Get all scenarios', function() {
         it('should get all scenarios.', function(done) {
             ScenarioManager.getAll(function(err, res) {
-                if(err) throw err;
+                if(err) {
+                    done(err);
+                }
                 expect(res.length).gt(0);
                 done();
             });
@@ -41,7 +45,9 @@ describe('Scenario Manager', function() {
         });
         it('should get scenario by id.', function(done) {
             ScenarioManager.get(id,function(err, res) {
-                if(err) throw err;
+                if(err) {
+                    done(err);
+                }
                 expect(res.name).to.equal('Bedtijd');
                 done();
             });
@@ -51,11 +57,15 @@ describe('Scenario Manager', function() {
     describe('#Update scenario', function() {
         it('Should update scenario name and description.', function(done) {
             ScenarioManager.get(id,function(err, res) {
-                if(err) throw err;
+                if(err) {
+                    done(err);
+                }
                 var update = new Scenario({name: 'Opstaan', description: 'Winter, dus lampen gaan aan.'});
                 res.merge(update);
                 ScenarioManager.update(res, function(err, res) {
-                    if(err) throw err;
+                    if(err) {
+                        done(err);
+                    }
                     expect(res.name).to.equal('Opstaan');
                     done();
                 });
@@ -63,12 +73,16 @@ describe('Scenario Manager', function() {
         });
         it('Should update scenario name and description with given id.', function(done) {
             ScenarioManager.get(id,function(err, res) {
-                if(err) throw err;
+                if(err) {
+                    done(err);
+                }
                 var scenario = res;
                 scenario.name = 'Aangepast';
                 scenario.description = 'New description';
                 ScenarioManager.updateById(id, scenario, function(err, res) {
-                    if(err) throw err;
+                    if(err) {
+                        done(err);
+                    }
                     expect(res.name).to.equal('Aangepast');
                     done();
                 });
@@ -76,11 +90,17 @@ describe('Scenario Manager', function() {
         });
         it('Should not update scenario when name is undefined.', function(done) {
             ScenarioManager.get(id,function(err, res) {
-                if(err) throw err;
+                if(err) {
+                    done(err);
+                }
                 var update = new Scenario({name: undefined, description: 'Winter, dus lampen gaan aan.'});
                 res.merge(update);
                 ScenarioManager.update(res, function(err, res) {
-                    if(err) done();
+                    if(err) {
+                        done();
+                    } else {
+                        done('saved while name was undefined');
+                    }
                 });
             });
         });

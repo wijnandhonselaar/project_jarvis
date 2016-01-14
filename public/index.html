@@ -20,7 +20,7 @@
                     <div ui-view="mainView"></div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="z-index:999; position:absolute; width: 597px">
                 <div class="col m12 backpanel_light menucontainer">
                     <div ui-view="menuView"></div>
                 </div>
@@ -33,16 +33,30 @@
 
     <div id="conflictmodal" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <p>Oeps! er is een conflict gevonden. Welke actie wil je dat ik uitvoer?</p>
+            <p>Oeps! er is een conflict gevonden bij het uitvoeren van <b><span id="executingScenario"></span></b>. Welke actie wil je dat ik uitvoer?</p>
             <div class="row">
                 <div class="col m6">
-                    <div class="card touch" style="padding:10px; text-align:center;">
-                        <span data-scenario="" id="resolve1"> </span>
+                    <div class="card touch" id="resolve1click" style="padding:10px;">
+                        <div class="row">
+                            <div class="col m2">
+                                <img id="resolve1img" src="" width="100%">
+                            </div>
+                            <div class="col m10" style="text-align: left;">
+                                <span data-scenario="" id="resolve1"> </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col m6">
-                    <div class="card touch" style="padding:10px; text-align:center;">
-                        <span data-scenario="" id="resolve2"> </span>
+                    <div class="card touch" id="resolve2click" style="padding:10px;">
+                        <div class="row">
+                            <div class="col m2">
+                                <img id="resolve2img" src="" width="100%">
+                            </div>
+                            <div class="col m10" style="text-align: left;">
+                                <span data-scenario="" id="resolve2"> </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

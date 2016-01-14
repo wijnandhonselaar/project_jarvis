@@ -2,10 +2,11 @@ var expect = require('chai').expect;
 var Scenario = require('../models/scenario');
 
 describe('Scenario', function () {
-    before(function(done) {
-        Scenario.delete();
-        done();
-    });
+    require('./globalBefore');
+    //before(function(done) {
+    //    Scenario.delete();
+    //    done();
+    //});
     it('Shouldn\'t save an empty Scenario', function (done) {
         // create the new Scenario
         var scenario = new Scenario({});
@@ -83,13 +84,16 @@ describe('Scenario', function () {
         var scenario = new Scenario({
             name: 'name',
             description: 'description',
-            actuators: [{deviceid: 1, action: {command: 'on'}}]
+            actuators: [{deviceid: 1, action: {command: 'on'}}],
+            status: false
         });
         // save the new Scenario
         Scenario.save(scenario).then(function(res) {
             done();
         }).error(function(err){
-            console.log(err);
+            if(err) {
+                done(err);
+            }
         });
     });
     after(function(done) {

@@ -9,7 +9,6 @@
     function ruleEngineScenariosCtrl(DS, $sp, $scope, $timeout, $http, ScenarioService) {
         var rec = this;
         rec.scenario = $sp.data;
-        console.log("scen:\n", rec.scenario);
         rec.sensors = [];
         rec.actuators = [];
         rec.openModal = openModal;
@@ -31,6 +30,7 @@
         rec.recalculateGroups = recalculateGroups;
         rec.getRuleIcon = getRuleIcon;
         rec.saveAll = saveAll;
+        rec.back = back;
 
         if (!rec.scenario.rules) {
             rec.scenario.rules = {
@@ -73,8 +73,8 @@
             gate: 'OR'
         };
 
+
         function recalculateGroups(groups) {
-            console.log("groups\n", groups);
             var isGroups = true;
             if( !groups ) {
                 rec.currentGroups = [];
@@ -185,9 +185,7 @@
                     return rule.id;
                 });
             });
-            console.log("TEST:\n", andgroups);
             rec.scenario.rules[rec.selectedCommand].andgroups = andgroups;
-            console.log("scenario:\n",rec.scenario.rules);
 
             ScenarioService.update(rec.scenario.id, rec.scenario)
                 .then(function (data) {
@@ -200,12 +198,27 @@
         }
 
         function remove(type, ruleID, modal) {
+            console.log(rec.currentGroups);
             var obj = rec.ruleObjects[rec.selectedCommand][type];
-            console.log(obj);
             for (var i = 0; i < obj.length; i++) {
                 if (obj[i].id == ruleID) {
                     obj.splice(i, 1);
                     closeModal(modal);
+                }
+            }
+            for (var groupIndex in rec.currentGroups) {
+                if( rec.currentGroups.hasOwnProperty(groupIndex) ) {
+                    var group = rec.currentGroups[groupIndex];
+                    for(var ruleIndex in group) {
+                        if(group.hasOwnProperty(ruleIndex)) {
+                            if(group[ruleIndex] && group[ruleIndex].id == ruleID) {
+                                rec.currentGroups[groupIndex].splice(ruleIndex,1);
+                                if(rec.currentGroups[groupIndex].length === 0) {
+                                    rec.currentGroups.splice(groupIndex,1);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             reset();
@@ -225,7 +238,6 @@
         }
 
         function closeModal(modal) {
-            console.log(modal);
             $('#' + modal).closeModal();
         }
 
@@ -260,7 +272,6 @@
         function getSensorFields(id) {
             for (var i = 0; i < rec.sensors.length; i++) {
                 if (rec.sensors[i].id == id) {
-                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.sensors[i].model.commands.status.returns;
                 }
             }
@@ -269,7 +280,6 @@
         function getActuatorById(id) {
             for (var i = 0; i < rec.actuators.length; i++) {
                 if (rec.actuators[i].id == id) {
-                    //console.log(rec.sensors[i].model.commands.status.returns);
                     return rec.actuators[i];
                 }
             }
@@ -277,7 +287,6 @@
 
         function updateFieldList() {
             DS.getDeviceById(rec.threshold.device, 'sensor').then(function (data) {
-                console.log(data);
                 rec.selectedSensor = data;
                 $scope.$apply();
             }).catch(function (e) {
@@ -287,7 +296,6 @@
 
         function updateEventList() {
             DS.getDeviceById(rec.event.device, 'actuator').then(function (data) {
-                console.log(data);
                 rec.selectedActuator = data;
                 $scope.$apply();
             }).catch(function (e) {
@@ -385,16 +393,27 @@
                     ChangeRuleInType(rec.timer);
                 }
             }
-
             reset();
             $timeout(draggable, 500);
         }
+
+        function back() {
+            //$state.go( 'state-whatever', { previousState : { name : $scope.previousState, params : $scope.previousStateParams } }, {} );
+        }
+
+        //$scope.$on('$stateChangeSuccess', function (ev, to, toParams, from, fromParams) {
+        //    $scope.previousState = from.name;
+        //    $scope.previousStateParams = fromParams;
+        //    $scope.currentState = to.name;
+        //});
 
         $timeout(function () {
             $('#timepicker').timepicker({'step': 15, timeFormat: 'H:i'});
             rec.actuators = JSON.parse(JSON.stringify(DS.getActuators()));
             rec.sensors = JSON.parse(JSON.stringify(DS.getSensors()));
             rec.ruleObjects = rec.scenario.rules;
+            rec.selectedCommand = "start";
+            rec.recalculateGroups(rec.scenario.rules[rec.selectedCommand].andgroups);
             //$scope.$watch('rec.scenario.rules', function (newVal, oldVal) {
             //    ScenarioService.update(rec.scenario.id, rec.scenario)
             //        .then(function (data) {

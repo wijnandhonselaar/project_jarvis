@@ -1,5 +1,4 @@
 local dobbie = {}
-local json = require "cjson"
 globalmethods = require 'globalmethods'
 dobbie.headersHaveBeenSent = false
 dobbie.fileTransfer = {
@@ -15,11 +14,11 @@ dobbie.masterConnection = {
     ip = nil
 }
 
-dobbie.httpRequests = require 'routes'
+local httpRequests = require 'routes'
 
 function dobbie.setEventTimer()
     tmr.alarm(0, 30000, 0, function() 
-        dobbie.udp.broadcast('{"id":1337,"msg":"koffiezetapparaat is klaar","key":"onFinish","severity":5}')
+        dobbie.udp.broadcast('{"id":1337,"msg":"Koffiezetapparaat is klaar","key":"koffie is klaar","severity":2}')
     end)
 end
 
@@ -30,9 +29,9 @@ function dobbie.handle(conn,request)
      end
     requestHandle = getRequestHandle(request)
     print(http_method.. "/" .. getRequestHandle(request))
-    if dobbie.httpRequests[http_method] ~= nil then
-        if dobbie.httpRequests[http_method][requestHandle] ~= nil then
-            message = dobbie.httpRequests[http_method][requestHandle](conn, postParams)
+    if httpRequests[http_method] ~= nil then
+        if httpRequests[http_method][requestHandle] ~= nil then
+            message = httpRequests[http_method][requestHandle](conn, postParams)
             if message == nil then
                 message = "No response given"
             end
@@ -63,11 +62,9 @@ function getHttpMethod(request)
 end
 
 function getRequestHandle(request)
-    -- Find start
     local e = string.find(request, "/")
     local request_handle = string.sub(request, e + 1)
-
-    -- Cut end
+    
     e = string.find(request_handle, "HTTP")
     request_handle = string.sub(request_handle, 0, (e-2))
    
@@ -116,8 +113,8 @@ function dobbie.streamFile(conn, filename, seek)
                     length = length + string.len(tostring(line))
                     dobbie.fileTransfer.bytesSent = dobbie.fileTransfer.bytesSent + 512
                     dobbie.fileTransfer.filePosition = dobbie.fileTransfer.bytesSent
-                    print(dobbie.fileTransfer.bytesSent);
-                   
+                  
+               
                     send(conn, line)
                 end 
             end
@@ -128,12 +125,7 @@ end
 
 function send(conn, message, length)
     if dobbie.headersHaveBeenSent == false then
-        print("sending headers")
         conn:send("HTTP/1.1 200 OK\r\n\r\n")
---      conn:send("Content-Type: application/json\r\n")
---      conn:send("Content-Type: text/html\r\n")    
---      conn:send("Content-Length: ".. tostring(length) .."\r\n\r\n")
---      conn:send("Keep-Alive: timeout=15, max=100\r\n\r\n")
         dobbie.headersHaveBeenSent = true
     end
     if message ~= nil then
