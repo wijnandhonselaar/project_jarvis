@@ -18,8 +18,8 @@ Voor het project Jarvis is een Raspberry Pi met een 7” touchscreen gebruikt. I
 # Eenvoudige installatie
 De installatie van de Raspberry Pi is ook mogelijk met een voor geprogrammeerde image van Raspbian. Deze is ontwikkeld door projectgroep Jarvis.
 
-Download link Raspbian Jarvis
-> https://mega.nz/#!61gnzY6I!BBfRfJVd3tJz2U812PaA83nBWDv3tLLfEPh-4CfbmW4
+Download link Raspbian Jarvis (upload 14-01-2016)
+> https://mega.nz/#!ms51VQ4A!hy2bqvsmc_APDulCiezi0hTuUkAnNoNJyI5N7TSJF4M
 
 Voer na de download stap 1 uit van de uitgebreide installatie met de image die zojuist gedownload is.
  
